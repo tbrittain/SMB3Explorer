@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <Button Click="Button_OnClick"
+                Width="200"
+                Height="50">
+            Select a file...
+        </Button>
     </Grid>
 </Window>
