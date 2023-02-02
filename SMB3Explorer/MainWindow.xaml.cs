@@ -130,7 +130,14 @@ public partial class MainWindow
             using var zlibStream = new ZlibStream(compressedStream, CompressionMode.Decompress);
             using var decompressedStream = new MemoryStream();
 
-            zlibStream.CopyTo(decompressedStream);
+            var buffer = new byte[4096];
+            int count;
+
+            while ((count = zlibStream.Read(buffer, 0, buffer.Length)) != 0)
+            {
+                decompressedStream.Write(buffer, 0, count);
+            }
+            
             decompressedStream.Position = 0;
 
             var decompressedFileName = $"smb3_explorer_{DateTime.Now:yyyyMMddHHmmssfff}.sqlite";
