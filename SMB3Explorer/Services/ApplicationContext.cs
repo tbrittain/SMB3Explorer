@@ -7,22 +7,22 @@ namespace SMB3Explorer.Services;
 
 public sealed class ApplicationContext : IApplicationContext, INotifyPropertyChanged
 {
-    private Guid? _selectedFranchiseId;
+    private Guid? _selectedLeagueId;
 
     /// <summary>
     /// For right now, the application only supports franchise mode.
     /// </summary>
-    public Guid? SelectedFranchiseId
+    public Guid? SelectedLeagueId
     {
-        get => _selectedFranchiseId;
+        get => _selectedLeagueId;
         set
         {
-            SetField(ref _selectedFranchiseId, value);
-            OnPropertyChanged(nameof(IsFranchiseSelected));
+            SetField(ref _selectedLeagueId, value);
+            OnPropertyChanged(nameof(IsLeagueSelected));
         }
     }
 
-    public bool IsFranchiseSelected => SelectedFranchiseId.HasValue;
+    public bool IsLeagueSelected => SelectedLeagueId.HasValue;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -4,6 +4,6 @@ namespace SMB3Explorer.Services;
 
 public interface IApplicationContext
 {
-    Guid? SelectedFranchiseId { get; set; }
-    bool IsFranchiseSelected { get; }
+    Guid? SelectedLeagueId { get; set; }
+    bool IsLeagueSelected { get; }
 }

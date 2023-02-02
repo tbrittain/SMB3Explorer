@@ -11,4 +11,12 @@ public static class GuidUtils
     {
         return guid.ToByteArray();
     }
+    
+    public static Guid FromBlob(this byte[] bytes)
+    {
+        var stringRepresentation = BitConverter.ToString(bytes).Replace("-", "");
+        var guid = Guid.ParseExact(stringRepresentation, "N");
+        
+        return guid;
+    }
 }

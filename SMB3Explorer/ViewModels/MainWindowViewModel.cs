@@ -1,20 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Threading.Tasks;
 using SMB3Explorer.Services;
 
 namespace SMB3Explorer.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private INavigationService _navigationService;
+    public INavigationService NavigationService { get; }
 
     public MainWindowViewModel(INavigationService navigationService)
     {
         NavigationService = navigationService;
     }
     
-    public void Initialize()
+    public Task Initialize()
     {
         NavigationService.NavigateTo<LandingViewModel>();
+        return Task.CompletedTask;
     }
 }

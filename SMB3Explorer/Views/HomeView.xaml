@@ -1,13 +1,27 @@
 ﻿<UserControl x:Class="SMB3Explorer.Views.HomeView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="clr-namespace:SMB3Explorer.Views"
-      mc:Ignorable="d">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:HomeViewModel}">
     <Grid>
-        <Label>
-            This is the main page
-        </Label>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <fa:ImageAwesome Grid.ColumnSpan="2"
+                         Icon="Refresh"
+                         Spin="True"
+                         Height="25"
+                         Width="25"
+                         Visibility="{Binding FranchisesLoading}" />
+        <ComboBox Grid.Column="0"
+                  Width="200"
+                  Height="25"
+                  DisplayMemberPath="DisplayText"
+                  ItemsSource="{Binding Franchises}"
+                  SelectedItem="{Binding SelectedFranchise}"/>
     </Grid>
 </UserControl>
