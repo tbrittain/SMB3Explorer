@@ -3,27 +3,46 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SMB3Explorer.Services;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.ViewModels;
 
-public class MainLandingViewModel
+public partial class LandingViewModel : ViewModelBase
 {
     private readonly IDataService _dataService;
-    private readonly INavigationService _navigationService;
+    
+    [ObservableProperty]
+    private INavigationService _navigationService;
 
-    public MainLandingViewModel(IDataService dataService, INavigationService navigationService)
+    public LandingViewModel(IDataService dataService, INavigationService navigationService)
     {
-        _navigationService = navigationService;
+        NavigationService = navigationService;
         _dataService = dataService;
-        SelectSaveFileCommand = new AsyncRelayCommand(SetSaveFile);
+
+        _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
     }
 
-    public ICommand SelectSaveFileCommand { get; }
+    private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
+    {
+        SelectSaveFileCommand?.NotifyCanExecuteChanged();
+    }
 
-    private async Task SetSaveFile()
+    private bool CanSelectSaveFile()
+    {
+        return !_dataService.IsConnected;
+    }
+    
+    [RelayCommand]
+    private void NavigateToMain()
+    {
+        NavigationService.NavigateTo<HomeViewModel>();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
+    private async Task SelectSaveFile()
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
@@ -34,7 +53,7 @@ public class MainLandingViewModel
             return;
         }
 
-        var (ok, exception) = await _dataService.SetupDbConnection(filePath);
+        var (ok, exception) = await _dataService.EstablishDbConnection(filePath);
         Mouse.OverrideCursor = Cursors.Arrow;
 
         if (!ok)
@@ -59,6 +78,12 @@ public class MainLandingViewModel
         }
 
         MessageBox.Show("Successfully connected to SMB3 database");
-        
+        NavigateToMainCommand.Execute(null);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        _dataService.ConnectionChanged -= DataServiceOnConnectionChanged;
+        base.Dispose(disposing);
     }
 }

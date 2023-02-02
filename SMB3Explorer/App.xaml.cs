@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using SMB3Explorer.Services;
 using SMB3Explorer.ViewModels;
@@ -10,8 +9,8 @@ namespace SMB3Explorer;
 
 public partial class App
 {
-    public IServiceProvider ServiceProvider { get; private set; } = null!;
-    public IServiceCollection Services { get; private set; } = null!;
+    private IServiceProvider ServiceProvider { get; set; } = null!;
+    private IServiceCollection Services { get; set; } = null!;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -20,17 +19,26 @@ public partial class App
         ConfigureServices(Services);
         ServiceProvider = Services.BuildServiceProvider();
         
-        var mainWindow = ServiceProvider.GetRequiredService<MainLandingPage>();
+        var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
+        ((MainWindowViewModel) mainWindow.DataContext).Initialize();
     }
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<Frame>(_ => new Frame());
         services.AddSingleton<IDataService, DataService>();
         services.AddSingleton<INavigationService, NavigationService>();
 
-        services.AddTransient<MainLandingPage>();
-        services.AddTransient<MainLandingViewModel>();
+        services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
+        {
+            DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>()
+        });
+
+        services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<LandingViewModel>();
+        services.AddTransient<HomeViewModel>();
+
+        services.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider =>
+            viewModelType => (ViewModelBase) serviceProvider.GetRequiredService(viewModelType));
     }
 }

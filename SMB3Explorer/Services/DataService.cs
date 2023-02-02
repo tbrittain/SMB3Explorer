@@ -26,7 +26,7 @@ public sealed class DataService : INotifyPropertyChanged, IDataService
     public bool IsConnected => Connection is not null;
     public event EventHandler<EventArgs>? ConnectionChanged;
 
-    public Task<(bool, Exception?)> SetupDbConnection(string filePath)
+    public Task<(bool, Exception?)> EstablishDbConnection(string filePath)
     {
         try
         {
@@ -37,7 +37,10 @@ public sealed class DataService : INotifyPropertyChanged, IDataService
             var buffer = new byte[4096];
             int count;
 
-            while ((count = zlibStream.Read(buffer, 0, buffer.Length)) != 0) decompressedStream.Write(buffer, 0, count);
+            while ((count = zlibStream.Read(buffer, 0, buffer.Length)) != 0)
+            {
+                decompressedStream.Write(buffer, 0, count);
+            }
 
             decompressedStream.Position = 0;
 

@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Page Update="Views\MainLandingPage.xaml">
+      <Page Update="Views\LandingView.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>

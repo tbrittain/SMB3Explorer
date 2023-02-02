@@ -1,4 +1,4 @@
-﻿<Window x:Class="SMB3Explorer.Views.MainLandingPage"
+﻿<UserControl x:Class="SMB3Explorer.Views.LandingView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,10 +6,9 @@
         xmlns:local="clr-namespace:SMB3Explorer"
         xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
         mc:Ignorable="d"
-        Title="SMB3 Explorer"
         Height="450"
         Width="800"
-        d:DataContext="{d:DesignInstance viewModels:MainLandingViewModel}">
+        d:DataContext="{d:DesignInstance viewModels:LandingViewModel}">
     <Grid>
         <Button 
             Command="{Binding SelectSaveFileCommand}"
@@ -18,4 +17,4 @@
             Select a save file...
         </Button>
     </Grid>
-</Window>
+</UserControl>

@@ -6,7 +6,7 @@ namespace SMB3Explorer.Services;
 public interface IDataService
 {
     bool IsConnected { get; }
-    Task<(bool, Exception?)> SetupDbConnection(string filePath);
+    Task<(bool, Exception?)> EstablishDbConnection(string filePath);
 
     event EventHandler<EventArgs> ConnectionChanged;
 }

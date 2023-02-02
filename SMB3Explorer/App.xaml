@@ -1,8 +1,22 @@
 ﻿<Application x:Class="SMB3Explorer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SMB3Explorer">
+             xmlns:local="clr-namespace:SMB3Explorer"
+             xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
+             xmlns:views="clr-namespace:SMB3Explorer.Views">
     <Application.Resources>
+        
+        <DataTemplate DataType="{x:Type viewModels:MainWindowViewModel}">
+            <views:MainWindow/>
+        </DataTemplate>
          
+        <DataTemplate DataType="{x:Type viewModels:LandingViewModel}">
+            <views:LandingView/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
+            <views:HomeView/>
+        </DataTemplate>
+        
     </Application.Resources>
 </Application>
