@@ -9,17 +9,19 @@ using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.ViewModels;
 
-public class MainWindowViewModel
+public class MainLandingViewModel
 {
-    public MainWindowViewModel(IDataService dataService)
+    private readonly IDataService _dataService;
+    private readonly INavigationService _navigationService;
+
+    public MainLandingViewModel(IDataService dataService, INavigationService navigationService)
     {
-        DataService = dataService;
+        _navigationService = navigationService;
+        _dataService = dataService;
         SelectSaveFileCommand = new AsyncRelayCommand(SetSaveFile);
     }
-    
+
     public ICommand SelectSaveFileCommand { get; }
-    
-    private IDataService DataService { get; }
 
     private async Task SetSaveFile()
     {
@@ -32,7 +34,7 @@ public class MainWindowViewModel
             return;
         }
 
-        var (ok, exception) = await DataService.SetupDbConnection(filePath);
+        var (ok, exception) = await _dataService.SetupDbConnection(filePath);
         Mouse.OverrideCursor = Cursors.Arrow;
 
         if (!ok)
@@ -57,5 +59,6 @@ public class MainWindowViewModel
         }
 
         MessageBox.Show("Successfully connected to SMB3 database");
+        
     }
 }

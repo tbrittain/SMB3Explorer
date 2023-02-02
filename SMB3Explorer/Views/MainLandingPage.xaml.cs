@@ -2,13 +2,13 @@
 using System.Windows;
 using SMB3Explorer.ViewModels;
 
-namespace SMB3Explorer;
+namespace SMB3Explorer.Views;
 
-public partial class MainWindow
+public partial class MainLandingPage
 {
-    public MainWindow(MainWindowViewModel viewModel)
+    public MainLandingPage(MainLandingViewModel landingViewModel)
     {
-        DataContext = viewModel;
+        DataContext = landingViewModel;
         InitializeComponent();
 
         if (Environment.OSVersion.Platform != PlatformID.Win32NT)
