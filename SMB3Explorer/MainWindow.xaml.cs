@@ -113,7 +113,7 @@ public partial class MainWindow
 
             if (openBrowser != MessageBoxResult.OK) return;
 
-            const string url = "https://github.com/tbrittain/SMB3Explorer2/issues/new";
+            const string url = "https://github.com/tbrittain/SMB3Explorer/issues/new";
             Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
 
             return;
