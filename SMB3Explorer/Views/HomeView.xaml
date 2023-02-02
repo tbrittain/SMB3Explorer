@@ -4,11 +4,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:SMB3Explorer.Views"
-      mc:Ignorable="d"
-      Height="450"
-      Width="800">
-    <Grid Background="Black">
-        <Label Foreground="White">
+      mc:Ignorable="d">
+    <Grid>
+        <Label>
             This is the main page
         </Label>
     </Grid>
