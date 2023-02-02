@@ -6,7 +6,9 @@ using System.Reflection;
 namespace SMB3Explorer.Utils;
 
 /// <summary>
-/// Enum mapping to SQL file embedded resources in the Resources/Sql folder.
+/// Enum mapping to SQL file embedded resources in the Resources/Sql folder. The SQL files themselves
+/// MUST be included in the solution and set to "Embedded Resource" in the properties, otherwise they
+/// will not be included in the compiled executable.
 /// </summary>
 public enum SqlFile
 {
@@ -15,6 +17,9 @@ public enum SqlFile
     
     [Description("GetFranchises.sql")]
     GetFranchises,
+    
+    [Description("GetAllFranchiseBatters.sql")]
+    GetAllFranchiseBatters,
 }
 
 public static class SqlRunner

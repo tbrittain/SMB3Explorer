@@ -35,9 +35,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Sql\GetAvailableTables.sql" />
       <EmbeddedResource Include="Resources\Sql\GetAvailableTables.sql" />
       <None Remove="Resources\Sql\GetFranchises.sql" />
       <EmbeddedResource Include="Resources\Sql\GetFranchises.sql" />
+      <None Remove="Resources\Sql\GetAllFranchiseBatters.sql" />
+      <EmbeddedResource Include="Resources\Sql\GetAllFranchiseBatters.sql" />
     </ItemGroup>
 
 </Project>
