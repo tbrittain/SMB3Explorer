@@ -28,6 +28,7 @@ public partial class App
     {
         services.AddSingleton<IDataService, DataService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IApplicationContext, ApplicationContext>();
 
         services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
         {
@@ -38,6 +39,7 @@ public partial class App
         services.AddTransient<LandingViewModel>();
         services.AddTransient<HomeViewModel>();
 
+        // NavigationService calls this Func to get the ViewModel instance
         services.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider =>
             viewModelType => (ViewModelBase) serviceProvider.GetRequiredService(viewModelType));
     }
