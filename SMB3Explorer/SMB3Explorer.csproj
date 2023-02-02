@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="DotNetZip" Version="1.16.0" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.2" />
     </ItemGroup>
 
