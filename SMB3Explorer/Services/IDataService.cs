@@ -9,4 +9,6 @@ public interface IDataService
     Task<(bool, Exception?)> EstablishDbConnection(string filePath);
 
     event EventHandler<EventArgs> ConnectionChanged;
+    
+    public string CurrentFilePath { get; }
 }

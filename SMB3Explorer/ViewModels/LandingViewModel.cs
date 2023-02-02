@@ -77,7 +77,8 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        MessageBox.Show("Successfully connected to SMB3 database");
+        MessageBox.Show("Successfully connected to SMB3 database at " +
+                        $"{Environment.NewLine}{_dataService.CurrentFilePath}");
         NavigateToMainCommand.Execute(null);
     }
 

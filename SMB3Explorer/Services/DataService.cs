@@ -6,12 +6,14 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Ionic.Zlib;
 using Microsoft.Data.Sqlite;
+using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Services;
 
 public sealed class DataService : INotifyPropertyChanged, IDataService
 {
     private SqliteConnection? _connection;
+    private string _currentFilePath = string.Empty;
 
     public SqliteConnection? Connection
     {
@@ -25,6 +27,12 @@ public sealed class DataService : INotifyPropertyChanged, IDataService
 
     public bool IsConnected => Connection is not null;
     public event EventHandler<EventArgs>? ConnectionChanged;
+
+    public string CurrentFilePath
+    {
+        get => _currentFilePath;
+        private set => SetField(ref _currentFilePath, value);
+    }
 
     public Task<(bool, Exception?)> EstablishDbConnection(string filePath)
     {
@@ -47,6 +55,8 @@ public sealed class DataService : INotifyPropertyChanged, IDataService
             var decompressedFileName = $"smb3_explorer_{DateTime.Now:yyyyMMddHHmmssfff}.sqlite";
             var decompressedFilePath = Path.Combine(Path.GetTempPath(), decompressedFileName);
 
+            CurrentFilePath = decompressedFilePath;
+
             using (var fileStream = File.Create(decompressedFilePath))
             {
                 decompressedStream.CopyTo(fileStream);
@@ -64,7 +74,8 @@ public sealed class DataService : INotifyPropertyChanged, IDataService
 
             // Test connection by querying the schema and getting the table names
             var command = Connection.CreateCommand();
-            command.CommandText = "SELECT name FROM sqlite_master WHERE type='table'";
+            var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAvailableTables);
+            command.CommandText = commandText;
             var reader = command.ExecuteReader();
 
             List<string> tableNames = new();

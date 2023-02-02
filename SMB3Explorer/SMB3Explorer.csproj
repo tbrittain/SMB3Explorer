@@ -28,4 +28,8 @@
       </Page>
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Sql\GetAvailableTables.sql" />
+    </ItemGroup>
+
 </Project>
