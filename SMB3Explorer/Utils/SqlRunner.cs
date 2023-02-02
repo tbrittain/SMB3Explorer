@@ -12,6 +12,9 @@ public enum SqlFile
 {
     [Description("GetAvailableTables.sql")]
     GetAvailableTables,
+    
+    [Description("GetFranchises.sql")]
+    GetFranchises,
 }
 
 public static class SqlRunner

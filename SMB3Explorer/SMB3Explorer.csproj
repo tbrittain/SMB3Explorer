@@ -5,6 +5,12 @@
         <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
+        <IsPackable>false</IsPackable>
+        <Version>0.1.0</Version>
+        <Title>SMB3 Explorer</Title>
+        <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
+        <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/tbrittain/SMB3Explorer.git</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -30,6 +36,8 @@
 
     <ItemGroup>
       <EmbeddedResource Include="Resources\Sql\GetAvailableTables.sql" />
+      <None Remove="Resources\Sql\GetFranchises.sql" />
+      <EmbeddedResource Include="Resources\Sql\GetFranchises.sql" />
     </ItemGroup>
 
 </Project>
