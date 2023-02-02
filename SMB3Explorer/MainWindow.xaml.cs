@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -149,6 +150,24 @@ public partial class MainWindow
 
             Connection = new SqliteConnection(connectionStringBuilder.ToString());
             Connection.Open();
+            
+            // Test connection by querying the schema and getting the table names
+            var command = Connection.CreateCommand();
+            command.CommandText = "SELECT name FROM sqlite_master WHERE type='table'";
+            var reader = command.ExecuteReader();
+            
+            List<string> tableNames = new();
+            while (reader.Read())
+            {
+                var tableName = reader.GetString(0);
+                tableNames.Add(tableName);
+            }
+
+            // Using t_stats as a test table since it is an important one for this application
+            if (!tableNames.Contains("t_stats"))
+            {
+                return Task.FromResult((false, (Exception?) new Exception("Invalid save file, missing expected tables")));
+            }
         }
         catch (Exception e)
         {
