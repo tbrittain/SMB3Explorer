@@ -1,8 +1,7 @@
 ﻿<Application x:Class="SMB3Explorer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SMB3Explorer"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:SMB3Explorer">
     <Application.Resources>
          
     </Application.Resources>
