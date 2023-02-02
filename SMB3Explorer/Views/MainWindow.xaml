@@ -7,8 +7,8 @@
         xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
         mc:Ignorable="d"
         Title="SMB3 Explorer"
-        Height="450"
-        Width="800"
+        Height="720"
+        Width="1280"
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}">
     <ContentControl Content="{Binding NavigationService.CurrentView}" />
 </Window>

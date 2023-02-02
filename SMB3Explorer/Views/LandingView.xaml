@@ -1,20 +1,34 @@
 ﻿<UserControl x:Class="SMB3Explorer.Views.LandingView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SMB3Explorer"
-        xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
-        mc:Ignorable="d"
-        Height="450"
-        Width="800"
-        d:DataContext="{d:DesignInstance viewModels:LandingViewModel}">
-    <Grid>
-        <Button 
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SMB3Explorer"
+             xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance viewModels:LandingViewModel}">
+    <StackPanel HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <Label FontSize="25"
+               FontWeight="Bold"
+               HorizontalAlignment="Center">
+            Welcome to SMB3 Explorer! Please select a save file to begin.
+        </Label>
+        <Label
+            HorizontalAlignment="Center"
+            FontSize="18"
+            Foreground="Red">
+            Note: To ensure your game is not corrupted, do NOT use this tool if the game is running.
+        </Label>
+        <Label HorizontalAlignment="Center">
+            The application will attempt to automatically detect your save file location. If it is not detected, you can manually select it.
+        </Label>
+        <Button
+            Margin="0,10,0,0"
             Command="{Binding SelectSaveFileCommand}"
-                Width="200"
-                Height="50">
-            Select a save file...
+            Width="200"
+            Height="50">
+            Load save file...
         </Button>
-    </Grid>
+    </StackPanel>
 </UserControl>
