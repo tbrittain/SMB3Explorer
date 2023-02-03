@@ -20,6 +20,9 @@ public enum SqlFile
     
     [Description("GetAllFranchiseBatters.sql")]
     GetAllFranchiseBatters,
+    
+    [Description("GetAllFranchisePitchers.sql")]
+    GetAllFranchisePitchers,
 }
 
 public static class SqlRunner

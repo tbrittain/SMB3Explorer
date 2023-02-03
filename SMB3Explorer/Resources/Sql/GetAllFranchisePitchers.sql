@@ -11,11 +11,11 @@ WITH teams AS
          (SELECT ttli.GUID AS teamGUID, tt.teamName
           FROM t_team_local_ids ttli
                    JOIN t_teams tt ON ttli.GUID = tt.GUID)
-SELECT vsb.*, 
-       t.teamName, 
-       t2.teamName AS mostRecentlyPlayedTeamName, 
+SELECT vsb.*,
+       t.teamName,
+       t2.teamName AS mostRecentlyPlayedTeamName,
        t3.teamName AS previousRecentlyPlayedTeamName
-FROM v_stats_batting vsb
+FROM v_stats_pitching vsb
          JOIN t_stats_players tsp ON vsb.statsPlayerID = tsp.statsPlayerID
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
@@ -23,4 +23,4 @@ FROM v_stats_batting vsb
          JOIN teams t2 ON vsb.mostRecentlyPlayedTeamGUID = t2.teamGUID
          JOIN teams t3 ON vsb.previousRecentlyPlayedTeamGUID = t3.teamGUID
 WHERE tl.GUID = @param1
-ORDER BY plateAppearances DESC
+ORDER BY totalPitches DESC

@@ -15,4 +15,5 @@ public interface IDataService
     
     public string CurrentFilePath { get; }
     Task Disconnect();
+    Task<List<PositionPlayerStatistic>> GetFranchisePositionPlayers();
 }

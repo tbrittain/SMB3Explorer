@@ -8,6 +8,9 @@
         Title="SMB3 Explorer"
         Height="720"
         Width="1280"
+        FontFamily="Segoe UI"
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}">
-    <ContentControl Content="{Binding NavigationService.CurrentView}" />
+    <ContentControl Content="{Binding NavigationService.CurrentView}"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch" />
 </Window>

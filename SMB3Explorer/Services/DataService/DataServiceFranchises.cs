@@ -35,4 +35,9 @@ public partial class DataService
 
         return franchises;
     }
+
+    public Task<List<PositionPlayerStatistic>> GetFranchisePositionPlayers()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -5,27 +5,61 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
-             mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:HomeViewModel}">
-    <StackPanel>
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:HomeViewModel}"
+             VerticalAlignment="Stretch">
+    <StackPanel VerticalAlignment="Stretch">
         <fa:ImageAwesome
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
             Icon="Refresh"
             Spin="True"
             Height="25"
             Width="25"
             Visibility="{Binding LoadingSpinnerVisible}" />
-        <Grid Visibility="{Binding ContentVisible}">
+        <Grid Visibility="{Binding ContentVisible}" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width="*" MinWidth="200" />
+                <ColumnDefinition Width="3*" MinWidth="500" />
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="0"
-                      Width="200"
-                      Height="25"
-                      DisplayMemberPath="DisplayText"
-                      ItemsSource="{Binding Franchises}"
-                      SelectedItem="{Binding SelectedFranchise}"
-                      IsEnabled="{Binding ComboBoxEnabled}" />
+            <DockPanel IsEnabled="{Binding InteractionEnabled}">
+                <StackPanel DockPanel.Dock="Top"
+                            Orientation="Vertical"
+                            VerticalAlignment="Stretch">
+                    <Label HorizontalAlignment="Stretch">
+                        Select a franchise:
+                    </Label>
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        Height="25"
+                        DisplayMemberPath="DisplayText"
+                        ItemsSource="{Binding Franchises}"
+                        SelectedItem="{Binding SelectedFranchise}" />
+                </StackPanel>
+
+                <Separator />
+
+                <Button DockPanel.Dock="Top"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchisePositionPlayersCommand}">
+                    Export position player statistics
+                </Button>
+
+                <Separator />
+
+                <Button DockPanel.Dock="Top"
+                        HorizontalAlignment="Stretch"
+                        Height="50">
+                    Export pitcher statistics
+                </Button>
+            </DockPanel>
+
+            <!-- TODO -->
+            <DataGrid Grid.Column="1"
+                      VerticalAlignment="Stretch">
+
+            </DataGrid>
         </Grid>
     </StackPanel>
 </UserControl>

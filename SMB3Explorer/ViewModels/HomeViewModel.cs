@@ -1,6 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using SMB3Explorer.Models;
 using SMB3Explorer.Services;
 using SMB3Explorer.Utils;
@@ -16,7 +19,7 @@ public partial class HomeViewModel : ViewModelBase
     private ObservableCollection<FranchiseSelection> _franchises = new();
     private FranchiseSelection? _selectedFranchise;
     private Visibility _loadingSpinnerVisible;
-    private bool _comboBoxEnabled;
+    private bool _interactionEnabled;
 
     public FranchiseSelection? SelectedFranchise
     {
@@ -25,6 +28,7 @@ public partial class HomeViewModel : ViewModelBase
         {
             SetField(ref _selectedFranchise, value);
             _applicationContext.SelectedLeagueId = value?.LeagueId;
+            OnPropertyChanged(nameof(FranchiseSelected));
         }
     }
 
@@ -60,11 +64,26 @@ public partial class HomeViewModel : ViewModelBase
         ? Visibility.Visible
         : Visibility.Collapsed;
 
-    public bool ComboBoxEnabled
+    public bool InteractionEnabled
     {
-        get => _comboBoxEnabled;
-        set => SetField(ref _comboBoxEnabled, value);
+        get => _interactionEnabled;
+        set => SetField(ref _interactionEnabled, value);
     }
+    
+    public bool FranchiseSelected => SelectedFranchise != null;
+    
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportFranchisePositionPlayers()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+        
+        var players = await _dataService.GetFranchisePositionPlayers();
+        // CsvUtils.ExportCsv(players); // TODO
+
+        Mouse.OverrideCursor = Cursors.Arrow;
+    }
+
+    private bool CanExport() => FranchiseSelected;
 
     private void GetFranchises()
     {
@@ -83,7 +102,7 @@ public partial class HomeViewModel : ViewModelBase
                 if (task.Result.Any())
                 {
                     Franchises = new ObservableCollection<FranchiseSelection>(task.Result);
-                    ComboBoxEnabled = true;
+                    InteractionEnabled = true;
                 }
                 else
                 {
