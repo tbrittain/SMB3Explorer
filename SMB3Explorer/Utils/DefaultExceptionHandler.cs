@@ -17,8 +17,8 @@ public static class DefaultExceptionHandler
         var openBrowser = MessageBox.Show(formattedMessage,
             "Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
 
-        Clipboard.SetText(exception?.StackTrace ?? "Unknown error");
-
+        Application.Current.Dispatcher.Invoke(() => Clipboard.SetText(exception?.StackTrace ?? "Unknown error"));
+        
         if (openBrowser != MessageBoxResult.OK) return;
 
         const string url = "https://github.com/tbrittain/SMB3Explorer/issues/new";

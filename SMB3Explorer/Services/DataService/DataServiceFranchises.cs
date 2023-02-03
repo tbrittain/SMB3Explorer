@@ -9,13 +9,13 @@ namespace SMB3Explorer.Services;
 
 public partial class DataService
 {
-    public Task<(List<FranchiseSelection>, Exception?)> GetFranchises()
+    public async Task<List<FranchiseSelection>> GetFranchises()
     {
         var command = Connection!.CreateCommand();
         var commandText = SqlRunner.GetSqlCommand(SqlFile.GetFranchises);
         command.CommandText = commandText;
-        var reader = command.ExecuteReader();
-        
+        var reader = await command.ExecuteReaderAsync();
+
         List<FranchiseSelection> franchises = new();
         while (reader.Read())
         {
@@ -32,7 +32,7 @@ public partial class DataService
             };
             franchises.Add(franchise);
         }
-        
-        return Task.FromResult((franchises, (Exception?)null));
+
+        return franchises;
     }
 }

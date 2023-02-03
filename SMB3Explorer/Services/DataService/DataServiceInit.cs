@@ -11,67 +11,68 @@ namespace SMB3Explorer.Services;
 
 public partial class DataService
 {
-    public Task<(bool, Exception?)> EstablishDbConnection(string filePath)
+    public async Task EstablishDbConnection(string filePath)
     {
-        try
+        await using var compressedStream = File.OpenRead(filePath);
+        await using var zlibStream = new ZlibStream(compressedStream, CompressionMode.Decompress);
+        using var decompressedStream = new MemoryStream();
+
+        var buffer = new byte[4096];
+        int count;
+
+        while ((count = zlibStream.Read(buffer, 0, buffer.Length)) != 0)
         {
-            using var compressedStream = File.OpenRead(filePath);
-            using var zlibStream = new ZlibStream(compressedStream, CompressionMode.Decompress);
-            using var decompressedStream = new MemoryStream();
-
-            var buffer = new byte[4096];
-            int count;
-
-            while ((count = zlibStream.Read(buffer, 0, buffer.Length)) != 0)
-            {
-                decompressedStream.Write(buffer, 0, count);
-            }
-
-            decompressedStream.Position = 0;
-
-            var decompressedFileName = $"smb3_explorer_{DateTime.Now:yyyyMMddHHmmssfff}.sqlite";
-            var decompressedFilePath = Path.Combine(Path.GetTempPath(), decompressedFileName);
-
-            CurrentFilePath = decompressedFilePath;
-
-            using (var fileStream = File.Create(decompressedFilePath))
-            {
-                decompressedStream.CopyTo(fileStream);
-            }
-
-            var connectionStringBuilder = new SqliteConnectionStringBuilder
-            {
-                DataSource = decompressedFilePath,
-                Mode = SqliteOpenMode.ReadOnly,
-                Cache = SqliteCacheMode.Shared
-            };
-
-            Connection = new SqliteConnection(connectionStringBuilder.ToString());
-            Connection.Open();
-
-            // Test connection by querying the schema and getting the table names
-            var command = Connection.CreateCommand();
-            var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAvailableTables);
-            command.CommandText = commandText;
-            var reader = command.ExecuteReader();
-
-            List<string> tableNames = new();
-            while (reader.Read())
-            {
-                var tableName = reader.GetString(0);
-                tableNames.Add(tableName);
-            }
-
-            // Using t_stats as a test table since it is an important one for this application
-            if (!tableNames.Contains("t_stats"))
-                return Task.FromResult(
-                    (false, (Exception?) new Exception("Invalid save file, missing expected tables")));
-        }
-        catch (Exception e)
-        {
-            return Task.FromResult((false, (Exception?) e));
+            decompressedStream.Write(buffer, 0, count);
         }
 
-        return Task.FromResult((true, null as Exception));
+        decompressedStream.Position = 0;
+
+        var decompressedFileName = $"smb3_explorer_{DateTime.Now:yyyyMMddHHmmssfff}.sqlite";
+        var decompressedFilePath = Path.Combine(Path.GetTempPath(), decompressedFileName);
+
+        CurrentFilePath = decompressedFilePath;
+
+        await using (var fileStream = File.Create(decompressedFilePath))
+        {
+            await decompressedStream.CopyToAsync(fileStream);
+        }
+
+        var connectionStringBuilder = new SqliteConnectionStringBuilder
+        {
+            DataSource = decompressedFilePath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Cache = SqliteCacheMode.Shared
+        };
+
+        Connection = new SqliteConnection(connectionStringBuilder.ToString());
+        Connection.Open();
+
+        // Test connection by querying the schema and getting the table names
+        var command = Connection.CreateCommand();
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAvailableTables);
+        command.CommandText = commandText;
+        var reader = await command.ExecuteReaderAsync();
+
+        List<string> tableNames = new();
+        while (reader.Read())
+        {
+            var tableName = reader.GetString(0);
+            tableNames.Add(tableName);
+        }
+
+        // Using t_stats as a test table since it is an important one for this application
+        if (!tableNames.Contains("t_stats"))
+            throw new Exception("Invalid save file, missing expected tables");
+    }
+    
+    public Task Disconnect()
+    {
+        Connection?.Close();
+        Connection?.Dispose();
+        
+        Connection = null;
+        CurrentFilePath = string.Empty;
+        
+        return Task.CompletedTask;
     }
 }

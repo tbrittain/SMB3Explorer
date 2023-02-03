@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
 using SMB3Explorer.Models;
 using SMB3Explorer.Services;
 using SMB3Explorer.Utils;
@@ -14,17 +13,17 @@ public partial class HomeViewModel : ViewModelBase
     private readonly IDataService _dataService;
     private readonly IApplicationContext _applicationContext;
 
-    [ObservableProperty]
-    private bool _franchisesLoading;
     private ObservableCollection<FranchiseSelection> _franchises = new();
     private FranchiseSelection? _selectedFranchise;
+    private Visibility _loadingSpinnerVisible;
+    private bool _comboBoxEnabled;
 
     public FranchiseSelection? SelectedFranchise
     {
         get => _selectedFranchise;
         set
         {
-            SetProperty(ref _selectedFranchise, value);
+            SetField(ref _selectedFranchise, value);
             _applicationContext.SelectedLeagueId = value?.LeagueId;
         }
     }
@@ -32,7 +31,7 @@ public partial class HomeViewModel : ViewModelBase
     public ObservableCollection<FranchiseSelection> Franchises
     {
         get => _franchises;
-        private set => SetProperty(ref _franchises, value);
+        private set => SetField(ref _franchises, value);
     }
 
     public HomeViewModel(INavigationService navigationService, IDataService dataService,
@@ -42,30 +41,58 @@ public partial class HomeViewModel : ViewModelBase
         _dataService = dataService;
         _applicationContext = applicationContext;
 
-        Task.Run(async () => await GetFranchises());
+        GetFranchises();
     }
 
-    private async Task GetFranchises()
+    public Visibility LoadingSpinnerVisible
     {
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        get => _loadingSpinnerVisible;
+        set
         {
-            FranchisesLoading = true;
-        });
+            if (value == _loadingSpinnerVisible) return;
+            _loadingSpinnerVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ContentVisible));
+        }
+    }
 
-        var (franchises, exception) = await _dataService.GetFranchises();
+    public Visibility ContentVisible => LoadingSpinnerVisible == Visibility.Collapsed
+        ? Visibility.Visible
+        : Visibility.Collapsed;
 
-        await Application.Current.Dispatcher.InvokeAsync(() =>
-        {
-            FranchisesLoading = false;
+    public bool ComboBoxEnabled
+    {
+        get => _comboBoxEnabled;
+        set => SetField(ref _comboBoxEnabled, value);
+    }
 
-            if (exception != null)
+    private void GetFranchises()
+    {
+        LoadingSpinnerVisible = Visibility.Visible;
+        
+        _dataService.GetFranchises()
+            .ContinueWith(async task =>
             {
-                DefaultExceptionHandler.HandleException("Failed to get franchises.", exception);
-                // TODO: Handle case that franchises could not be loaded
-                return;
-            }
+                if (task.Exception != null)
+                {
+                    DefaultExceptionHandler.HandleException("Failed to get franchises.", task.Exception);
+                    LoadingSpinnerVisible = Visibility.Collapsed;
+                    return;
+                }
 
-            Franchises = new ObservableCollection<FranchiseSelection>(franchises);
-        });
+                if (task.Result.Any())
+                {
+                    Franchises = new ObservableCollection<FranchiseSelection>(task.Result);
+                    ComboBoxEnabled = true;
+                }
+                else
+                {
+                    MessageBox.Show("No franchises found. Please select a different save file.");
+                    await _dataService.Disconnect();
+                    _navigationService.NavigateTo<LandingViewModel>();
+                }
+
+                LoadingSpinnerVisible = Visibility.Collapsed;
+            });
     }
 }

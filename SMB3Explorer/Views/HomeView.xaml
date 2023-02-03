@@ -6,22 +6,26 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:HomeViewModel}">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <fa:ImageAwesome Grid.ColumnSpan="2"
-                         Icon="Refresh"
-                         Spin="True"
-                         Height="25"
-                         Width="25"
-                         Visibility="{Binding FranchisesLoading}" />
-        <ComboBox Grid.Column="0"
-                  Width="200"
-                  Height="25"
-                  DisplayMemberPath="DisplayText"
-                  ItemsSource="{Binding Franchises}"
-                  SelectedItem="{Binding SelectedFranchise}"/>
-    </Grid>
+    <StackPanel>
+        <fa:ImageAwesome
+            Icon="Refresh"
+            Spin="True"
+            Height="25"
+            Width="25"
+            Visibility="{Binding LoadingSpinnerVisible}" />
+        <Grid Visibility="{Binding ContentVisible}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="0"
+                      Width="200"
+                      Height="25"
+                      DisplayMemberPath="DisplayText"
+                      ItemsSource="{Binding Franchises}"
+                      SelectedItem="{Binding SelectedFranchise}"
+                      IsEnabled="{Binding ComboBoxEnabled}" />
+        </Grid>
+    </StackPanel>
 </UserControl>

@@ -8,10 +8,11 @@ namespace SMB3Explorer.Services;
 public interface IDataService
 {
     bool IsConnected { get; }
-    Task<(bool, Exception?)> EstablishDbConnection(string filePath);
-    Task<(List<FranchiseSelection>, Exception?)> GetFranchises();
+    Task EstablishDbConnection(string filePath);
+    Task<List<FranchiseSelection>> GetFranchises();
 
     event EventHandler<EventArgs> ConnectionChanged;
     
     public string CurrentFilePath { get; }
+    Task Disconnect();
 }

@@ -30,12 +30,6 @@ public partial class LandingViewModel : ViewModelBase
     {
         return !_dataService.IsConnected;
     }
-    
-    [RelayCommand]
-    private void NavigateToMain()
-    {
-        _navigationService.NavigateTo<HomeViewModel>();
-    }
 
     [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
     private async Task SelectSaveFile()
@@ -49,23 +43,29 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        var (ok, exception) = await _dataService.EstablishDbConnection(filePath);
-        Mouse.OverrideCursor = Cursors.Arrow;
+        var hasError = false;
+        await _dataService.EstablishDbConnection(filePath)
+            .ContinueWith(task =>
+            {
+                if (task.Exception != null)
+                {
+                    hasError = true;
+                    DefaultExceptionHandler.HandleException("Failed to connect to SMB3 database.", task.Exception);
+                }
 
-        if (!ok)
-        {
-            DefaultExceptionHandler.HandleException("Failed to connect to SMB3 database.", exception);
-            return;
-        }
+                Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
+            });
+
+        if (hasError) return;
 
         MessageBox.Show("Successfully connected to SMB3 database at " +
                         $"{Environment.NewLine}{_dataService.CurrentFilePath}");
-        NavigateToMainCommand.Execute(null);
+        _navigationService.NavigateTo<HomeViewModel>();
     }
 
-    // protected override void Dispose(bool disposing)
-    // {
-    //     _dataService.ConnectionChanged -= DataServiceOnConnectionChanged;
-    //     base.Dispose(disposing);
-    // }
+    protected override void Dispose(bool disposing)
+    {
+        _dataService.ConnectionChanged -= DataServiceOnConnectionChanged;
+        base.Dispose(disposing);
+    }
 }
