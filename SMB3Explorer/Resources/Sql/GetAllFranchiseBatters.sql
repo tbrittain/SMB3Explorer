@@ -22,5 +22,5 @@ FROM v_stats_batting vsb
          JOIN teams t ON vsb.teamGUID = t.teamGUID
          JOIN teams t2 ON vsb.mostRecentlyPlayedTeamGUID = t2.teamGUID
          JOIN teams t3 ON vsb.previousRecentlyPlayedTeamGUID = t3.teamGUID
-WHERE tl.GUID = @param1
+WHERE tl.GUID = CAST(@param1 AS BLOB)
 ORDER BY plateAppearances DESC

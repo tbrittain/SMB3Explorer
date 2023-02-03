@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 using SMB3Explorer.Models;
 using SMB3Explorer.Utils;
 
@@ -36,8 +38,75 @@ public partial class DataService
         return franchises;
     }
 
-    public Task<List<PositionPlayerStatistic>> GetFranchisePositionPlayers()
+    public async IAsyncEnumerable<PositionPlayerStatistic> GetFranchisePositionPlayers()
     {
-        throw new NotImplementedException();
+        var command = Connection!.CreateCommand();
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAllFranchiseBatters);
+        command.CommandText = commandText;
+
+        var parameter = new SqliteParameter("@param1", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        };
+
+        command.Parameters.Add(parameter);
+
+        var reader = await command.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            var positionPlayer = new PositionPlayerStatistic
+            {
+                PlayerStatsId = int.Parse(reader["statsPlayerID"].ToString()!),
+                PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.FromBlob(),
+                FirstName = reader["firstName"].ToString()!,
+                LastName = reader["lastName"].ToString()!,
+                PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
+                CurrentTeam = string.IsNullOrEmpty(reader["teamName"].ToString()!)
+                    ? null
+                    : reader["teamName"].ToString()!,
+                PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!) 
+                    ? null 
+                    : reader["previousRecentlyPlayedTeamName"].ToString()!,
+
+                // Counting stats
+                GamesPlayed = int.Parse(reader["gamesBatting"].ToString()!),
+                AtBats = int.Parse(reader["atBats"].ToString()!),
+                PlateAppearances = int.Parse(reader["plateAppearances"].ToString()!),
+                Runs = int.Parse(reader["runs"].ToString()!),
+                Hits = int.Parse(reader["hits"].ToString()!),
+                Doubles = int.Parse(reader["doubles"].ToString()!),
+                Triples = int.Parse(reader["triples"].ToString()!),
+                HomeRuns = int.Parse(reader["homeRuns"].ToString()!),
+                ExtraBaseHits = int.Parse(reader["extraBaseHits"].ToString()!),
+                RunsBattedIn = int.Parse(reader["rbi"].ToString()!),
+                TotalBases = int.Parse(reader["totalBases"].ToString()!),
+                StolenBases = int.Parse(reader["stolenBases"].ToString()!),
+                CaughtStealing = int.Parse(reader["caughtStealing"].ToString()!),
+                Walks = int.Parse(reader["baseOnBalls"].ToString()!),
+                Strikeouts = int.Parse(reader["strikeouts"].ToString()!),
+                HitByPitch = int.Parse(reader["hitByPitch"].ToString()!),
+                SacrificeHits = int.Parse(reader["sacrificeHits"].ToString()!),
+                SacrificeFlies = int.Parse(reader["sacrificeFlies"].ToString()!),
+                Errors = int.Parse(reader["errors"].ToString()!),
+                PassedBalls = int.Parse(reader["passedBalls"].ToString()!),
+
+                // Rate stats
+                PlateAppearancesPerGame = double.Parse(reader["plateAppearancesPerGame"].ToString()!),
+                OnBasePercentage = double.Parse(reader["onBasePct"].ToString()!),
+                SluggingPercentage = double.Parse(reader["sluggingPct"].ToString()!),
+                OnBasePlusSlugging = double.Parse(reader["onBasePlusSlugging"].ToString()!),
+                BattingAverage = double.Parse(reader["battingAverage"].ToString()!),
+                BattingAverageOnBallsInPlay = double.Parse(reader["babip"].ToString()!),
+                AtBatsPerHomeRun = string.IsNullOrEmpty(reader["atBatsPerHomeRun"].ToString())
+                    ? 0
+                    : double.Parse(reader["atBatsPerHomeRun"].ToString()!),
+                StrikeoutPercentage = double.Parse(reader["strikeoutPct"].ToString()!),
+                WalkPercentage = double.Parse(reader["baseOnBallsPct"].ToString()!),
+                ExtraBaseHitPercentage = double.Parse(reader["extraBaseHitsPct"].ToString()!),
+            };
+
+            yield return positionPlayer;
+        }
     }
 }

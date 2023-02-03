@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,8 +28,9 @@ public partial class HomeViewModel : ViewModelBase
         set
         {
             SetField(ref _selectedFranchise, value);
-            _applicationContext.SelectedLeagueId = value?.LeagueId;
+            _applicationContext.SelectedFranchise = value;
             OnPropertyChanged(nameof(FranchiseSelected));
+            ExportFranchisePositionPlayersCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -69,16 +71,20 @@ public partial class HomeViewModel : ViewModelBase
         get => _interactionEnabled;
         set => SetField(ref _interactionEnabled, value);
     }
-    
+
     public bool FranchiseSelected => SelectedFranchise != null;
-    
+
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchisePositionPlayers()
     {
         Mouse.OverrideCursor = Cursors.Wait;
-        
-        var players = await _dataService.GetFranchisePositionPlayers();
-        // CsvUtils.ExportCsv(players); // TODO
+
+        var playersEnumerable = _dataService.GetFranchisePositionPlayers();
+
+        var fileName =
+            $"position_players_{_applicationContext.SelectedFranchise!.LeagueName}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+
+        await CsvUtils.ExportCsv(playersEnumerable, fileName);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -88,7 +94,7 @@ public partial class HomeViewModel : ViewModelBase
     private void GetFranchises()
     {
         LoadingSpinnerVisible = Visibility.Visible;
-        
+
         _dataService.GetFranchises()
             .ContinueWith(async task =>
             {

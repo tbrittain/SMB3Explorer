@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using SMB3Explorer.Models;
 
 namespace SMB3Explorer.Services;
 
 public sealed class ApplicationContext : IApplicationContext, INotifyPropertyChanged
 {
-    private Guid? _selectedLeagueId;
+    private FranchiseSelection? _selectedFranchise;
 
     /// <summary>
     /// For right now, the application only supports franchise mode.
     /// </summary>
-    public Guid? SelectedLeagueId
+    public FranchiseSelection? SelectedFranchise
     {
-        get => _selectedLeagueId;
+        get => _selectedFranchise;
         set
         {
-            SetField(ref _selectedLeagueId, value);
-            OnPropertyChanged(nameof(IsLeagueSelected));
+            SetField(ref _selectedFranchise, value);
+            OnPropertyChanged(nameof(IsFranchiseSelected));
         }
     }
 
-    public bool IsLeagueSelected => SelectedLeagueId.HasValue;
+    public bool IsFranchiseSelected => SelectedFranchise is not null;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

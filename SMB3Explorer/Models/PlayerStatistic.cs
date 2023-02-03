@@ -6,23 +6,27 @@ namespace SMB3Explorer.Models;
 
 public abstract class PlayerStatistic
 {
-    [Name("baseballPlayerGUIDIfKnown")]
-    public Guid Id { get; set; }
+    [Name("player_stats_id"), Index(0)]
+    public int PlayerStatsId { get; set; }
     
-    [Name("firstName")]
+    [Name("player_id"), Index(1)]
+    public Guid? PlayerId { get; set; }
+    
+    [Name("first_name"), Index(2)]
     public string FirstName { get; set; }
     
-    [Name("lastName")]
+    [Name("last_name"), Index(3)]
     public string LastName { get; set; }
     
-    [Name("primaryPosition")]
+    [Name("primary_position"), Index(4)]
     public int PositionNumber { get; set; }
     
+    [Name("primary_position_name"), Index(5)]
     public string Position => ((BaseballPlayerPosition) PositionNumber).ToString();
     
-    [Name("teamName")]
-    public string CurrentTeam { get; set; }
+    [Name("current_team_name"), Index(6)]
+    public string? CurrentTeam { get; set; }
     
-    [Name("previousRecentlyPlayedTeamName")]
-    public string PreviousTeam { get; set; }
+    [Name("previous_team_name"), Index(7)]
+    public string? PreviousTeam { get; set; }
 }
