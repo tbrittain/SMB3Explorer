@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:SMB3Explorer"
              xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance viewModels:LandingViewModel}">
@@ -11,25 +10,38 @@
                 VerticalAlignment="Center">
         <Label FontSize="25"
                FontWeight="Bold"
-               HorizontalAlignment="Center">
-            Welcome to SMB3 Explorer! Please select a save file to begin.
-        </Label>
+               HorizontalAlignment="Center"
+               Content="Welcome to SMB3 Explorer! Please select a save file to begin." />
         <Label
             HorizontalAlignment="Center"
             FontSize="18"
-            Foreground="Red">
-            Note: To ensure your game is not corrupted, do NOT use this tool if the game is running.
-        </Label>
-        <Label HorizontalAlignment="Center">
-            The application will attempt to automatically detect your save file location. If it is not detected, you can manually select it.
-        </Label>
-        <!-- TODO: A checkbox to enable/disable auto-detection -->
-        <Button
-            Margin="0,10,0,0"
-            Command="{Binding SelectSaveFileCommand}"
-            Width="200"
-            Height="50">
-            Load save file...
-        </Button>
+            Foreground="Red"
+            Content="Note: To ensure your game is not corrupted, do NOT use this tool if the game is running." />
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Height="50"
+                    Margin="0,10,0,0">
+            <Button
+                Command="{Binding AutomaticallySelectSaveFileCommand}"
+                Width="200"
+                Content="Automatically detect save file" />
+
+            <Label VerticalAlignment="Center" Margin="5">
+                -or-
+            </Label>
+
+            <Button Width="200"
+                Content="Manually select save file"
+                Command="{Binding ManuallySelectSaveFileCommand}">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Use an existing save file database"
+                                  Command="{Binding UseExistingDatabaseCommand}"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+
+        </StackPanel>
     </StackPanel>
 </UserControl>

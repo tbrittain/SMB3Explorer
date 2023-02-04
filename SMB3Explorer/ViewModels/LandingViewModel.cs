@@ -23,7 +23,9 @@ public partial class LandingViewModel : ViewModelBase
 
     private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
     {
-        SelectSaveFileCommand?.NotifyCanExecuteChanged();
+        AutomaticallySelectSaveFileCommand?.NotifyCanExecuteChanged();
+        ManuallySelectSaveFileCommand?.NotifyCanExecuteChanged();
+        UseExistingDatabaseCommand?.NotifyCanExecuteChanged();
     }
 
     private bool CanSelectSaveFile()
@@ -32,7 +34,7 @@ public partial class LandingViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
-    private async Task SelectSaveFile()
+    private async Task AutomaticallySelectSaveFile()
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
@@ -43,8 +45,55 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
+        var hasError = await EstablishDbConnection(filePath);
+        HandleDatabaseConnection(hasError);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
+    private async Task ManuallySelectSaveFile()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+        var filePath = await SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString());
+        if (string.IsNullOrEmpty(filePath))
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
+            return;
+        }
+
+        var hasError = await EstablishDbConnection(filePath);
+        HandleDatabaseConnection(hasError);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
+    private async Task UseExistingDatabase()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+        var filePath = await SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(),
+            "SQLite databases (*.db, *.sqlite)|*.db;*.sqlite");
+        
+        if (string.IsNullOrEmpty(filePath))
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
+            return;
+        }
+        
+        var hasError = await EstablishDbConnection(filePath, false);
+        HandleDatabaseConnection(hasError);
+    }
+
+    private void HandleDatabaseConnection(bool hasError)
+    {
+        if (hasError) return;
+
+        MessageBox.Show("Successfully connected to SMB3 database at " +
+                        $"{Environment.NewLine}{_dataService.CurrentFilePath}");
+        _navigationService.NavigateTo<HomeViewModel>();
+    }
+
+    private async Task<bool> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
+    {
         var hasError = false;
-        await _dataService.EstablishDbConnection(filePath)
+        await _dataService.EstablishDbConnection(filePath, isCompressedSaveGame)
             .ContinueWith(task =>
             {
                 if (task.Exception != null)
@@ -55,12 +104,7 @@ public partial class LandingViewModel : ViewModelBase
 
                 Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
             });
-
-        if (hasError) return;
-
-        MessageBox.Show("Successfully connected to SMB3 database at " +
-                        $"{Environment.NewLine}{_dataService.CurrentFilePath}");
-        _navigationService.NavigateTo<HomeViewModel>();
+        return hasError;
     }
 
     protected override void Dispose(bool disposing)

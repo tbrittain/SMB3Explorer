@@ -11,7 +11,7 @@ namespace SMB3Explorer.Services;
 
 public partial class DataService
 {
-    public async Task EstablishDbConnection(string filePath)
+    public async Task<string> DecompressSaveGame(string filePath)
     {
         await using var compressedStream = File.OpenRead(filePath);
         await using var zlibStream = new ZlibStream(compressedStream, CompressionMode.Decompress);
@@ -32,9 +32,22 @@ public partial class DataService
 
         CurrentFilePath = decompressedFilePath;
 
-        await using (var fileStream = File.Create(decompressedFilePath))
+        await using var fileStream = File.Create(decompressedFilePath);
+        await decompressedStream.CopyToAsync(fileStream);
+
+        return decompressedFilePath;
+    }
+    
+    public async Task EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
+    {
+        var decompressedFilePath = filePath;
+        if (isCompressedSaveGame)
         {
-            await decompressedStream.CopyToAsync(fileStream);
+            decompressedFilePath = await DecompressSaveGame(filePath);
+        }
+        else
+        {
+            CurrentFilePath = filePath;
         }
 
         var connectionStringBuilder = new SqliteConnectionStringBuilder

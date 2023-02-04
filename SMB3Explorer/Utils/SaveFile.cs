@@ -10,8 +10,9 @@ namespace SMB3Explorer.Utils;
 public static class SaveFile
 {
     private const string DefaultSaveFileName = "savedata.sav";
+    private const string SaveGameFileFilter = "Save files (*.sav)|*.sav";
     
-    public static Task<string> GetSaveFilePath()
+    public static async Task<string> GetSaveFilePath()
     {
         var baseDirectoryPath = Path.Combine(Environment.GetFolderPath(
                 Environment.SpecialFolder.LocalApplicationData),
@@ -23,9 +24,9 @@ public static class SaveFile
                 MessageBox.Show("Default save file directory does not exist. " +
                                 "Would you like to select a save file directly?",
                     "Default location not found", MessageBoxButton.YesNo);
-            return Task.FromResult(result == MessageBoxResult.Yes
-                ? GetUserProvidedFile(baseDirectoryPath)
-                : string.Empty);
+            
+            if (result == MessageBoxResult.No) return string.Empty;
+            return await GetUserProvidedFile(baseDirectoryPath);
         }
 
         var subdirectories = Directory.GetDirectories(baseDirectoryPath);
@@ -41,28 +42,27 @@ public static class SaveFile
         {
             var defaultFilePath = Path.Combine(steamUserDirectory, DefaultSaveFileName);
 
-            if (File.Exists(defaultFilePath)) return Task.FromResult(defaultFilePath);
+            if (File.Exists(defaultFilePath)) return defaultFilePath;
         }
 
         var result2 = MessageBox.Show("Default file does not exist. " +
                                       "Would you like to select a save file directly?",
             "Default file not found", MessageBoxButton.YesNo);
 
-        return Task.FromResult(result2 == MessageBoxResult.Yes
-            ? GetUserProvidedFile(steamUserDirectory ?? baseDirectoryPath)
-            : string.Empty);
+        if (result2 == MessageBoxResult.No) return string.Empty;
+        return await GetUserProvidedFile(baseDirectoryPath);
     }
     
-    private static string GetUserProvidedFile(string directoryPath)
+    public static Task<string> GetUserProvidedFile(string directoryPath, string filter = SaveGameFileFilter)
     {
         var openFileDialog = new OpenFileDialog
         {
-            Filter = "Save files (*.sav)",
+            Filter = filter,
             InitialDirectory = directoryPath
         };
 
-        return openFileDialog.ShowDialog() != true
+        return Task.FromResult(openFileDialog.ShowDialog() != true
             ? string.Empty
-            : openFileDialog.FileName;
+            : openFileDialog.FileName);
     }
 }
