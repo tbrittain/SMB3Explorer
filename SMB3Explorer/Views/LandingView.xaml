@@ -32,10 +32,12 @@
             </Label>
 
             <Button Width="200"
-                Content="Manually select save file">
+                Content="Manually select save file"
+                Command="{Binding ManuallySelectSaveFileCommand}">
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Use an existing save file database" />
+                        <MenuItem Header="Use an existing save file database"
+                                  Command="{Binding UseExistingDatabaseCommand}"/>
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>

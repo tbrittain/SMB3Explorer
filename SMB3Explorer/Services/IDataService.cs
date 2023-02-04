@@ -8,7 +8,8 @@ namespace SMB3Explorer.Services;
 public interface IDataService
 {
     bool IsConnected { get; }
-    Task EstablishDbConnection(string filePath);
+    Task<string> DecompressSaveGame(string filePath);
+    Task EstablishDbConnection(string filePath, bool isCompressedSaveGame = true);
     Task<List<FranchiseSelection>> GetFranchises();
 
     event EventHandler<EventArgs> ConnectionChanged;
