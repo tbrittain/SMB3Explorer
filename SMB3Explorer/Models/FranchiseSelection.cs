@@ -10,6 +10,11 @@ public record FranchiseSelection
         .Concat(Path.GetInvalidFileNameChars())
         .ToArray();
 
+    /// <summary>
+    /// The League ID is different from a Franchise ID, which is not currently tracked, but will be
+    /// and will be used to identify the franchise in the future for various queries that requre
+    /// a FranchiseID vs a LeagueID.
+    /// </summary>
     public Guid LeagueId { get; init; }
     public string LeagueName { get; init; } = string.Empty;
     public string LeagueType { get; init; } = string.Empty;
