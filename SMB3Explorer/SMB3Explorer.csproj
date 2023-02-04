@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controls" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Page Update="Views\LandingView.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
@@ -43,6 +39,10 @@
       <EmbeddedResource Include="Resources\Sql\GetAllFranchiseBatters.sql" />
       <None Remove="Resources\Sql\GetAllFranchisePitchers.sql" />
       <EmbeddedResource Include="Resources\Sql\GetAllFranchisePitchers.sql" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Controls" />
     </ItemGroup>
 
 </Project>

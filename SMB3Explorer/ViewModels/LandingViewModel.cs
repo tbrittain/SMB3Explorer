@@ -23,7 +23,7 @@ public partial class LandingViewModel : ViewModelBase
 
     private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
     {
-        SelectSaveFileCommand?.NotifyCanExecuteChanged();
+        AutomaticallySelectSaveFileCommand?.NotifyCanExecuteChanged();
     }
 
     private bool CanSelectSaveFile()
@@ -32,7 +32,7 @@ public partial class LandingViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
-    private async Task SelectSaveFile()
+    private async Task AutomaticallySelectSaveFile()
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
