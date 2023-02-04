@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using SMB3Explorer.Services;
@@ -12,22 +13,23 @@ public partial class App
     private IServiceProvider ServiceProvider { get; set; } = null!;
     private IServiceCollection Services { get; set; } = null!;
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         Services = new ServiceCollection();
-        ConfigureServices(Services);
+        await ConfigureServices(Services);
         ServiceProvider = Services.BuildServiceProvider();
         
         var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
-        ((MainWindowViewModel) mainWindow.DataContext).Initialize();
+        await ((MainWindowViewModel) mainWindow.DataContext).Initialize();
     }
 
-    private static void ConfigureServices(IServiceCollection services)
+    private static Task ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IDataService, DataService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IApplicationContext, ApplicationContext>();
 
         services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
         {
@@ -38,7 +40,10 @@ public partial class App
         services.AddTransient<LandingViewModel>();
         services.AddTransient<HomeViewModel>();
 
+        // NavigationService calls this Func to get the ViewModel instance
         services.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider =>
             viewModelType => (ViewModelBase) serviceProvider.GetRequiredService(viewModelType));
+        
+        return Task.CompletedTask;
     }
 }

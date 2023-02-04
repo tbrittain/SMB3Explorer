@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SMB3Explorer.Services;
 using SMB3Explorer.Utils;
@@ -13,13 +11,11 @@ namespace SMB3Explorer.ViewModels;
 public partial class LandingViewModel : ViewModelBase
 {
     private readonly IDataService _dataService;
-    
-    [ObservableProperty]
-    private INavigationService _navigationService;
+    private readonly INavigationService _navigationService;
 
     public LandingViewModel(IDataService dataService, INavigationService navigationService)
     {
-        NavigationService = navigationService;
+        _navigationService = navigationService;
         _dataService = dataService;
 
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
@@ -34,12 +30,6 @@ public partial class LandingViewModel : ViewModelBase
     {
         return !_dataService.IsConnected;
     }
-    
-    [RelayCommand]
-    private void NavigateToMain()
-    {
-        NavigationService.NavigateTo<HomeViewModel>();
-    }
 
     [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
     private async Task SelectSaveFile()
@@ -53,33 +43,24 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        var (ok, exception) = await _dataService.EstablishDbConnection(filePath);
-        Mouse.OverrideCursor = Cursors.Arrow;
+        var hasError = false;
+        await _dataService.EstablishDbConnection(filePath)
+            .ContinueWith(task =>
+            {
+                if (task.Exception != null)
+                {
+                    hasError = true;
+                    DefaultExceptionHandler.HandleException("Failed to connect to SMB3 database.", task.Exception);
+                }
 
-        if (!ok)
-        {
-            const string initialMessage = "Failed to connect to SMB3 database. " +
-                                          "A full stack trace has been copied to your clipboard. " +
-                                          "Press OK to report this issue on GitHub.";
+                Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
+            });
 
-            var formattedMessage = $"{initialMessage}{Environment.NewLine}{exception?.Message ?? "Unknown error"}";
-
-            var openBrowser = MessageBox.Show(formattedMessage,
-                "Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-
-            Clipboard.SetText(exception?.StackTrace ?? "Unknown error");
-
-            if (openBrowser != MessageBoxResult.OK) return;
-
-            const string url = "https://github.com/tbrittain/SMB3Explorer/issues/new";
-            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
-
-            return;
-        }
+        if (hasError) return;
 
         MessageBox.Show("Successfully connected to SMB3 database at " +
                         $"{Environment.NewLine}{_dataService.CurrentFilePath}");
-        NavigateToMainCommand.Execute(null);
+        _navigationService.NavigateTo<HomeViewModel>();
     }
 
     protected override void Dispose(bool disposing)

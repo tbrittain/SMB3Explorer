@@ -5,19 +5,25 @@
         <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
+        <IsPackable>false</IsPackable>
+        <Version>0.1.0</Version>
+        <Title>SMB3 Explorer</Title>
+        <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
+        <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/tbrittain/SMB3Explorer.git</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
       <PackageReference Include="CsvHelper" Version="30.0.1" />
       <PackageReference Include="DotNetZip" Version="1.16.0" />
+      <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.2" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Controls" />
-      <Folder Include="Models" />
     </ItemGroup>
 
     <ItemGroup>
@@ -29,7 +35,14 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Sql\GetAvailableTables.sql" />
       <EmbeddedResource Include="Resources\Sql\GetAvailableTables.sql" />
+      <None Remove="Resources\Sql\GetFranchises.sql" />
+      <EmbeddedResource Include="Resources\Sql\GetFranchises.sql" />
+      <None Remove="Resources\Sql\GetAllFranchiseBatters.sql" />
+      <EmbeddedResource Include="Resources\Sql\GetAllFranchiseBatters.sql" />
+      <None Remove="Resources\Sql\GetAllFranchisePitchers.sql" />
+      <EmbeddedResource Include="Resources\Sql\GetAllFranchisePitchers.sql" />
     </ItemGroup>
 
 </Project>

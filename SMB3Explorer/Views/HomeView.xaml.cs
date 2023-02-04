@@ -8,6 +8,4 @@ public partial class HomeView : UserControl
     {
         InitializeComponent();
     }
-    
-    // TODO: https://joshclose.github.io/CsvHelper/getting-started/
 }
