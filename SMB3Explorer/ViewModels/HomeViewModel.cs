@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,7 +31,7 @@ public partial class HomeViewModel : ViewModelBase
             SetField(ref _selectedFranchise, value);
             _applicationContext.SelectedFranchise = value;
             OnPropertyChanged(nameof(FranchiseSelected));
-            ExportFranchisePositionPlayersCommand.NotifyCanExecuteChanged();
+            ExportFranchiseBattingStatisticsCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -75,16 +76,24 @@ public partial class HomeViewModel : ViewModelBase
     public bool FranchiseSelected => SelectedFranchise != null;
 
     [RelayCommand(CanExecute = nameof(CanExport))]
-    private async Task ExportFranchisePositionPlayers()
+    private async Task ExportFranchiseBattingStatistics()
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchisePositionPlayers();
 
-        var fileName =
-            $"position_players_{_applicationContext.SelectedFranchise!.LeagueName}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_batting_" +
+                       $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        await CsvUtils.ExportCsv(playersEnumerable, fileName);
+        var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
+
+        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+        if (ok == MessageBoxResult.Yes)
+        {
+            Process.Start(filePath);
+        }
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }

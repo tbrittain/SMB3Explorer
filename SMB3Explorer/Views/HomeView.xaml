@@ -37,21 +37,19 @@
                         SelectedItem="{Binding SelectedFranchise}" />
                 </StackPanel>
 
-                <Separator />
-
                 <Button DockPanel.Dock="Top"
+                        Margin="0, 5, 0, 0"
                         HorizontalAlignment="Stretch"
                         Height="50"
-                        Command="{Binding ExportFranchisePositionPlayersCommand}">
-                    Export position player statistics
+                        Command="{Binding ExportFranchiseBattingStatisticsCommand}">
+                    Export batting statistics
                 </Button>
 
-                <Separator />
-
                 <Button DockPanel.Dock="Top"
+                        Margin="0, 5, 0, 0"
                         HorizontalAlignment="Stretch"
                         Height="50">
-                    Export pitcher statistics
+                    Export pitching statistics
                 </Button>
             </DockPanel>
 

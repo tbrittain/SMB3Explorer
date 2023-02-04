@@ -92,18 +92,16 @@ public partial class DataService
                 PassedBalls = int.Parse(reader["passedBalls"].ToString()!),
 
                 // Rate stats
-                PlateAppearancesPerGame = double.Parse(reader["plateAppearancesPerGame"].ToString()!),
-                OnBasePercentage = double.Parse(reader["onBasePct"].ToString()!),
-                SluggingPercentage = double.Parse(reader["sluggingPct"].ToString()!),
-                OnBasePlusSlugging = double.Parse(reader["onBasePlusSlugging"].ToString()!),
-                BattingAverage = double.Parse(reader["battingAverage"].ToString()!),
-                BattingAverageOnBallsInPlay = double.Parse(reader["babip"].ToString()!),
-                AtBatsPerHomeRun = string.IsNullOrEmpty(reader["atBatsPerHomeRun"].ToString())
-                    ? 0
-                    : double.Parse(reader["atBatsPerHomeRun"].ToString()!),
-                StrikeoutPercentage = double.Parse(reader["strikeoutPct"].ToString()!),
-                WalkPercentage = double.Parse(reader["baseOnBallsPct"].ToString()!),
-                ExtraBaseHitPercentage = double.Parse(reader["extraBaseHitsPct"].ToString()!),
+                PlateAppearancesPerGame = SafeParseDouble.Parse(reader["plateAppearancesPerGame"].ToString()!),
+                OnBasePercentage = SafeParseDouble.Parse(reader["onBasePct"].ToString()!),
+                SluggingPercentage = SafeParseDouble.Parse(reader["sluggingPct"].ToString()!),
+                OnBasePlusSlugging = SafeParseDouble.Parse(reader["onBasePlusSlugging"].ToString()!),
+                BattingAverage = SafeParseDouble.Parse(reader["battingAverage"].ToString()!),
+                BattingAverageOnBallsInPlay = SafeParseDouble.Parse(reader["babip"].ToString()!),
+                AtBatsPerHomeRun = SafeParseDouble.Parse(reader["atBatsPerHomeRun"].ToString()!),
+                StrikeoutPercentage = SafeParseDouble.Parse(reader["strikeoutPct"].ToString()!),
+                WalkPercentage = SafeParseDouble.Parse(reader["baseOnBallsPct"].ToString()!),
+                ExtraBaseHitPercentage = SafeParseDouble.Parse(reader["extraBaseHitsPct"].ToString()!),
             };
 
             yield return positionPlayer;
