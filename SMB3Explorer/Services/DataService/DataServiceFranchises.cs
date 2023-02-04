@@ -38,7 +38,7 @@ public partial class DataService
         return franchises;
     }
 
-    public async IAsyncEnumerable<PositionPlayerStatistic> GetFranchisePositionPlayers()
+    public async IAsyncEnumerable<BattingStatistic> GetFranchiseBattingStatistics()
     {
         var command = Connection!.CreateCommand();
         var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAllFranchiseBatters);
@@ -55,7 +55,7 @@ public partial class DataService
 
         while (reader.Read())
         {
-            var positionPlayer = new PositionPlayerStatistic
+            var positionPlayer = new BattingStatistic
             {
                 PlayerStatsId = int.Parse(reader["statsPlayerID"].ToString()!),
                 PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.FromBlob(),
@@ -106,5 +106,10 @@ public partial class DataService
 
             yield return positionPlayer;
         }
+    }
+
+    public IAsyncEnumerable<PitcherStatistic> GetFranchisePitchingStatistics()
+    {
+        throw new NotImplementedException();
     }
 }

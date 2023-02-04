@@ -80,9 +80,32 @@ public partial class HomeViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
-        var playersEnumerable = _dataService.GetFranchisePositionPlayers();
+        var playersEnumerable = _dataService.GetFranchiseBattingStatistics();
 
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_batting_" +
+                       $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+
+        var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
+
+        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+        if (ok == MessageBoxResult.Yes)
+        {
+            Process.Start(filePath);
+        }
+
+        Mouse.OverrideCursor = Cursors.Arrow;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportFranchisePitchingStatistics()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var playersEnumerable = _dataService.GetFranchisePitchingStatistics();
+
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_pitching_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);

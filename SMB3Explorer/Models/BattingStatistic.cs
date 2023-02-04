@@ -5,7 +5,7 @@ namespace SMB3Explorer.Models;
 /// <summary>
 /// Represents a player's career statistics, but could be used for a single season as well
 /// </summary>
-public class PositionPlayerStatistic : PlayerStatistic
+public class BattingStatistic : PlayerStatistic
 {
     [Name("games_batting"), Index(8)]
     public int GamesPlayed { get; set; }
