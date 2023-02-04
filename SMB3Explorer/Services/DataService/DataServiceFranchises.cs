@@ -22,7 +22,7 @@ public partial class DataService
         while (reader.Read())
         {
             var bytes = reader["leagueId"] as byte[] ?? Array.Empty<byte>();
-            var leagueId = bytes.FromBlob();
+            var leagueId = bytes.ToGuid();
 
             var franchise = new FranchiseSelection
             {
@@ -58,15 +58,15 @@ public partial class DataService
             var positionPlayer = new BattingStatistic
             {
                 PlayerStatsId = int.Parse(reader["statsPlayerID"].ToString()!),
-                PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.FromBlob(),
+                PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid(),
                 FirstName = reader["firstName"].ToString()!,
                 LastName = reader["lastName"].ToString()!,
                 PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
                 CurrentTeam = string.IsNullOrEmpty(reader["teamName"].ToString()!)
                     ? null
                     : reader["teamName"].ToString()!,
-                PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!) 
-                    ? null 
+                PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
+                    ? null
                     : reader["previousRecentlyPlayedTeamName"].ToString()!,
 
                 // Counting stats
@@ -108,8 +108,76 @@ public partial class DataService
         }
     }
 
-    public IAsyncEnumerable<PitcherStatistic> GetFranchisePitchingStatistics()
+    public async IAsyncEnumerable<PitcherStatistic> GetFranchisePitchingStatistics()
     {
-        throw new NotImplementedException();
+        var command = Connection!.CreateCommand();
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAllFranchisePitchers);
+        command.CommandText = commandText;
+
+        var parameter = new SqliteParameter("@param1", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        };
+
+        command.Parameters.Add(parameter);
+
+        var reader = await command.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            var pitcher = new PitcherStatistic
+            {
+                PlayerStatsId = int.Parse(reader["statsPlayerID"].ToString()!),
+                PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid(),
+                FirstName = reader["firstName"].ToString()!,
+                LastName = reader["lastName"].ToString()!,
+                PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
+                CurrentTeam = string.IsNullOrEmpty(reader["teamName"].ToString()!)
+                    ? null
+                    : reader["teamName"].ToString()!,
+                PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
+                    ? null
+                    : reader["previousRecentlyPlayedTeamName"].ToString()!,
+                
+                PitcherRole = int.Parse(reader["pitcherRole"].ToString()!),
+
+                // Counting stats
+                GamesPlayed = int.Parse(reader["games"].ToString()!),
+                GamesStarted = int.Parse(reader["gamesStarted"].ToString()!),
+                Wins = int.Parse(reader["wins"].ToString()!),
+                Losses = int.Parse(reader["losses"].ToString()!),
+                CompleteGames = int.Parse(reader["completeGames"].ToString()!),
+                Shutouts = int.Parse(reader["shutouts"].ToString()!),
+                TotalPitches = int.Parse(reader["totalPitches"].ToString()!),
+                Saves = int.Parse(reader["saves"].ToString()!),
+                OutsPitched = int.Parse(reader["outsPitched"].ToString()!),
+                HitsAllowed = int.Parse(reader["hits"].ToString()!),
+                EarnedRuns = int.Parse(reader["earnedRuns"].ToString()!),
+                HomeRunsAllowed = int.Parse(reader["homeRuns"].ToString()!),
+                WalksAllowed = int.Parse(reader["baseOnBalls"].ToString()!),
+                Strikeouts = int.Parse(reader["strikeOuts"].ToString()!),
+                HitByPitch = int.Parse(reader["battersHitByPitch"].ToString()!),
+                BattersFaced = int.Parse(reader["battersFaced"].ToString()!),
+                GamesFinished = int.Parse(reader["gamesFinished"].ToString()!),
+                RunsAllowed = int.Parse(reader["runsAllowed"].ToString()!),
+                WildPitches = int.Parse(reader["wildPitches"].ToString()!),
+                InningsPitched = SafeParseDouble.Parse(reader["inningsPitched"].ToString()!),
+                
+                // Rate stats
+                EarnedRunAverage = SafeParseDouble.Parse(reader["ERA"].ToString()!),
+                Whip = SafeParseDouble.Parse(reader["WHIP"].ToString()!),
+                OpponentBattingAverage = SafeParseDouble.Parse(reader["opponent_AVG"].ToString()!),
+                WinningPercentage = SafeParseDouble.Parse(reader["winPct"].ToString()!),
+                OpponentOnBasePercentage = SafeParseDouble.Parse(reader["opponent_OBP"].ToString()!),
+                StrikeoutsPerWalk = SafeParseDouble.Parse(reader["strikeOutsPerWalk"].ToString()!),
+                StrikeoutsPerNineInnings = SafeParseDouble.Parse(reader["strikeOuts_9"].ToString()!),
+                WalksPerNineInnings = SafeParseDouble.Parse(reader["baseOnBalls_9"].ToString()!),
+                HitsPerNineInnings = SafeParseDouble.Parse(reader["hits_9"].ToString()!),
+                PitchesPerInning = SafeParseDouble.Parse(reader["pitchesPerInningPitched"].ToString()!),
+                InningsPerGame = SafeParseDouble.Parse(reader["inningsPitchedPerGame"].ToString()!),
+            };
+
+            yield return pitcher;
+        }
     }
 }

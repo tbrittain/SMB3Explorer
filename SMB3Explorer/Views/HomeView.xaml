@@ -48,7 +48,8 @@
                 <Button DockPanel.Dock="Top"
                         Margin="0, 5, 0, 0"
                         HorizontalAlignment="Stretch"
-                        Height="50">
+                        Height="50"
+                        Command="{Binding ExportFranchisePitchingStatisticsCommand}">
                     Export pitching statistics
                 </Button>
             </DockPanel>

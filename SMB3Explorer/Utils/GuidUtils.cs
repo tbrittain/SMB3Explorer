@@ -22,7 +22,7 @@ public static class GuidUtils
         return bytes;
     }
     
-    public static Guid FromBlob(this byte[] bytes)
+    public static Guid ToGuid(this byte[] bytes)
     {
         var stringRepresentation = BitConverter.ToString(bytes).Replace("-", "");
         var guid = Guid.ParseExact(stringRepresentation, "N");

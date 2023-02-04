@@ -31,7 +31,9 @@ public partial class HomeViewModel : ViewModelBase
             SetField(ref _selectedFranchise, value);
             _applicationContext.SelectedFranchise = value;
             OnPropertyChanged(nameof(FranchiseSelected));
+            
             ExportFranchiseBattingStatisticsCommand.NotifyCanExecuteChanged();
+            ExportFranchisePitchingStatisticsCommand.NotifyCanExecuteChanged();
         }
     }
 

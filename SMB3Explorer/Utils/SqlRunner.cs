@@ -36,22 +36,12 @@ public static class SqlRunner
     public static string GetSqlCommand(SqlFile file)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = $"SMB3Explorer.Resources.Sql.{GetSqlFileName(file)}";
+        var resourceName = $"SMB3Explorer.Resources.Sql.{file.GetEnumDescription()}";
 
         using var stream = assembly.GetManifestResourceStream(resourceName);
         using var reader = new StreamReader(stream ?? throw new InvalidOperationException("Invalid resource name"));
         
         var result = reader.ReadToEnd();
         return result;
-    }
-    
-    // We can generalize this to get any enum description later if we need to
-    private static string GetSqlFileName(SqlFile sqlFile)
-    {
-        var type = sqlFile.GetType();
-        var memberInfo = type.GetMember(sqlFile.ToString());
-        var attributes = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-        var description = ((DescriptionAttribute)attributes[0]).Description;
-        return description;
     }
 }
