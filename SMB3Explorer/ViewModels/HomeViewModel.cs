@@ -92,7 +92,7 @@ public partial class HomeViewModel : ViewModelBase
 
         if (ok == MessageBoxResult.Yes)
         {
-            Process.Start(filePath);
+            SafeProcess.Start(filePath);
         }
 
         Mouse.OverrideCursor = Cursors.Arrow;
@@ -115,7 +115,7 @@ public partial class HomeViewModel : ViewModelBase
 
         if (ok == MessageBoxResult.Yes)
         {
-            Process.Start(filePath);
+            SafeProcess.Start(filePath);
         }
 
         Mouse.OverrideCursor = Cursors.Arrow;
