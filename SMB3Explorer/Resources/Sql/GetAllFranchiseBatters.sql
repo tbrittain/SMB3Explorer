@@ -19,8 +19,11 @@ FROM v_stats_batting vsb
          JOIN t_stats_players tsp ON vsb.statsPlayerID = tsp.statsPlayerID
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
+         JOIN t_franchise tf ON tl.GUID = tf.leagueGUID
          JOIN teams t ON vsb.teamGUID = t.teamGUID
          JOIN teams t2 ON vsb.mostRecentlyPlayedTeamGUID = t2.teamGUID
          JOIN teams t3 ON vsb.previousRecentlyPlayedTeamGUID = t3.teamGUID
 WHERE tl.GUID = CAST(@param1 AS BLOB)
+  AND tf.GUID = CAST(@param2 AS BLOB)
+GROUP BY vsb.statsPlayerID
 ORDER BY plateAppearances DESC
