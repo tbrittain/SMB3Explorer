@@ -9,10 +9,7 @@ public static class GuidUtils
 {
     public static byte[] ToBlob(this Guid guid)
     {
-        // get guid in N format and convert to upper case
         var stringRepresentation = guid.ToString("N").ToUpperInvariant();
-        
-        // convert to byte array
         var bytes = new byte[16];
         for (var i = 0; i < 16; i++)
         {

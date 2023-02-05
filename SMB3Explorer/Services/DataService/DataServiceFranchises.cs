@@ -21,12 +21,16 @@ public partial class DataService
         List<FranchiseSelection> franchises = new();
         while (reader.Read())
         {
-            var bytes = reader["leagueId"] as byte[] ?? Array.Empty<byte>();
-            var leagueId = bytes.ToGuid();
+            var leagueBytes = reader["leagueId"] as byte[] ?? Array.Empty<byte>();
+            var leagueId = leagueBytes.ToGuid();
+            
+            var franchiseBytes = reader["franchiseId"] as byte[] ?? Array.Empty<byte>();
+            var franchiseId = franchiseBytes.ToGuid();
 
             var franchise = new FranchiseSelection
             {
                 LeagueId = leagueId,
+                FranchiseId = franchiseId,
                 LeagueName = reader["leagueName"].ToString()!,
                 LeagueType = reader["leagueTypeName"].ToString()!,
                 PlayerTeamName = reader["playerTeamName"].ToString()!,
@@ -44,12 +48,15 @@ public partial class DataService
         var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAllFranchiseBatters);
         command.CommandText = commandText;
 
-        var parameter = new SqliteParameter("@param1", SqliteType.Blob)
+        command.Parameters.Add(new SqliteParameter("@param1", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
-        };
-
-        command.Parameters.Add(parameter);
+        });
+        
+        command.Parameters.Add(new SqliteParameter("@param2", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.FranchiseId.ToBlob()
+        });
 
         var reader = await command.ExecuteReaderAsync();
 
@@ -113,13 +120,16 @@ public partial class DataService
         var command = Connection!.CreateCommand();
         var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAllFranchisePitchers);
         command.CommandText = commandText;
-
-        var parameter = new SqliteParameter("@param1", SqliteType.Blob)
+        
+        command.Parameters.Add(new SqliteParameter("@param1", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
-        };
-
-        command.Parameters.Add(parameter);
+        });
+        
+        command.Parameters.Add(new SqliteParameter("@param2", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.FranchiseId.ToBlob()
+        });
 
         var reader = await command.ExecuteReaderAsync();
 
