@@ -45,6 +45,11 @@ public partial class HomeViewModel : ViewModelBase
             ExportFranchiseCareerPitchingStatisticsCommand.NotifyCanExecuteChanged();
             ExportFranchiseCareerPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
             ExportFranchiseCareerPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
+            
+            ExportFranchiseSeasonBattingStatisticsCommand.NotifyCanExecuteChanged();
+            ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
+            ExportFranchiseSeasonPitchingStatisticsCommand.NotifyCanExecuteChanged();
+            ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -130,6 +135,70 @@ public partial class HomeViewModel : ViewModelBase
 
         var pitchingType = isRegularSeason ? "regular_season" : "playoffs";
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_career_pitching_{pitchingType}_" +
+                       $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+
+        var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
+
+        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath);
+
+        Mouse.OverrideCursor = Cursors.Arrow;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportFranchiseSeasonBattingStatistics()
+    {
+        await HandleFranchiseSeasonBattingExport();
+    }
+    
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportFranchiseSeasonPlayoffBattingStatistics()
+    {
+        await HandleFranchiseSeasonBattingExport(false);
+    }
+    
+    private async Task HandleFranchiseSeasonBattingExport(bool isRegularSeason = true)
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var playersEnumerable = _dataService.GetFranchiseSeasonBattingStatistics(isRegularSeason);
+
+        var battingType = isRegularSeason ? "regular_season" : "playoffs";
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_batting_{battingType}_" +
+                       $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+
+        var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
+
+        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath);
+
+        Mouse.OverrideCursor = Cursors.Arrow;
+    }
+    
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportFranchiseSeasonPitchingStatistics()
+    {
+        await HandleFranchiseSeasonPitchingExport();
+    }
+    
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportFranchiseSeasonPlayoffPitchingStatistics()
+    {
+        await HandleFranchiseSeasonPitchingExport(false);
+    }
+    
+    private async Task HandleFranchiseSeasonPitchingExport(bool isRegularSeason = true)
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var playersEnumerable = _dataService.GetFranchiseSeasonPitchingStatistics(isRegularSeason);
+
+        var pitchingType = isRegularSeason ? "regular_season" : "playoffs";
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_pitching_{pitchingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
