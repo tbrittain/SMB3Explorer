@@ -141,12 +141,8 @@ public partial class HomeViewModel : ViewModelBase
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
-
-
-    private bool CanExport()
-    {
-        return FranchiseSelected;
-    }
+    
+    private bool CanExport() => FranchiseSelected;
 
     private void GetFranchises()
     {
