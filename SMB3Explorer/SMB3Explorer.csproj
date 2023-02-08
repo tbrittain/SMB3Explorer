@@ -58,6 +58,10 @@
       <EmbeddedResource Include="Resources\Sql\PlayoffStatsPitching.sql" />
       <None Remove="Resources\Sql\SeasonStatsPitching.sql" />
       <EmbeddedResource Include="Resources\Sql\SeasonStatsPitching.sql" />
+      <None Remove="Resources\Sql\DatabaseTables.sql" />
+      <EmbeddedResource Include="Resources\Sql\DatabaseTables.sql" />
+      <None Remove="Resources\Sql\Franchises.sql" />
+      <EmbeddedResource Include="Resources\Sql\Franchises.sql" />
     </ItemGroup>
 
 </Project>
