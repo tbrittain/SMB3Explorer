@@ -6,7 +6,7 @@ namespace SMB3Explorer.Models;
 public class PitchingSeasonStatistic : PitchingStatistic
 {
     [Name("season_completion_date"), Index(43)]
-    public DateTime CompletionDate { get; set; }
+    public DateTime? CompletionDate { get; set; }
     
     /// <summary>
     /// This is an auto-incrementing integer cross-leagues. It does not necessarily correspond to the
