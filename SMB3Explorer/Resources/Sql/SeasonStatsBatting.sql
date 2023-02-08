@@ -19,8 +19,8 @@ SELECT baseballPlayerGUID,
            ELSE vbpi.[pitcherRole] END                AS pitcherRole,
        CAST(secondaryPosition.optionValue AS INTEGER) AS secondaryPosition,
        tsb.*,
-       currentTeam.teamName,
-       previousTeam.teamName
+       currentTeam.teamName AS currentTeam,
+       previousTeam.teamName AS previousTeam
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID

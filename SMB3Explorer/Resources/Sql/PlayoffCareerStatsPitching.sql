@@ -16,14 +16,14 @@ SELECT baseballPlayerGUID,
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[pitcherRole]
            ELSE vbpi.[pitcherRole] END                AS pitcherRole,
        CAST(secondaryPosition.optionValue AS INTEGER) AS secondaryPosition,
-       tsb.*,
+       tspitch.*,
        currentTeam.teamName AS currentTeam,
        previousTeam.teamName AS previousTeam
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
          LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
-         LEFT JOIN t_stats_batting tsb ON ts.aggregatorID = tsb.aggregatorID
+         JOIN t_stats_pitching tspitch ON ts.aggregatorID = tspitch.aggregatorID
 
          JOIN t_career_playoff_stats tcps ON ts.aggregatorID = tcps.aggregatorID
          JOIN t_franchise_local_ids tfli ON tcps.franchiseID = tfli.localID
@@ -39,4 +39,4 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
 
 WHERE tf.GUID = CAST(@franchiseId AS BLOB)
-ORDER BY gamesBatting DESC
+ORDER BY totalPitches DESC

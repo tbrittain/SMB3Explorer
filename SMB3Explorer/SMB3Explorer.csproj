@@ -41,4 +41,23 @@
       <Folder Include="Controls" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\Sql\CareerStatsBatting.sql" />
+      <EmbeddedResource Include="Resources\Sql\CareerStatsBatting.sql" />
+      <None Remove="Resources\Sql\PlayoffCareerStatsBatting.sql" />
+      <EmbeddedResource Include="Resources\Sql\PlayoffCareerStatsBatting.sql" />
+      <None Remove="Resources\Sql\PlayoffStatsBatting.sql" />
+      <EmbeddedResource Include="Resources\Sql\PlayoffStatsBatting.sql" />
+      <None Remove="Resources\Sql\SeasonStatsBatting.sql" />
+      <EmbeddedResource Include="Resources\Sql\SeasonStatsBatting.sql" />
+      <None Remove="Resources\Sql\CareerStatsPitching.sql" />
+      <EmbeddedResource Include="Resources\Sql\CareerStatsPitching.sql" />
+      <None Remove="Resources\Sql\PlayoffCareerStatsPitching.sql" />
+      <EmbeddedResource Include="Resources\Sql\PlayoffCareerStatsPitching.sql" />
+      <None Remove="Resources\Sql\PlayoffStatsPitching.sql" />
+      <EmbeddedResource Include="Resources\Sql\PlayoffStatsPitching.sql" />
+      <None Remove="Resources\Sql\SeasonStatsPitching.sql" />
+      <EmbeddedResource Include="Resources\Sql\SeasonStatsPitching.sql" />
+    </ItemGroup>
+
 </Project>
