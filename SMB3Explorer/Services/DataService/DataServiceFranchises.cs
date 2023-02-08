@@ -42,18 +42,21 @@ public partial class DataService
         return franchises;
     }
 
-    public async IAsyncEnumerable<BattingStatistic> GetFranchiseBattingStatistics()
+    public async IAsyncEnumerable<BattingStatistic> GetFranchiseCareerBattingStatistics(bool isRegularSeason = true)
     {
         var command = Connection!.CreateCommand();
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAllFranchiseBatters);
+        
+        var sqlFile = isRegularSeason ? SqlFile.CareerStatsBatting : SqlFile.PlayoffCareerStatsBatting;
+        
+        var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
 
-        command.Parameters.Add(new SqliteParameter("@param1", SqliteType.Blob)
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
         });
         
-        command.Parameters.Add(new SqliteParameter("@param2", SqliteType.Blob)
+        command.Parameters.Add(new SqliteParameter("@franchiseId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.FranchiseId.ToBlob()
         });
@@ -64,69 +67,57 @@ public partial class DataService
         {
             var positionPlayer = new BattingStatistic
             {
-                PlayerStatsId = int.Parse(reader["statsPlayerID"].ToString()!),
-                PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid(),
+                PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid(),
                 FirstName = reader["firstName"].ToString()!,
                 LastName = reader["lastName"].ToString()!,
                 PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
+                SecondaryPositionNumber = int.Parse(reader["secondaryPosition"].ToString()!),
                 CurrentTeam = string.IsNullOrEmpty(reader["teamName"].ToString()!)
                     ? null
-                    : reader["teamName"].ToString()!,
-                PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
+                    : reader["currentTeam"].ToString()!,
+                PreviousTeam = string.IsNullOrEmpty(reader["previousTeam"].ToString()!)
                     ? null
-                    : reader["previousRecentlyPlayedTeamName"].ToString()!,
-
-                // Counting stats
+                    : reader["previousTeam"].ToString()!,
+                
+                GamesPlayed = int.Parse(reader["gamesPlayed"].ToString()!),
                 GamesBatting = int.Parse(reader["gamesBatting"].ToString()!),
                 AtBats = int.Parse(reader["atBats"].ToString()!),
-                PlateAppearances = int.Parse(reader["plateAppearances"].ToString()!),
                 Runs = int.Parse(reader["runs"].ToString()!),
                 Hits = int.Parse(reader["hits"].ToString()!),
                 Doubles = int.Parse(reader["doubles"].ToString()!),
                 Triples = int.Parse(reader["triples"].ToString()!),
-                HomeRuns = int.Parse(reader["homeRuns"].ToString()!),
-                ExtraBaseHits = int.Parse(reader["extraBaseHits"].ToString()!),
+                HomeRuns = int.Parse(reader["homeruns"].ToString()!),
                 RunsBattedIn = int.Parse(reader["rbi"].ToString()!),
-                TotalBases = int.Parse(reader["totalBases"].ToString()!),
                 StolenBases = int.Parse(reader["stolenBases"].ToString()!),
                 CaughtStealing = int.Parse(reader["caughtStealing"].ToString()!),
                 Walks = int.Parse(reader["baseOnBalls"].ToString()!),
-                Strikeouts = int.Parse(reader["strikeouts"].ToString()!),
+                Strikeouts = int.Parse(reader["strikeOuts"].ToString()!),
                 HitByPitch = int.Parse(reader["hitByPitch"].ToString()!),
                 SacrificeHits = int.Parse(reader["sacrificeHits"].ToString()!),
                 SacrificeFlies = int.Parse(reader["sacrificeFlies"].ToString()!),
                 Errors = int.Parse(reader["errors"].ToString()!),
                 PassedBalls = int.Parse(reader["passedBalls"].ToString()!),
-
-                // Rate stats
-                PlateAppearancesPerGame = SafeParseDouble.Parse(reader["plateAppearancesPerGame"].ToString()!),
-                OnBasePercentage = SafeParseDouble.Parse(reader["onBasePct"].ToString()!),
-                SluggingPercentage = SafeParseDouble.Parse(reader["sluggingPct"].ToString()!),
-                OnBasePlusSlugging = SafeParseDouble.Parse(reader["onBasePlusSlugging"].ToString()!),
-                BattingAverage = SafeParseDouble.Parse(reader["battingAverage"].ToString()!),
-                BattingAverageOnBallsInPlay = SafeParseDouble.Parse(reader["babip"].ToString()!),
-                AtBatsPerHomeRun = SafeParseDouble.Parse(reader["atBatsPerHomeRun"].ToString()!),
-                StrikeoutPercentage = SafeParseDouble.Parse(reader["strikeoutPct"].ToString()!),
-                WalkPercentage = SafeParseDouble.Parse(reader["baseOnBallsPct"].ToString()!),
-                ExtraBaseHitPercentage = SafeParseDouble.Parse(reader["extraBaseHitsPct"].ToString()!),
             };
 
             yield return positionPlayer;
         }
     }
 
-    public async IAsyncEnumerable<PitchingStatistic> GetFranchisePitchingStatistics()
+    public async IAsyncEnumerable<PitchingStatistic> GetFranchiseCareerPitchingStatistics(bool isRegularSeason = true)
     {
         var command = Connection!.CreateCommand();
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAllFranchisePitchers);
+        
+        var sqlFile = isRegularSeason ? SqlFile.CareerStatsPitching : SqlFile.PlayoffCareerStatsPitching;
+        
+        var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
         
-        command.Parameters.Add(new SqliteParameter("@param1", SqliteType.Blob)
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
         });
         
-        command.Parameters.Add(new SqliteParameter("@param2", SqliteType.Blob)
+        command.Parameters.Add(new SqliteParameter("@franchiseId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.FranchiseId.ToBlob()
         });
@@ -137,8 +128,7 @@ public partial class DataService
         {
             var pitcher = new PitchingStatistic
             {
-                PlayerStatsId = int.Parse(reader["statsPlayerID"].ToString()!),
-                PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid(),
+                PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid(),
                 FirstName = reader["firstName"].ToString()!,
                 LastName = reader["lastName"].ToString()!,
                 PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
@@ -150,8 +140,7 @@ public partial class DataService
                     : reader["previousRecentlyPlayedTeamName"].ToString()!,
                 
                 PitcherRole = int.Parse(reader["pitcherRole"].ToString()!),
-
-                // Counting stats
+                
                 GamesPlayed = int.Parse(reader["games"].ToString()!),
                 GamesStarted = int.Parse(reader["gamesStarted"].ToString()!),
                 Wins = int.Parse(reader["wins"].ToString()!),
@@ -171,20 +160,6 @@ public partial class DataService
                 GamesFinished = int.Parse(reader["gamesFinished"].ToString()!),
                 RunsAllowed = int.Parse(reader["runsAllowed"].ToString()!),
                 WildPitches = int.Parse(reader["wildPitches"].ToString()!),
-                InningsPitched = SafeParseDouble.Parse(reader["inningsPitched"].ToString()!),
-                
-                // Rate stats
-                EarnedRunAverage = SafeParseDouble.Parse(reader["ERA"].ToString()!),
-                Whip = SafeParseDouble.Parse(reader["WHIP"].ToString()!),
-                OpponentBattingAverage = SafeParseDouble.Parse(reader["opponent_AVG"].ToString()!),
-                WinningPercentage = SafeParseDouble.Parse(reader["winPct"].ToString()!),
-                OpponentOnBasePercentage = SafeParseDouble.Parse(reader["opponent_OBP"].ToString()!),
-                StrikeoutsPerWalk = SafeParseDouble.Parse(reader["strikeOutsPerWalk"].ToString()!),
-                StrikeoutsPerNineInnings = SafeParseDouble.Parse(reader["strikeOuts_9"].ToString()!),
-                WalksPerNineInnings = SafeParseDouble.Parse(reader["baseOnBalls_9"].ToString()!),
-                HitsPerNineInnings = SafeParseDouble.Parse(reader["hits_9"].ToString()!),
-                PitchesPerInning = SafeParseDouble.Parse(reader["pitchesPerInningPitched"].ToString()!),
-                InningsPerGame = SafeParseDouble.Parse(reader["inningsPitchedPerGame"].ToString()!),
             };
 
             yield return pitcher;

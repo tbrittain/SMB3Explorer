@@ -82,7 +82,7 @@ public partial class HomeViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
-        var playersEnumerable = _dataService.GetFranchiseBattingStatistics();
+        var playersEnumerable = _dataService.GetFranchiseCareerBattingStatistics();
 
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_batting_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
@@ -105,7 +105,7 @@ public partial class HomeViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
-        var playersEnumerable = _dataService.GetFranchisePitchingStatistics();
+        var playersEnumerable = _dataService.GetFranchiseCareerPitchingStatistics();
 
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_pitching_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";

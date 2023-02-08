@@ -1,7 +1,7 @@
 ﻿using CsvHelper.Configuration.Attributes;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Utils;
-
+// ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace SMB3Explorer.Models;

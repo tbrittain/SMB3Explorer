@@ -2,6 +2,7 @@
 using SMB3Explorer.Enums;
 using SMB3Explorer.Utils;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable UnusedMember.Global
 
 namespace SMB3Explorer.Models;
 
