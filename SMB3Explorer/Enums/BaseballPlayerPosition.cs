@@ -35,4 +35,18 @@ public enum BaseballPlayerPosition
     
     [Description("RF")]
     RightField = 9,
+    
+    // The following are only used as Secondary Positions
+    
+    [Description("IF")]
+    Infield = 10,
+    
+    [Description("OF")]
+    Outfield = 11,
+    
+    [Description("1B/OF")]
+    FirstBaseAndOutfield = 12,
+    
+    [Description("IF/OF")]
+    InfieldAndOutfield = 13,
 }
