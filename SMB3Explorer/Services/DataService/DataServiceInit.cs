@@ -62,7 +62,7 @@ public partial class DataService
 
         // Test connection by querying the schema and getting the table names
         var command = Connection.CreateCommand();
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAvailableTables);
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.DatabaseTables);
         command.CommandText = commandText;
         var reader = await command.ExecuteReaderAsync();
 

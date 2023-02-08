@@ -14,7 +14,7 @@ public partial class DataService
     public async Task<List<FranchiseSelection>> GetFranchises()
     {
         var command = Connection!.CreateCommand();
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.GetFranchises);
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.Franchises);
         command.CommandText = commandText;
         var reader = await command.ExecuteReaderAsync();
 
