@@ -9,11 +9,13 @@ namespace SMB3Explorer.Models;
 public class BattingStatistic : PlayerStatistic
 {
     [Name("secondary_position"), Index(7)]
-    public int SecondaryPositionNumber { get; set; }
+    public int? SecondaryPositionNumber { get; set; }
 
     [Name("secondary_position_name"), Index(8)]
     // ReSharper disable once UnusedMember.Global
-    public string SecondaryPosition => ((BaseballPlayerPosition) SecondaryPositionNumber).GetEnumDescription();
+    public string? SecondaryPosition => SecondaryPositionNumber.HasValue
+        ? ((BaseballPlayerPosition) SecondaryPositionNumber).GetEnumDescription()
+        : null;
 
     [Name("games_batting"), Index(9)]
     public int GamesBatting { get; set; }
@@ -32,6 +34,8 @@ public class BattingStatistic : PlayerStatistic
 
     [Name("hits"), Index(14)]
     public int Hits { get; set; }
+    
+    private int Singles => Hits - Doubles - Triples - HomeRuns;
 
     [Name("doubles"), Index(15)]
     public int Doubles { get; set; }
@@ -82,11 +86,12 @@ public class BattingStatistic : PlayerStatistic
     public double PlateAppearancesPerGame => PlateAppearances / (double) GamesPlayed;
 
     [Name("on_base_percentage"), Index(31)]
-    public double OnBasePercentage => (Hits + Walks + HitByPitch) / (double) PlateAppearances;
+    public double OnBasePercentage => (Hits + Walks + HitByPitch) /
+                                     (double) (AtBats + Walks + HitByPitch + SacrificeFlies);
 
     [Name("slugging_percentage"), Index(32)]
-    public double SluggingPercentage => (Hits - Doubles - Triples - HomeRuns) + 2 * Doubles + 3 * Triples +
-                                        4 * HomeRuns / (double) AtBats;
+    public double SluggingPercentage => (Singles + (2 * Doubles) + (3 * Triples) +
+                                         (4 * HomeRuns)) / (double) AtBats;
 
     [Name("on_base_plus_slugging"), Index(33)]
     public double OnBasePlusSlugging => OnBasePercentage + SluggingPercentage;
@@ -96,7 +101,7 @@ public class BattingStatistic : PlayerStatistic
 
     [Name("babip"), Index(35)]
     public double BattingAverageOnBallsInPlay =>
-        Hits - HomeRuns / (double) (AtBats - Strikeouts - HomeRuns + SacrificeFlies);
+        (Hits - HomeRuns) / (double) (AtBats - Strikeouts - HomeRuns + SacrificeFlies);
 
     [Name("at_bats_per_home_run"), Index(36)]
     public double AtBatsPerHomeRun => AtBats / (double) HomeRuns;

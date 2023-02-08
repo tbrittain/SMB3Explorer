@@ -49,7 +49,7 @@ public partial class HomeViewModel : ViewModelBase
             ExportFranchiseSeasonBattingStatisticsCommand.NotifyCanExecuteChanged();
             ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
             ExportFranchiseSeasonPitchingStatisticsCommand.NotifyCanExecuteChanged();
-            ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
+            ExportFranchiseSeasonPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
         }
     }
 

@@ -39,13 +39,12 @@ public partial class DataService
                 FirstName = reader["firstName"].ToString()!,
                 LastName = reader["lastName"].ToString()!,
                 PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
-                SecondaryPositionNumber = int.Parse(reader["secondaryPosition"].ToString()!),
-                CurrentTeam = string.IsNullOrEmpty(reader["teamName"].ToString()!)
+                SecondaryPositionNumber = string.IsNullOrEmpty(reader["secondaryPosition"].ToString()!)
+                    ? null
+                    : int.Parse(reader["secondaryPosition"].ToString()!),
+                CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
                     ? null
                     : reader["currentTeam"].ToString()!,
-                PreviousTeam = string.IsNullOrEmpty(reader["previousTeam"].ToString()!)
-                    ? null
-                    : reader["previousTeam"].ToString()!,
 
                 GamesPlayed = int.Parse(reader["gamesPlayed"].ToString()!),
                 GamesBatting = int.Parse(reader["gamesBatting"].ToString()!),
@@ -72,11 +71,19 @@ public partial class DataService
                 SeasonId = int.Parse(reader["seasonId"].ToString()!),
             };
 
+            if (isRegularSeason)
+            {
+                positionPlayerStatistic.PreviousTeam = string.IsNullOrEmpty(reader["previousTeam"].ToString()!)
+                    ? null
+                    : reader["previousTeam"].ToString()!;
+            }
+
             yield return positionPlayerStatistic;
         }
     }
 
-    public async IAsyncEnumerable<PitchingSeasonStatistic> GetFranchiseSeasonPitchingStatistics(bool isRegularSeason = true)
+    public async IAsyncEnumerable<PitchingSeasonStatistic> GetFranchiseSeasonPitchingStatistics(
+        bool isRegularSeason = true)
     {
         var command = Connection!.CreateCommand();
 
@@ -101,19 +108,16 @@ public partial class DataService
         {
             var pitcherStatistic = new PitchingSeasonStatistic
             {
-                                PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid(),
+                PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid(),
                 FirstName = reader["firstName"].ToString()!,
                 LastName = reader["lastName"].ToString()!,
                 PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
-                CurrentTeam = string.IsNullOrEmpty(reader["teamName"].ToString()!)
+                CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
                     ? null
-                    : reader["teamName"].ToString()!,
-                PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
-                    ? null
-                    : reader["previousRecentlyPlayedTeamName"].ToString()!,
-                
+                    : reader["currentTeam"].ToString()!,
+
                 PitcherRole = int.Parse(reader["pitcherRole"].ToString()!),
-                
+
                 GamesPlayed = int.Parse(reader["games"].ToString()!),
                 GamesStarted = int.Parse(reader["gamesStarted"].ToString()!),
                 Wins = int.Parse(reader["wins"].ToString()!),
@@ -133,13 +137,20 @@ public partial class DataService
                 GamesFinished = int.Parse(reader["gamesFinished"].ToString()!),
                 RunsAllowed = int.Parse(reader["runsAllowed"].ToString()!),
                 WildPitches = int.Parse(reader["wildPitches"].ToString()!),
-                
+
                 CompletionDate = string.IsNullOrEmpty(reader["completionDate"].ToString()!)
                     ? null
                     : DateTime.Parse(reader["completionDate"].ToString()!),
                 SeasonId = int.Parse(reader["seasonId"].ToString()!),
             };
-            
+
+            if (isRegularSeason)
+            {
+                pitcherStatistic.PreviousTeam = string.IsNullOrEmpty(reader["previousTeam"].ToString()!)
+                    ? null
+                    : reader["previousTeam"].ToString()!;
+            }
+
             yield return pitcherStatistic;
         }
     }

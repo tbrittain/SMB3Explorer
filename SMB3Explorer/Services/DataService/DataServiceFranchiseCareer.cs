@@ -37,8 +37,10 @@ public partial class DataService
                 FirstName = reader["firstName"].ToString()!,
                 LastName = reader["lastName"].ToString()!,
                 PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
-                SecondaryPositionNumber = int.Parse(reader["secondaryPosition"].ToString()!),
-                CurrentTeam = string.IsNullOrEmpty(reader["teamName"].ToString()!)
+                SecondaryPositionNumber = string.IsNullOrEmpty(reader["secondaryPosition"].ToString()!)
+                    ? null 
+                    : int.Parse(reader["secondaryPosition"].ToString()!),
+                CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
                     ? null
                     : reader["currentTeam"].ToString()!,
                 PreviousTeam = string.IsNullOrEmpty(reader["previousTeam"].ToString()!)
@@ -98,12 +100,12 @@ public partial class DataService
                 FirstName = reader["firstName"].ToString()!,
                 LastName = reader["lastName"].ToString()!,
                 PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
-                CurrentTeam = string.IsNullOrEmpty(reader["teamName"].ToString()!)
+                CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
                     ? null
-                    : reader["teamName"].ToString()!,
-                PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
+                    : reader["currentTeam"].ToString()!,
+                PreviousTeam = string.IsNullOrEmpty(reader["previousTeam"].ToString()!)
                     ? null
-                    : reader["previousRecentlyPlayedTeamName"].ToString()!,
+                    : reader["previousTeam"].ToString()!,
                 
                 PitcherRole = int.Parse(reader["pitcherRole"].ToString()!),
                 

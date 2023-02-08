@@ -85,7 +85,7 @@ public class PitchingStatistic : PlayerStatistic
     public double WalksAndHitsPerInning => (WalksAllowed + HitsAllowed) / InningsPitched;
     
     [Name("win_percentage"), Index(34)]
-    public double WinPercentage => Wins / (double) GamesPlayed;
+    public double WinPercentage => Wins / (double) (Wins + Losses);
     
     [Name("opponent_on_base_percentage"), Index(35)]
     public double OpponentOnBasePercentage => (HitsAllowed + WalksAllowed + HitByPitch) / (double) BattersFaced;
