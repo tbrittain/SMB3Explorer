@@ -77,7 +77,7 @@ public partial class DataService
                     : reader["previousRecentlyPlayedTeamName"].ToString()!,
 
                 // Counting stats
-                GamesPlayed = int.Parse(reader["gamesBatting"].ToString()!),
+                GamesBatting = int.Parse(reader["gamesBatting"].ToString()!),
                 AtBats = int.Parse(reader["atBats"].ToString()!),
                 PlateAppearances = int.Parse(reader["plateAppearances"].ToString()!),
                 Runs = int.Parse(reader["runs"].ToString()!),
