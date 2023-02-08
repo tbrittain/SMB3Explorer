@@ -4,7 +4,7 @@ using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Models;
 
-public class PitcherStatistic : PlayerStatistic
+public class PitchingStatistic : PlayerStatistic
 {
     [Name("pitcher_role"), Index(9)]
     public int PitcherRole { get; set; }

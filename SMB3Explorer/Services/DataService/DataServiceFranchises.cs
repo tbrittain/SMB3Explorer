@@ -115,7 +115,7 @@ public partial class DataService
         }
     }
 
-    public async IAsyncEnumerable<PitcherStatistic> GetFranchisePitchingStatistics()
+    public async IAsyncEnumerable<PitchingStatistic> GetFranchisePitchingStatistics()
     {
         var command = Connection!.CreateCommand();
         var commandText = SqlRunner.GetSqlCommand(SqlFile.GetAllFranchisePitchers);
@@ -135,7 +135,7 @@ public partial class DataService
 
         while (reader.Read())
         {
-            var pitcher = new PitcherStatistic
+            var pitcher = new PitchingStatistic
             {
                 PlayerStatsId = int.Parse(reader["statsPlayerID"].ToString()!),
                 PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid(),
