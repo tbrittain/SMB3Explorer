@@ -74,4 +74,4 @@ FROM [t_stats_batting] tsbat
          LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
          JOIN t_career_playoff_stats tcss ON ts.aggregatorID = tcss.aggregatorID
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
-ORDER BY gamesPlayed DESC
+ORDER BY gamesBatting DESC
