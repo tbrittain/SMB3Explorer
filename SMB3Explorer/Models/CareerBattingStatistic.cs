@@ -3,6 +3,7 @@ using SMB3Explorer.Enums;
 using SMB3Explorer.Utils;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace SMB3Explorer.Models;
 
@@ -16,18 +17,22 @@ public class CareerBattingStatistic : CareerStatistic
     public string PrimaryPositionDescription => ((BaseballPlayerPosition) PrimaryPositionNumber).GetEnumDescription();
     
     [Name("secondary_position"), Index(12)]
-    public int SecondaryPositionNumber { get; set; }
+    public int? SecondaryPositionNumber { get; set; }
     
     [Name("secondary_position_name"), Index(13)]
     // ReSharper disable once UnusedMember.Global
-    public string SecondaryPositionDescription => ((BaseballPlayerPosition) SecondaryPositionNumber).GetEnumDescription();
+    public string? SecondaryPositionDescription => SecondaryPositionNumber is null 
+        ? null 
+        : ((BaseballPlayerPosition) SecondaryPositionNumber).GetEnumDescription();
     
     [Name("pitcher_role"), Index(14)]
-    public int PitcherRole { get; set; }
+    public int? PitcherRole { get; set; }
     
     [Name("pitcher_role_name"), Index(15)]
     // ReSharper disable once UnusedMember.Global
-    public string PitcherRoleDescription => ((PitcherRole) PitcherRole).GetEnumDescription();
+    public string? PitcherRoleDescription => PitcherRole is null 
+        ? null 
+        : ((PitcherRole) PitcherRole).GetEnumDescription();
     
     [Name("games_played"), Index(16)]
     public int GamesPlayed { get; set; }

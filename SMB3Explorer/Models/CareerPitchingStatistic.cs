@@ -30,78 +30,84 @@ public class CareerPitchingStatistic : CareerStatistic
     [Name("total_pitches"), Index(16)]
     public int TotalPitches { get; set; }
     
-    [Name("shutouts"), Index(17)]
+    [Name("complete_games"), Index(17)]
+    public int CompleteGames { get; set; }
+    
+    [Name("shutouts"), Index(18)]
     public int Shutouts { get; set; }
     
-    [Name("saves"), Index(18)]
+    [Name("saves"), Index(19)]
     public int Saves { get; set; }
     
-    [Name("outs_pitched"), Index(19)]
+    [Name("outs_pitched"), Index(20)]
     public int OutsPitched { get; set; }
     
-    [Name("hits_allowed"), Index(20)]
+    [Name("hits_allowed"), Index(21)]
     public int HitsAllowed { get; set; }
     
-    [Name("earned_runs"), Index(21)]
+    [Name("earned_runs"), Index(22)]
     public int EarnedRuns { get; set; }
     
-    [Name("home_runs_allowed"), Index(22)]
+    [Name("home_runs_allowed"), Index(23)]
     public int HomeRunsAllowed { get; set; }
     
-    [Name("walks_allowed"), Index(23)]
+    [Name("walks_allowed"), Index(24)]
     public int WalksAllowed { get; set; }
     
-    [Name("strikeouts"), Index(24)]
+    [Name("strikeouts"), Index(25)]
     public int Strikeouts { get; set; }
     
-    [Name("hit_by_pitch"), Index(25)]
+    [Name("hit_by_pitch"), Index(26)]
     public int HitByPitch { get; set; }
     
-    [Name("batters_faced"), Index(26)]
+    [Name("batters_faced"), Index(27)]
     public int BattersFaced { get; set; }
     
-    [Name("runs_allowed"), Index(27)]
+    [Name("games_finished"), Index(28)]
+    public int GamesFinished { get; set; }
+
+    [Name("runs_allowed"), Index(29)]
     public int RunsAllowed { get; set; }
     
-    [Name("wild_pitches"), Index(28)]
+    [Name("wild_pitches"), Index(30)]
     public int WildPitches { get; set; }
     
-    [Name("innings_pitched"), Index(29)]
+    [Name("innings_pitched"), Index(31)]
     public double InningsPitched => OutsPitched / 3.0;
 
-    [Name("era"), Index(30)]
+    [Name("era"), Index(32)]
     public double EarnedRunAverage => EarnedRuns / InningsPitched;
 
-    [Name("batting_average_against"), Index(31)]
+    [Name("batting_average_against"), Index(33)]
     public double BattingAverageAgainst => HitsAllowed / (double) BattersFaced;
 
-    [Name("whip"), Index(32)]
+    [Name("whip"), Index(34)]
     public double WalksAndHitsPerInning => (WalksAllowed + HitsAllowed) / InningsPitched;
     
-    [Name("win_percentage"), Index(33)]
+    [Name("win_percentage"), Index(35)]
     public double WinPercentage => Wins / (double) (Wins + Losses);
     
-    [Name("opponent_on_base_percentage"), Index(34)]
+    [Name("opponent_on_base_percentage"), Index(36)]
     public double OpponentOnBasePercentage => (HitsAllowed + WalksAllowed + HitByPitch) / (double) BattersFaced;
     
-    [Name("strikeout_to_walk_ratio"), Index(35)]
+    [Name("strikeout_to_walk_ratio"), Index(37)]
     public double StrikeoutToWalkRatio => Strikeouts / (double) WalksAllowed;
     
-    [Name("strikeouts_per_nine_innings"), Index(36)]
+    [Name("strikeouts_per_nine_innings"), Index(38)]
     public double StrikeoutsPerNineInnings => Strikeouts / (InningsPitched / 9.0);
     
-    [Name("walks_per_nine_innings"), Index(37)]
+    [Name("walks_per_nine_innings"), Index(39)]
     public double WalksPerNineInnings => WalksAllowed / (InningsPitched / 9.0);
     
-    [Name("hits_per_nine_innings"), Index(38)]
+    [Name("hits_per_nine_innings"), Index(40)]
     public double HitsPerNineInnings => HitsAllowed / (InningsPitched / 9.0);
     
-    [Name("home_runs_per_nine_innings"), Index(39)]
+    [Name("home_runs_per_nine_innings"), Index(41)]
     public double HomeRunsPerNineInnings => HomeRunsAllowed / (InningsPitched / 9.0);
     
-    [Name("pitches_per_inning"), Index(40)]
+    [Name("pitches_per_inning"), Index(42)]
     public double PitchesPerInning => TotalPitches / InningsPitched;
     
-    [Name("pitches_per_game"), Index(41)]
+    [Name("pitches_per_game"), Index(43)]
     public double PitchesPerGame => TotalPitches / (double) GamesPlayed;
 }

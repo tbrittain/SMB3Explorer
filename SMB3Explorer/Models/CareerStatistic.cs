@@ -17,13 +17,13 @@ public class CareerStatistic
     public Guid? PlayerId { get; set; }
     
     [Name("current_team"), Index(3)]
-    public string? CurrentTeamId { get; set; }
+    public string? CurrentTeam { get; set; }
     
     [Name("most_recent_team"), Index(4)]
-    public string? MostRecentTeamId { get; set; }
+    public string? MostRecentTeam { get; set; }
     
     [Name("second_most_recent_team"), Index(5)]
-    public string? SecondMostRecentTeamId { get; set; }
+    public string? SecondMostRecentTeam { get; set; }
     
     [Name("first_name"), Index(6)]
     public string FirstName { get; set; } = string.Empty;
