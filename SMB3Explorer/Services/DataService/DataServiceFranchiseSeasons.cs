@@ -33,43 +33,43 @@ public partial class DataService
 
         while (reader.Read())
         {
-            var positionPlayerStatistic = new BattingSeasonStatistic
-            {
-                PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid(),
-                FirstName = reader["firstName"].ToString()!,
-                LastName = reader["lastName"].ToString()!,
-                PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
-                SecondaryPositionNumber = string.IsNullOrEmpty(reader["secondaryPosition"].ToString()!)
-                    ? null
-                    : int.Parse(reader["secondaryPosition"].ToString()!),
-                CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
-                    ? null
-                    : reader["currentTeam"].ToString()!,
-
-                GamesPlayed = int.Parse(reader["gamesPlayed"].ToString()!),
-                GamesBatting = int.Parse(reader["gamesBatting"].ToString()!),
-                AtBats = int.Parse(reader["atBats"].ToString()!),
-                Runs = int.Parse(reader["runs"].ToString()!),
-                Hits = int.Parse(reader["hits"].ToString()!),
-                Doubles = int.Parse(reader["doubles"].ToString()!),
-                Triples = int.Parse(reader["triples"].ToString()!),
-                HomeRuns = int.Parse(reader["homeruns"].ToString()!),
-                RunsBattedIn = int.Parse(reader["rbi"].ToString()!),
-                StolenBases = int.Parse(reader["stolenBases"].ToString()!),
-                CaughtStealing = int.Parse(reader["caughtStealing"].ToString()!),
-                Walks = int.Parse(reader["baseOnBalls"].ToString()!),
-                Strikeouts = int.Parse(reader["strikeOuts"].ToString()!),
-                HitByPitch = int.Parse(reader["hitByPitch"].ToString()!),
-                SacrificeHits = int.Parse(reader["sacrificeHits"].ToString()!),
-                SacrificeFlies = int.Parse(reader["sacrificeFlies"].ToString()!),
-                Errors = int.Parse(reader["errors"].ToString()!),
-                PassedBalls = int.Parse(reader["passedBalls"].ToString()!),
-
-                CompletionDate = string.IsNullOrEmpty(reader["completionDate"].ToString()!)
-                    ? null
-                    : DateTime.Parse(reader["completionDate"].ToString()!),
-                SeasonId = int.Parse(reader["seasonId"].ToString()!),
-            };
+            var positionPlayerStatistic = new BattingSeasonStatistic();
+            
+            positionPlayerStatistic.FirstName = reader["firstName"].ToString()!;
+            positionPlayerStatistic.LastName = reader["lastName"].ToString()!;
+            
+            var position = reader["primaryPosition"].ToString();
+            positionPlayerStatistic.PositionNumber = position is null ? 0 : int.Parse(position);
+            
+            positionPlayerStatistic.SecondaryPositionNumber = string.IsNullOrEmpty(reader["secondaryPosition"].ToString()!)
+                ? null
+                : int.Parse(reader["secondaryPosition"].ToString()!);
+            positionPlayerStatistic.CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
+                ? null
+                : reader["currentTeam"].ToString()!;
+            positionPlayerStatistic.GamesPlayed = int.Parse(reader["gamesPlayed"].ToString()!);
+            positionPlayerStatistic.GamesBatting = int.Parse(reader["gamesBatting"].ToString()!);
+            positionPlayerStatistic.AtBats = int.Parse(reader["atBats"].ToString()!);
+            positionPlayerStatistic.Runs = int.Parse(reader["runs"].ToString()!);
+            positionPlayerStatistic.Hits = int.Parse(reader["hits"].ToString()!);
+            positionPlayerStatistic.Doubles = int.Parse(reader["doubles"].ToString()!);
+            positionPlayerStatistic.Triples = int.Parse(reader["triples"].ToString()!);
+            positionPlayerStatistic.HomeRuns = int.Parse(reader["homeruns"].ToString()!);
+            positionPlayerStatistic.RunsBattedIn = int.Parse(reader["rbi"].ToString()!);
+            positionPlayerStatistic.StolenBases = int.Parse(reader["stolenBases"].ToString()!);
+            positionPlayerStatistic.CaughtStealing = int.Parse(reader["caughtStealing"].ToString()!);
+            positionPlayerStatistic.Walks = int.Parse(reader["baseOnBalls"].ToString()!);
+            positionPlayerStatistic.Strikeouts = int.Parse(reader["strikeOuts"].ToString()!);
+            positionPlayerStatistic.HitByPitch = int.Parse(reader["hitByPitch"].ToString()!);
+            positionPlayerStatistic.SacrificeHits = int.Parse(reader["sacrificeHits"].ToString()!);
+            positionPlayerStatistic.SacrificeFlies = int.Parse(reader["sacrificeFlies"].ToString()!);
+            positionPlayerStatistic.Errors = int.Parse(reader["errors"].ToString()!);
+            positionPlayerStatistic.PassedBalls = int.Parse(reader["passedBalls"].ToString()!);
+            positionPlayerStatistic.CompletionDate = string.IsNullOrEmpty(reader["completionDate"].ToString()!)
+                ? null
+                : DateTime.Parse(reader["completionDate"].ToString()!);
+            positionPlayerStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
+            positionPlayerStatistic.PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid();
 
             if (isRegularSeason)
             {
@@ -106,43 +106,39 @@ public partial class DataService
 
         while (reader.Read())
         {
-            var pitcherStatistic = new PitchingSeasonStatistic
-            {
-                PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid(),
-                FirstName = reader["firstName"].ToString()!,
-                LastName = reader["lastName"].ToString()!,
-                PositionNumber = int.Parse(reader["primaryPosition"].ToString()!),
-                CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
-                    ? null
-                    : reader["currentTeam"].ToString()!,
-
-                PitcherRole = int.Parse(reader["pitcherRole"].ToString()!),
-
-                GamesPlayed = int.Parse(reader["games"].ToString()!),
-                GamesStarted = int.Parse(reader["gamesStarted"].ToString()!),
-                Wins = int.Parse(reader["wins"].ToString()!),
-                Losses = int.Parse(reader["losses"].ToString()!),
-                CompleteGames = int.Parse(reader["completeGames"].ToString()!),
-                Shutouts = int.Parse(reader["shutouts"].ToString()!),
-                TotalPitches = int.Parse(reader["totalPitches"].ToString()!),
-                Saves = int.Parse(reader["saves"].ToString()!),
-                OutsPitched = int.Parse(reader["outsPitched"].ToString()!),
-                HitsAllowed = int.Parse(reader["hits"].ToString()!),
-                EarnedRuns = int.Parse(reader["earnedRuns"].ToString()!),
-                HomeRunsAllowed = int.Parse(reader["homeRuns"].ToString()!),
-                WalksAllowed = int.Parse(reader["baseOnBalls"].ToString()!),
-                Strikeouts = int.Parse(reader["strikeOuts"].ToString()!),
-                HitByPitch = int.Parse(reader["battersHitByPitch"].ToString()!),
-                BattersFaced = int.Parse(reader["battersFaced"].ToString()!),
-                GamesFinished = int.Parse(reader["gamesFinished"].ToString()!),
-                RunsAllowed = int.Parse(reader["runsAllowed"].ToString()!),
-                WildPitches = int.Parse(reader["wildPitches"].ToString()!),
-
-                CompletionDate = string.IsNullOrEmpty(reader["completionDate"].ToString()!)
-                    ? null
-                    : DateTime.Parse(reader["completionDate"].ToString()!),
-                SeasonId = int.Parse(reader["seasonId"].ToString()!),
-            };
+            var pitcherStatistic = new PitchingSeasonStatistic();
+            
+            pitcherStatistic.PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid();
+            pitcherStatistic.FirstName = reader["firstName"].ToString()!;
+            pitcherStatistic.LastName = reader["lastName"].ToString()!;
+            pitcherStatistic.PositionNumber = int.Parse(reader["primaryPosition"].ToString()!);
+            pitcherStatistic.CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
+                ? null
+                : reader["currentTeam"].ToString()!;
+            pitcherStatistic.PitcherRole = int.Parse(reader["pitcherRole"].ToString()!);
+            pitcherStatistic.GamesPlayed = int.Parse(reader["games"].ToString()!);
+            pitcherStatistic.GamesStarted = int.Parse(reader["gamesStarted"].ToString()!);
+            pitcherStatistic.Wins = int.Parse(reader["wins"].ToString()!);
+            pitcherStatistic.Losses = int.Parse(reader["losses"].ToString()!);
+            pitcherStatistic.CompleteGames = int.Parse(reader["completeGames"].ToString()!);
+            pitcherStatistic.Shutouts = int.Parse(reader["shutouts"].ToString()!);
+            pitcherStatistic.TotalPitches = int.Parse(reader["totalPitches"].ToString()!);
+            pitcherStatistic.Saves = int.Parse(reader["saves"].ToString()!);
+            pitcherStatistic.OutsPitched = int.Parse(reader["outsPitched"].ToString()!);
+            pitcherStatistic.HitsAllowed = int.Parse(reader["hits"].ToString()!);
+            pitcherStatistic.EarnedRuns = int.Parse(reader["earnedRuns"].ToString()!);
+            pitcherStatistic.HomeRunsAllowed = int.Parse(reader["homeRuns"].ToString()!);
+            pitcherStatistic.WalksAllowed = int.Parse(reader["baseOnBalls"].ToString()!);
+            pitcherStatistic.Strikeouts = int.Parse(reader["strikeOuts"].ToString()!);
+            pitcherStatistic.HitByPitch = int.Parse(reader["battersHitByPitch"].ToString()!);
+            pitcherStatistic.BattersFaced = int.Parse(reader["battersFaced"].ToString()!);
+            pitcherStatistic.GamesFinished = int.Parse(reader["gamesFinished"].ToString()!);
+            pitcherStatistic.RunsAllowed = int.Parse(reader["runsAllowed"].ToString()!);
+            pitcherStatistic.WildPitches = int.Parse(reader["wildPitches"].ToString()!);
+            pitcherStatistic.CompletionDate = string.IsNullOrEmpty(reader["completionDate"].ToString()!)
+                ? null
+                : DateTime.Parse(reader["completionDate"].ToString()!);
+            pitcherStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
 
             if (isRegularSeason)
             {
