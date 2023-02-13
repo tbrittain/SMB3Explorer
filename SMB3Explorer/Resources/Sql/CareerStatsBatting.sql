@@ -29,6 +29,7 @@ SELECT ts.[aggregatorID]                                           AS [aggregato
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[pitcherRole]
            ELSE vbpi.[pitcherRole] END                             AS pitcherRole,
+       [gamesPlayed],
        [gamesBatting],
        [atBats],
        [runs],
@@ -73,4 +74,4 @@ FROM [t_stats_batting] tsbat
          LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
          JOIN t_career_season_stats tcss ON ts.aggregatorID = tcss.aggregatorID
 WHERE tl.GUID = @leagueId
-ORDER BY gamesBatting DESC
+ORDER BY gamesPlayed DESC
