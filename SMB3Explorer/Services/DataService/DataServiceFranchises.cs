@@ -23,7 +23,7 @@ public partial class DataService
         {
             var leagueBytes = reader["leagueId"] as byte[] ?? Array.Empty<byte>();
             var leagueId = leagueBytes.ToGuid();
-            
+
             var franchiseBytes = reader["franchiseId"] as byte[] ?? Array.Empty<byte>();
             var franchiseId = franchiseBytes.ToGuid();
 

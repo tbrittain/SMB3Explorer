@@ -34,16 +34,17 @@ public partial class DataService
         while (reader.Read())
         {
             var positionPlayerStatistic = new BattingSeasonStatistic();
-            
+
             positionPlayerStatistic.FirstName = reader["firstName"].ToString()!;
             positionPlayerStatistic.LastName = reader["lastName"].ToString()!;
-            
+
             var position = reader["primaryPosition"].ToString();
             positionPlayerStatistic.PositionNumber = position is null ? 0 : int.Parse(position);
-            
-            positionPlayerStatistic.SecondaryPositionNumber = string.IsNullOrEmpty(reader["secondaryPosition"].ToString()!)
-                ? null
-                : int.Parse(reader["secondaryPosition"].ToString()!);
+
+            positionPlayerStatistic.SecondaryPositionNumber =
+                string.IsNullOrEmpty(reader["secondaryPosition"].ToString()!)
+                    ? null
+                    : int.Parse(reader["secondaryPosition"].ToString()!);
             positionPlayerStatistic.CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
                 ? null
                 : reader["currentTeam"].ToString()!;
@@ -107,7 +108,7 @@ public partial class DataService
         while (reader.Read())
         {
             var pitcherStatistic = new PitchingSeasonStatistic();
-            
+
             pitcherStatistic.PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid();
             pitcherStatistic.FirstName = reader["firstName"].ToString()!;
             pitcherStatistic.LastName = reader["lastName"].ToString()!;

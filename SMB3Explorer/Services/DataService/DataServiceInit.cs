@@ -37,7 +37,7 @@ public partial class DataService
 
         return decompressedFilePath;
     }
-    
+
     public async Task EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
     {
         var decompressedFilePath = filePath;
@@ -77,15 +77,15 @@ public partial class DataService
         if (!tableNames.Contains("t_stats"))
             throw new Exception("Invalid save file, missing expected tables");
     }
-    
+
     public Task Disconnect()
     {
         Connection?.Close();
         Connection?.Dispose();
-        
+
         Connection = null;
         CurrentFilePath = string.Empty;
-        
+
         return Task.CompletedTask;
     }
 }
