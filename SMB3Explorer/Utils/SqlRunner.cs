@@ -12,17 +12,35 @@ namespace SMB3Explorer.Utils;
 /// </summary>
 public enum SqlFile
 {
-    [Description("GetAvailableTables.sql")]
-    GetAvailableTables,
+    [Description("DatabaseTables.sql")]
+    DatabaseTables,
     
-    [Description("GetFranchises.sql")]
-    GetFranchises,
+    [Description("Franchises.sql")]
+    Franchises,
     
-    [Description("GetAllFranchiseBatters.sql")]
-    GetAllFranchiseBatters,
+    [Description("CareerStatsBatting.sql")]
+    CareerStatsBatting,
     
-    [Description("GetAllFranchisePitchers.sql")]
-    GetAllFranchisePitchers,
+    [Description("CareerStatsPitching.sql")]
+    CareerStatsPitching,
+    
+    [Description("PlayoffCareerStatsBatting.sql")]
+    PlayoffCareerStatsBatting,
+    
+    [Description("PlayoffCareerStatsPitching.sql")]
+    PlayoffCareerStatsPitching,
+    
+    [Description("PlayoffStatsBatting.sql")]
+    PlayoffStatsBatting,
+    
+    [Description("PlayoffStatsPitching.sql")]
+    PlayoffStatsPitching,
+    
+    [Description("SeasonStatsBatting.sql")]
+    SeasonStatsBatting,
+    
+    [Description("SeasonStatsPitching.sql")]
+    SeasonStatsPitching,
 }
 
 public static class SqlRunner

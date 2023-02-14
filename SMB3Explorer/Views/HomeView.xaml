@@ -19,16 +19,16 @@
         <Grid Visibility="{Binding ContentVisible}" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="200" />
-                <ColumnDefinition Width="3*" MinWidth="500" />
+                <ColumnDefinition Width="2*" MinWidth="200" />
+                <ColumnDefinition Width="2*" MinWidth="200" />
             </Grid.ColumnDefinitions>
 
             <DockPanel IsEnabled="{Binding InteractionEnabled}">
                 <StackPanel DockPanel.Dock="Top"
                             Orientation="Vertical"
                             VerticalAlignment="Stretch">
-                    <Label HorizontalAlignment="Stretch">
-                        Select a franchise:
-                    </Label>
+                    <Label HorizontalAlignment="Stretch"
+                           Content="Select a franchise:" />
                     <ComboBox
                         HorizontalAlignment="Stretch"
                         Height="25"
@@ -37,28 +37,86 @@
                         SelectedItem="{Binding SelectedFranchise}" />
                 </StackPanel>
 
-                <Button DockPanel.Dock="Top"
-                        Margin="0, 5, 0, 0"
-                        HorizontalAlignment="Stretch"
-                        Height="50"
-                        Command="{Binding ExportFranchiseBattingStatisticsCommand}">
-                    Export batting statistics
-                </Button>
-
-                <Button DockPanel.Dock="Top"
-                        Margin="0, 5, 0, 0"
-                        HorizontalAlignment="Stretch"
-                        Height="50"
-                        Command="{Binding ExportFranchisePitchingStatisticsCommand}">
-                    Export pitching statistics
-                </Button>
             </DockPanel>
 
-            <!-- TODO -->
-            <DataGrid Grid.Column="1"
-                      VerticalAlignment="Stretch">
+            <GroupBox Header="Career"
+                      Grid.Column="1"
+                      Margin="5"
+                      Padding="5">
+                <WrapPanel Orientation="Vertical">
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseCareerBattingStatisticsCommand}"
+                        Content="Export career regular season batting statistics" />
 
-            </DataGrid>
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseCareerPitchingStatisticsCommand}"
+                        Content="Export career regular season pitching statistics" />
+
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseCareerPlayoffBattingStatisticsCommand}"
+                        Content="Export career playoff batting statistics" />
+
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseCareerPlayoffPitchingStatisticsCommand}"
+                        Content="Export career playoff pitching statistics" />
+                </WrapPanel>
+            </GroupBox>
+
+            <GroupBox Header="By Season"
+                      Grid.Column="2"
+                      Margin="5"
+                      Padding="5">
+                <WrapPanel Orientation="Vertical">
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseSeasonBattingStatisticsCommand}"
+                        Content="Export all regular season batting statistics" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseSeasonPitchingStatisticsCommand}"
+                        Content="Export all regular season pitching statistics" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseSeasonPlayoffBattingStatisticsCommand}"
+                        Content="Export all playoff batting statistics" />
+
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseSeasonPlayoffPitchingStatisticsCommand}"
+                        Content="Export all playoff pitching statistics" />
+                </WrapPanel>
+            </GroupBox>
+
         </Grid>
     </StackPanel>
 </UserControl>

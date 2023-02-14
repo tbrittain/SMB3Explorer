@@ -16,6 +16,8 @@ public interface IDataService
     
     public string CurrentFilePath { get; }
     Task Disconnect();
-    IAsyncEnumerable<BattingStatistic> GetFranchiseBattingStatistics();
-    IAsyncEnumerable<PitcherStatistic> GetFranchisePitchingStatistics();
+    IAsyncEnumerable<CareerBattingStatistic> GetFranchiseCareerBattingStatistics(bool isRegularSeason = true);
+    IAsyncEnumerable<CareerPitchingStatistic> GetFranchiseCareerPitchingStatistics(bool isRegularSeason = true);
+    IAsyncEnumerable<BattingSeasonStatistic> GetFranchiseSeasonBattingStatistics(bool isRegularSeason = true);
+    IAsyncEnumerable<PitchingSeasonStatistic> GetFranchiseSeasonPitchingStatistics(bool isRegularSeason = true);
 }
