@@ -10,7 +10,7 @@ namespace SMB3Explorer.Utils;
 public static class CsvUtils
 {
     private static readonly string DefaultDirectory =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "SMB3Explorer");
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer");
 
     private static string GetDefaultFilePath(string fileName) => Path.Combine(DefaultDirectory, fileName);
 
