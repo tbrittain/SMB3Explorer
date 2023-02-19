@@ -1,18 +1,29 @@
 # SMB3 Explorer
 
-SMB3Explorer is a .NET 7 Windows WPF application that exports baseball player (batter and pitcher) statistics for the computer game Super Mega Baseball 3. This application is perfect for fans of the game who are interested in analyzing player statistics and using them for various purposes.
+SMB3 Explorer is a native Windows application that exports various game statistics for the Steam version of Super Mega Baseball 3.
+
+- For FAQs/general usage information, see the [wiki](https://github.com/tbrittain/SMB3Explorer/wiki).
+- For a list of planned features, see the [project board](https://github.com/users/tbrittain/projects/5/views/1).
+- For a list of known issues, see the [issues page](https://github.com/tbrittain/SMB3Explorer/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
+- For general discussion, see the [discussions page](https://github.com/tbrittain/SMB3Explorer/discussions).
 
 ## Features
 
-- Exports all-time statistics for both batters and pitchers in franchise mode
+- Exports statistics for players in franchise mode, with additional exports planned for the future (both with regard to players and teams as a whole)
 - Easy-to-use graphical user interface (GUI)
-- Exported statistics include batting average, home runs, RBIs, ERA, and more
-- Designed for use on Windows operating systems
+- Designed for use on Windows operating systems (Windows 10 and later)
 
-## Development
+## Contributing
 
-Development is currently ongoing, with significant updates planned for the future. The project is not currently open to contributions while the early stages of development are underway, but once some of the core features and patterns are implemented, contributions will be welcome.
+See the [contributing guidelines](https://github.com/tbrittain/SMB3Explorer/blob/main/CONTRIBUTING.md) for more information.
 
 ## Installation
 
-There are no installation instructions at this time. Releases will be available for download in the future in a binary executable format for Windows.
+See the [releases page](https://github.com/tbrittain/SMB3Explorer/releases) for more information.
+
+## License
+
+SMB3 Explorer is open source software released under the [GNU GPLv3](https://github.com/tbrittain/SMB3Explorer/blob/main/LICENSE) license.
+By contributing to the project, you agree to license your contributions under the same license.
+
+<a href="https://www.buymeacoffee.com/tbrittain" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee" height="41" width="174"></a>
