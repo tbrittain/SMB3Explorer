@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel;
+using SMB3Explorer.Services;
 
 namespace SMB3Explorer.Utils;
 
 public static class SafeProcess
 {
-    public static void Start(string fileName)
+    public static void Start(string fileName, ISystemInteropWrapper systemInteropWrapper)
     {
         var process = new System.Diagnostics.Process
         {
@@ -22,7 +23,7 @@ public static class SafeProcess
         }
         catch (Win32Exception e)
         {
-            DefaultExceptionHandler.HandleException("Failed to start process.", e);
+            DefaultExceptionHandler.HandleException("Failed to start process.", e, systemInteropWrapper);
         }
     }
 }

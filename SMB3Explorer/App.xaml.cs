@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using SMB3Explorer.Services;
+using SMB3Explorer.Utils;
 using SMB3Explorer.ViewModels;
 using SMB3Explorer.Views;
 
@@ -30,6 +31,7 @@ public partial class App
         services.AddSingleton<IDataService, DataService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IApplicationContext, ApplicationContext>();
+        services.AddSingleton<ISystemInteropWrapper, SystemInteropWrapper>();
 
         services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
         {

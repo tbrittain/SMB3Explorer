@@ -12,10 +12,12 @@ public partial class LandingViewModel : ViewModelBase
 {
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
+    private readonly ISystemInteropWrapper _systemInteropWrapper;
 
-    public LandingViewModel(IDataService dataService, INavigationService navigationService)
+    public LandingViewModel(IDataService dataService, INavigationService navigationService, ISystemInteropWrapper systemInteropWrapper)
     {
         _navigationService = navigationService;
+        _systemInteropWrapper = systemInteropWrapper;
         _dataService = dataService;
 
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
@@ -99,7 +101,8 @@ public partial class LandingViewModel : ViewModelBase
                 if (task.Exception != null)
                 {
                     hasError = true;
-                    DefaultExceptionHandler.HandleException("Failed to connect to SMB3 database.", task.Exception);
+                    DefaultExceptionHandler.HandleException("Failed to connect to SMB3 database.", task.Exception,
+                        _systemInteropWrapper);
                 }
 
                 Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);

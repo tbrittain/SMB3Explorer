@@ -14,6 +14,7 @@ namespace SMB3Explorer.ViewModels;
 public partial class HomeViewModel : ViewModelBase
 {
     private readonly IApplicationContext _applicationContext;
+    private readonly ISystemInteropWrapper _systemInteropWrapper;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
 
@@ -23,11 +24,12 @@ public partial class HomeViewModel : ViewModelBase
     private FranchiseSelection? _selectedFranchise;
 
     public HomeViewModel(INavigationService navigationService, IDataService dataService,
-        IApplicationContext applicationContext)
+        IApplicationContext applicationContext, ISystemInteropWrapper systemInteropWrapper)
     {
         _navigationService = navigationService;
         _dataService = dataService;
         _applicationContext = applicationContext;
+        _systemInteropWrapper = systemInteropWrapper;
 
         GetFranchises();
     }
@@ -110,7 +112,7 @@ public partial class HomeViewModel : ViewModelBase
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -142,7 +144,7 @@ public partial class HomeViewModel : ViewModelBase
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -174,7 +176,7 @@ public partial class HomeViewModel : ViewModelBase
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -206,7 +208,7 @@ public partial class HomeViewModel : ViewModelBase
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -222,7 +224,8 @@ public partial class HomeViewModel : ViewModelBase
             {
                 if (task.Exception != null)
                 {
-                    DefaultExceptionHandler.HandleException("Failed to get franchises.", task.Exception);
+                    DefaultExceptionHandler.HandleException("Failed to get franchises.", task.Exception,
+                        _systemInteropWrapper);
                     LoadingSpinnerVisible = Visibility.Collapsed;
                     return;
                 }
