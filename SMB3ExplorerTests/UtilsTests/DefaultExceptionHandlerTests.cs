@@ -86,24 +86,26 @@ public class DefaultExceptionHandlerTests
     public void HandleException_OpensGitHubIssuePage_WhenUserClicksOK()
     {
         // Arrange
-        var wrapper = new Mock<ISystemInteropWrapper>();
-        wrapper.Setup(m => m.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>(),
+        var exception = new Exception("Test Exception");
+        
+        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+
+        mockSystemInteropWrapper.Setup(x => x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<MessageBoxButton>(),
                 It.IsAny<MessageBoxImage>()))
             .Returns(MessageBoxResult.OK);
-
-        var exception = new Exception("Test Exception");
-        var expectedClipboardText = exception.StackTrace ?? "Unknown error";
-
-        wrapper.Setup(m => m.MessageBoxText)
-            .Returns(
-                $"Test Message A full stack trace has been copied to your clipboard. {Environment.NewLine}{expectedClipboardText}");
+        
+        mockSystemInteropWrapper.Setup(x => x.SetClipboardText(It.IsAny<string>()));
+        
+        mockSystemInteropWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
+            .Returns(It.IsAny<Process>());
 
         // Act
-        DefaultExceptionHandler.HandleException("Test Message", exception, wrapper.Object);
+        DefaultExceptionHandler.HandleException("Test Message", exception, mockSystemInteropWrapper.Object);
 
         // Assert
-        wrapper.Verify(
+        mockSystemInteropWrapper.Verify(
             m => m.StartProcess(It.Is<ProcessStartInfo>(p =>
-                p.FileName.Contains(DefaultExceptionHandler.GithubNewIssueUrl))), Times.Once);
+                p.Arguments.Contains(DefaultExceptionHandler.GithubNewIssueUrl))), Times.Once);
     }
 }
