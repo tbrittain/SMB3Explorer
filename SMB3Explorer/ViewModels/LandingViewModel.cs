@@ -25,9 +25,9 @@ public partial class LandingViewModel : ViewModelBase
 
     private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
     {
-        AutomaticallySelectSaveFileCommand?.NotifyCanExecuteChanged();
-        ManuallySelectSaveFileCommand?.NotifyCanExecuteChanged();
-        UseExistingDatabaseCommand?.NotifyCanExecuteChanged();
+        AutomaticallySelectSaveFileCommand.NotifyCanExecuteChanged();
+        ManuallySelectSaveFileCommand.NotifyCanExecuteChanged();
+        UseExistingDatabaseCommand.NotifyCanExecuteChanged();
     }
 
     private bool CanSelectSaveFile()
@@ -40,7 +40,7 @@ public partial class LandingViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
-        var filePath = await SaveFile.GetSaveFilePath();
+        var filePath = await SaveFile.GetSaveFilePath(_systemInteropWrapper);
         if (string.IsNullOrEmpty(filePath))
         {
             Mouse.OverrideCursor = Cursors.Arrow;

@@ -12,6 +12,13 @@ public class SystemInteropWrapper : ISystemInteropWrapper
         return MessageBox.Show(messageBoxText, caption, button, icon);
     }
 
+    public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button)
+    {
+        MessageBoxText = messageBoxText;
+        
+        return MessageBox.Show(messageBoxText, caption, button);
+    }
+
     public void SetClipboardText(string text)
     {
         Application.Current.Dispatcher.Invoke(() => Clipboard.SetText(text));
