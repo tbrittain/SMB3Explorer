@@ -22,7 +22,7 @@ public static class DefaultExceptionHandler
             "Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
         
         var stackTrace = exception.StackTrace ?? "Unknown error";
-        systemInteropWrapper.SetClipboardText(stackTrace);
+        systemInteropWrapper.SetClipboardText($"{exception.Message}{stackTrace}");
 
         if (openBrowser != MessageBoxResult.OK) return;
 

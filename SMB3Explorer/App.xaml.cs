@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using SMB3Explorer.Services;
-using SMB3Explorer.Utils;
 using SMB3Explorer.ViewModels;
 using SMB3Explorer.Views;
 
