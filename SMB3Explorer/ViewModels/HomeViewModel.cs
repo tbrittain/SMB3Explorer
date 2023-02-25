@@ -107,7 +107,7 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_career_batting_{battingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, playersEnumerable, fileName);
 
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
@@ -139,7 +139,7 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_career_pitching_{pitchingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, playersEnumerable, fileName);
 
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
@@ -171,7 +171,7 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_batting_{battingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, playersEnumerable, fileName);
 
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
@@ -203,7 +203,7 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_pitching_{pitchingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        var filePath = await CsvUtils.ExportCsv(playersEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, playersEnumerable, fileName);
 
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);

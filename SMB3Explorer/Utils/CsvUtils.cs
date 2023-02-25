@@ -4,28 +4,29 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using CsvHelper;
+using SMB3Explorer.Services;
 
 namespace SMB3Explorer.Utils;
 
 public static class CsvUtils
 {
-    private static readonly string DefaultDirectory =
+    public static readonly string DefaultDirectory =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer");
 
     private static string GetDefaultFilePath(string fileName) => Path.Combine(DefaultDirectory, fileName);
 
-    public static async Task<string> ExportCsv<T>(IAsyncEnumerable<T> records, string fileName,
-        int limit = int.MaxValue)
+    public static async Task<(string, int)> ExportCsv<T>(ISystemInteropWrapper systemInteropWrapper,
+        IAsyncEnumerable<T> records, string fileName, int limit = int.MaxValue)
     {
-        if (!Directory.Exists(DefaultDirectory))
+        if (!systemInteropWrapper.DirectoryExists(DefaultDirectory))
         {
-            Directory.CreateDirectory(DefaultDirectory);
+            systemInteropWrapper.DirectoryCreate(DefaultDirectory);
         }
         
         var filePath = GetDefaultFilePath(fileName);
         
-        if (File.Exists(filePath)) File.Delete(filePath);
-        await File.Create(filePath).DisposeAsync();
+        if (systemInteropWrapper.FileExists(filePath)) systemInteropWrapper.FileDelete(filePath);
+        await systemInteropWrapper.FileCreate(filePath);
 
         await using var writer = new StreamWriter(filePath);
         await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
@@ -33,21 +34,22 @@ public static class CsvUtils
         csv.WriteHeader<T>();
         await csv.NextRecordAsync();
 
-        var row = 0;
+        var rowCount = 1;
         var enumerator = records.GetAsyncEnumerator();
         while (await enumerator.MoveNextAsync())
         {
             csv.WriteRecord(enumerator.Current);
             await csv.NextRecordAsync();
 
-            if (row++ >= limit)
+            if (rowCount >= limit)
             {
                 break;
             }
+            rowCount++;
         }
 
         await writer.FlushAsync();
 
-        return filePath;
+        return (filePath, rowCount);
     }
 }

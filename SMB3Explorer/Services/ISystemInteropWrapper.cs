@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace SMB3Explorer.Services;
@@ -10,4 +11,9 @@ public interface ISystemInteropWrapper
     void SetClipboardText(string text);
     string MessageBoxText { get; }
     Process? StartProcess(ProcessStartInfo startInfo);
+    bool FileExists(string path);
+    bool FileDelete(string path);
+    ValueTask FileCreate(string path);
+    bool DirectoryExists(string path);
+    void DirectoryCreate(string path);
 }

@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace SMB3Explorer.Services;
@@ -29,5 +31,31 @@ public class SystemInteropWrapper : ISystemInteropWrapper
     public Process? StartProcess(ProcessStartInfo startInfo)
     {
         return Process.Start(startInfo);
+    }
+
+    public bool FileExists(string path)
+    {
+        return File.Exists(path);
+    }
+
+    public bool FileDelete(string path)
+    {
+        File.Delete(path);
+        return true;
+    }
+
+    public async ValueTask FileCreate(string path)
+    {
+        await File.Create(path).DisposeAsync();
+    }
+
+    public bool DirectoryExists(string path)
+    {
+        return Directory.Exists(path);
+    }
+
+    public void DirectoryCreate(string path)
+    {
+        Directory.CreateDirectory(path);
     }
 }
