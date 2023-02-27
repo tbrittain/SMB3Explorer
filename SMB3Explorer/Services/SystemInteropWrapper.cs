@@ -1,12 +1,21 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SMB3Explorer.Services;
 
 public class SystemInteropWrapper : ISystemInteropWrapper
 {
+    private readonly IServiceProvider _serviceProvider;
+    
+    public SystemInteropWrapper(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+    
     public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
     {
         MessageBoxText = messageBoxText;
@@ -57,5 +66,12 @@ public class SystemInteropWrapper : ISystemInteropWrapper
     public void DirectoryCreate(string path)
     {
         Directory.CreateDirectory(path);
+    }
+
+    public ICsvWriterWrapper CreateCsvWriter()
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var csvWriterWrapper = scope.ServiceProvider.GetRequiredService<ICsvWriterWrapper>();
+        return csvWriterWrapper;
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using CsvHelper;
 using SMB3Explorer.Services;
 
 namespace SMB3Explorer.Utils;
@@ -16,7 +14,7 @@ public static class CsvUtils
     private static string GetDefaultFilePath(string fileName) => Path.Combine(DefaultDirectory, fileName);
 
     public static async Task<(string, int)> ExportCsv<T>(ISystemInteropWrapper systemInteropWrapper,
-        IAsyncEnumerable<T> records, string fileName, int limit = int.MaxValue)
+        IAsyncEnumerable<T> records, string fileName, int limit = int.MaxValue) where T : notnull
     {
         if (!systemInteropWrapper.DirectoryExists(DefaultDirectory))
         {
@@ -27,19 +25,17 @@ public static class CsvUtils
         
         if (systemInteropWrapper.FileExists(filePath)) systemInteropWrapper.FileDelete(filePath);
         await systemInteropWrapper.FileCreate(filePath);
-
+        
         await using var writer = new StreamWriter(filePath);
-        await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-
-        csv.WriteHeader<T>();
-        await csv.NextRecordAsync();
+        await using var csv = systemInteropWrapper.CreateCsvWriter();
+        
+        await csv.WriteHeaderAsync<T>();
 
         var rowCount = 1;
         var enumerator = records.GetAsyncEnumerator();
         while (await enumerator.MoveNextAsync())
         {
-            csv.WriteRecord(enumerator.Current);
-            await csv.NextRecordAsync();
+            await csv.WriteRecordAsync(enumerator.Current);
 
             if (rowCount >= limit)
             {

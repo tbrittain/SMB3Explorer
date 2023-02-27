@@ -40,6 +40,7 @@ public partial class App
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<LandingViewModel>();
         services.AddTransient<HomeViewModel>();
+        services.AddTransient<ICsvWriterWrapper, CsvWriterWrapper>();
 
         // NavigationService calls this Func to get the ViewModel instance
         services.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider =>
