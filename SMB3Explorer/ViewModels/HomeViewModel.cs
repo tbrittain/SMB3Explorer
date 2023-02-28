@@ -224,8 +224,7 @@ public partial class HomeViewModel : ViewModelBase
             {
                 if (task.Exception != null)
                 {
-                    DefaultExceptionHandler.HandleException("Failed to get franchises.", task.Exception,
-                        _systemInteropWrapper);
+                    DefaultExceptionHandler.HandleException(_systemInteropWrapper, "Failed to get franchises.", task.Exception);
                     LoadingSpinnerVisible = Visibility.Collapsed;
                     return;
                 }

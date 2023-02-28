@@ -101,8 +101,7 @@ public partial class LandingViewModel : ViewModelBase
                 if (task.Exception != null)
                 {
                     hasError = true;
-                    DefaultExceptionHandler.HandleException("Failed to connect to SMB3 database.", task.Exception,
-                        _systemInteropWrapper);
+                    DefaultExceptionHandler.HandleException(_systemInteropWrapper, "Failed to connect to SMB3 database.", task.Exception);
                 }
 
                 Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);

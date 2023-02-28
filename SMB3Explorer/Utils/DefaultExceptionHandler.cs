@@ -9,8 +9,8 @@ public static class DefaultExceptionHandler
 {
     public const string GithubNewIssueUrl = "https://github.com/tbrittain/SMB3Explorer/issues/new";
 
-    public static void HandleException(string userFriendlyMessage, Exception exception,
-        ISystemInteropWrapper systemInteropWrapper)
+    public static void HandleException(ISystemInteropWrapper systemInteropWrapper, string userFriendlyMessage,
+        Exception exception)
     {
         var initialMessage = $"{userFriendlyMessage} " +
                              "A full stack trace has been copied to your clipboard. " +

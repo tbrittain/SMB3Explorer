@@ -30,7 +30,7 @@ public class DefaultExceptionHandlerTests
             .Returns(userFriendlyMessage);
 
         // Act
-        DefaultExceptionHandler.HandleException(userFriendlyMessage, exception, mockSystemInteropWrapper.Object);
+        DefaultExceptionHandler.HandleException(mockSystemInteropWrapper.Object, userFriendlyMessage, exception);
 
         // Assert
         // Ensure that the user-friendly message is displayed in the message box
@@ -69,7 +69,7 @@ public class DefaultExceptionHandlerTests
             .Returns(It.IsAny<Process>());
 
         // Act
-        DefaultExceptionHandler.HandleException(userFriendlyMessage, exception, mockSystemInteropWrapper.Object);
+        DefaultExceptionHandler.HandleException(mockSystemInteropWrapper.Object, userFriendlyMessage, exception);
 
         // Assert
         mockSystemInteropWrapper.Verify(x => x.ShowMessageBox(
@@ -101,7 +101,7 @@ public class DefaultExceptionHandlerTests
             .Returns(It.IsAny<Process>());
 
         // Act
-        DefaultExceptionHandler.HandleException("Test Message", exception, mockSystemInteropWrapper.Object);
+        DefaultExceptionHandler.HandleException(mockSystemInteropWrapper.Object, "Test Message", exception);
 
         // Assert
         mockSystemInteropWrapper.Verify(

@@ -24,7 +24,7 @@ public static class SafeProcess
         }
         catch (Win32Exception e)
         {
-            DefaultExceptionHandler.HandleException("Failed to start process.", e, systemInteropWrapper);
+            DefaultExceptionHandler.HandleException(systemInteropWrapper, "Failed to start process.", e);
         }
     }
 }
