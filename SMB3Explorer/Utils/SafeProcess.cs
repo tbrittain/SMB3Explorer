@@ -8,19 +8,16 @@ public static class SafeProcess
 {
     public static void Start(string fileName, ISystemInteropWrapper systemInteropWrapper)
     {
-        var process = new Process
+        var startInfo = new ProcessStartInfo
         {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = fileName,
-                UseShellExecute = true,
-                CreateNoWindow = true
-            }
+            FileName = fileName,
+            UseShellExecute = true,
+            CreateNoWindow = true
         };
 
         try
         {
-            process.Start();
+            systemInteropWrapper.StartProcess(startInfo);
         }
         catch (Win32Exception e)
         {
