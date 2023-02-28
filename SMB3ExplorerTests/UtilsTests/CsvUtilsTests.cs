@@ -88,6 +88,35 @@ public class CsvUtilsTests
         mockSystemInteropWrapper
             .Setup(x => x.FileCreate(expectedFilePath))
             .Returns(ValueTask.CompletedTask);
+        
+        mockSystemInteropWrapper
+            .Setup(x => x.CreateStreamWriter(expectedFilePath))
+            .Returns(new StreamWriter(Stream.Null));
+
+        var mockCsvWriterWrapper = new Mock<ICsvWriterWrapper>(MockBehavior.Strict);
+        
+        mockSystemInteropWrapper
+            .Setup(x => x.CreateCsvWriter())
+            .Returns(mockCsvWriterWrapper.Object);
+
+        mockCsvWriterWrapper
+            .Setup(x => x.Initialize(It.IsAny<StreamWriter>()))
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.WriteHeaderAsync<It.IsAnyType>())
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.WriteRecordAsync(It.IsAny<It.IsAnyType>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.DisposeAsync())
+            .Returns(ValueTask.CompletedTask)
+            .Verifiable();
 
         // Act
         var (actualFilePath, _) = await CsvUtils.ExportCsv(mockSystemInteropWrapper.Object, records, "export.csv");
@@ -122,6 +151,35 @@ public class CsvUtilsTests
         mockSystemInteropWrapper
             .Setup(x => x.FileCreate(expectedFilePath))
             .Returns(ValueTask.CompletedTask);
+        
+        mockSystemInteropWrapper
+            .Setup(x => x.CreateStreamWriter(expectedFilePath))
+            .Returns(new StreamWriter(Stream.Null));
+
+        var mockCsvWriterWrapper = new Mock<ICsvWriterWrapper>(MockBehavior.Strict);
+        
+        mockSystemInteropWrapper
+            .Setup(x => x.CreateCsvWriter())
+            .Returns(mockCsvWriterWrapper.Object);
+
+        mockCsvWriterWrapper
+            .Setup(x => x.Initialize(It.IsAny<StreamWriter>()))
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.WriteHeaderAsync<It.IsAnyType>())
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.WriteRecordAsync(It.IsAny<It.IsAnyType>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.DisposeAsync())
+            .Returns(ValueTask.CompletedTask)
+            .Verifiable();
 
         // Act
         var (actualFilePath, rowCount) = await CsvUtils.ExportCsv(mockSystemInteropWrapper.Object, records, "export.csv", 2);
@@ -156,6 +214,35 @@ public class CsvUtilsTests
         mockSystemInteropWrapper
             .Setup(x => x.FileDelete(expectedFilePath))
             .Returns(true)
+            .Verifiable();
+        
+        mockSystemInteropWrapper
+            .Setup(x => x.CreateStreamWriter(expectedFilePath))
+            .Returns(new StreamWriter(Stream.Null));
+
+        var mockCsvWriterWrapper = new Mock<ICsvWriterWrapper>(MockBehavior.Strict);
+        
+        mockSystemInteropWrapper
+            .Setup(x => x.CreateCsvWriter())
+            .Returns(mockCsvWriterWrapper.Object);
+
+        mockCsvWriterWrapper
+            .Setup(x => x.Initialize(It.IsAny<StreamWriter>()))
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.WriteHeaderAsync<It.IsAnyType>())
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.WriteRecordAsync(It.IsAny<It.IsAnyType>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+        
+        mockCsvWriterWrapper
+            .Setup(x => x.DisposeAsync())
+            .Returns(ValueTask.CompletedTask)
             .Verifiable();
 
         // Act
