@@ -28,6 +28,7 @@ public static class CsvUtils
         
         await using var writer = new StreamWriter(filePath);
         await using var csv = systemInteropWrapper.CreateCsvWriter();
+        csv.Initialize(writer);
         
         await csv.WriteHeaderAsync<T>();
 

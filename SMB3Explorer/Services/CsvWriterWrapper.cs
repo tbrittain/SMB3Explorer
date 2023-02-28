@@ -21,11 +21,6 @@ public class CsvWriterWrapper : ICsvWriterWrapper
         await CsvWriter.NextRecordAsync();
     }
 
-    public async Task NextRecordAsync()
-    {
-        await CsvWriter.NextRecordAsync();
-    }
-
     public async Task WriteRecordAsync<T>(T record) where T : notnull
     {
         CsvWriter.WriteRecord(record);
