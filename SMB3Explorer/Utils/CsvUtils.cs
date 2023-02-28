@@ -25,8 +25,8 @@ public static class CsvUtils
         
         if (systemInteropWrapper.FileExists(filePath)) systemInteropWrapper.FileDelete(filePath);
         await systemInteropWrapper.FileCreate(filePath);
-        
-        await using var writer = new StreamWriter(filePath);
+
+        await using var writer = systemInteropWrapper.CreateStreamWriter(filePath);
         await using var csv = systemInteropWrapper.CreateCsvWriter();
         csv.Initialize(writer);
         

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -16,5 +17,6 @@ public interface ISystemInteropWrapper
     ValueTask FileCreate(string path);
     bool DirectoryExists(string path);
     void DirectoryCreate(string path);
+    StreamWriter CreateStreamWriter(string path);
     ICsvWriterWrapper CreateCsvWriter();
 }

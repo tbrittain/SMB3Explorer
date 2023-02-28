@@ -27,6 +27,10 @@ public class CsvUtilsTests
             .Setup(x => x.FileCreate(expectedFilePath))
             .Returns(ValueTask.CompletedTask);
         
+        mockSystemInteropWrapper
+            .Setup(x => x.CreateStreamWriter(expectedFilePath))
+            .Returns(new StreamWriter(Stream.Null));
+
         var mockCsvWriterWrapper = new Mock<ICsvWriterWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper

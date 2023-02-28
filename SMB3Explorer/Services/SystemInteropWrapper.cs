@@ -68,6 +68,11 @@ public class SystemInteropWrapper : ISystemInteropWrapper
         Directory.CreateDirectory(path);
     }
 
+    public StreamWriter CreateStreamWriter(string path)
+    {
+        return new StreamWriter(path);
+    }
+
     public ICsvWriterWrapper CreateCsvWriter()
     {
         using var scope = _serviceProvider.CreateScope();
