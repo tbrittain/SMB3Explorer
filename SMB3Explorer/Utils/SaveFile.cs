@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
+using OneOf;
+using OneOf.Types;
 using SMB3Explorer.Services;
 
 namespace SMB3Explorer.Utils;
@@ -16,22 +17,23 @@ public static class SaveFile
     public static string BaseGameDirectoryPath { get; } = Path.Combine(Environment.GetFolderPath(
             Environment.SpecialFolder.LocalApplicationData), "Metalhead", "Super Mega Baseball 3");
 
-    public static async Task<string> GetSaveFilePath(ISystemInteropWrapper systemInteropWrapper)
+    public static OneOf<string, None> GetSaveFilePath(ISystemInteropWrapper systemInteropWrapper)
     {
-        if (!Directory.Exists(BaseGameDirectoryPath))
+        if (!systemInteropWrapper.DirectoryExists(BaseGameDirectoryPath))
         {
             var result =
                 systemInteropWrapper.ShowMessageBox("Default save file directory does not exist. " +
                                           "Would you like to select a save file directly?",
                     "Default location not found", MessageBoxButton.YesNo);
 
-            if (result == MessageBoxResult.No) return string.Empty;
-            return await GetUserProvidedFile(BaseGameDirectoryPath);
+            if (result == MessageBoxResult.No) return new None();
+            return GetUserProvidedFile(BaseGameDirectoryPath);
         }
 
-        var subdirectories = Directory.GetDirectories(BaseGameDirectoryPath);
+        var subdirectories = systemInteropWrapper.DirectoryGetDirectories(BaseGameDirectoryPath);
 
-        var steamUserDirectories = subdirectories.Where(x =>
+        var steamUserDirectories = subdirectories
+            .Where(x =>
             {
                 var lastBackslashIndex = x.LastIndexOf('\\');
                 var lastPart = x[(lastBackslashIndex + 1)..];
@@ -54,7 +56,7 @@ public static class SaveFile
                 var steamUserDirectory = steamUserDirectories[0];
                 var defaultFilePath = Path.Combine(steamUserDirectory, DefaultSaveFileName);
 
-                if (File.Exists(defaultFilePath)) return defaultFilePath;
+                if (systemInteropWrapper.FileExists(defaultFilePath)) return defaultFilePath;
                 
                 message = "Default file does not exist. " +
                           "Would you like to select a save file directly?";
@@ -71,20 +73,20 @@ public static class SaveFile
         }
 
         var result2 = systemInteropWrapper.ShowMessageBox(message, caption, MessageBoxButton.YesNo);
-        if (result2 == MessageBoxResult.No) return string.Empty;
-        return await GetUserProvidedFile(BaseGameDirectoryPath);
+        if (result2 == MessageBoxResult.No) return new None();
+        return GetUserProvidedFile(BaseGameDirectoryPath);
     }
 
-    public static Task<string> GetUserProvidedFile(string directoryPath, string filter = SaveGameFileFilter)
+    public static OneOf<string, None> GetUserProvidedFile(string directoryPath, string filter = SaveGameFileFilter)
     {
         var openFileDialog = new OpenFileDialog
         {
             Filter = filter,
             InitialDirectory = directoryPath
         };
-
-        return Task.FromResult(openFileDialog.ShowDialog() != true
-            ? string.Empty
-            : openFileDialog.FileName);
+        
+        if (openFileDialog.ShowDialog() != true) return new None();
+        
+        return openFileDialog.FileName;
     }
 }

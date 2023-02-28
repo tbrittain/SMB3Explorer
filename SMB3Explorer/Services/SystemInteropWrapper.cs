@@ -68,6 +68,11 @@ public class SystemInteropWrapper : ISystemInteropWrapper
         Directory.CreateDirectory(path);
     }
 
+    public string[] DirectoryGetDirectories(string path)
+    {
+        return Directory.GetDirectories(path);
+    }
+
     public StreamWriter CreateStreamWriter(string path)
     {
         return new StreamWriter(path);

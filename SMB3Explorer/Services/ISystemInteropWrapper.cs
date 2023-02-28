@@ -17,6 +17,7 @@ public interface ISystemInteropWrapper
     ValueTask FileCreate(string path);
     bool DirectoryExists(string path);
     void DirectoryCreate(string path);
+    string[] DirectoryGetDirectories(string path);
     StreamWriter CreateStreamWriter(string path);
     ICsvWriterWrapper CreateCsvWriter();
 }
