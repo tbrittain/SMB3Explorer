@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
-using SMB3Explorer.Services;
+using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Utils;
 

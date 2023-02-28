@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CsvHelper;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.CsvWriterWrapper;
 
 public class CsvWriterWrapper : ICsvWriterWrapper
 {

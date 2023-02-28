@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.CsvWriterWrapper;
 
 public interface ICsvWriterWrapper : IDisposable, IAsyncDisposable
 {

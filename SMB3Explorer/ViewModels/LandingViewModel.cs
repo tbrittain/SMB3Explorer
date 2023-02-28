@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using OneOf.Types;
-using SMB3Explorer.Services;
+using SMB3Explorer.Services.DataService;
+using SMB3Explorer.Services.NavigationService;
+using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.ViewModels;

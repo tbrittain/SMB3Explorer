@@ -2,8 +2,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using SMB3Explorer.Services.CsvWriterWrapper;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.SystemInteropWrapper;
 
 public interface ISystemInteropWrapper
 {

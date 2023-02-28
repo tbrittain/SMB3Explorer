@@ -1,7 +1,6 @@
-﻿using System;
-using SMB3Explorer.ViewModels;
+﻿using SMB3Explorer.ViewModels;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.NavigationService;
 
 public interface INavigationService
 {

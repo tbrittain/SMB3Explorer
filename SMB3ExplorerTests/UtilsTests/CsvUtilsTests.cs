@@ -1,5 +1,6 @@
 ﻿using Moq;
-using SMB3Explorer.Services;
+using SMB3Explorer.Services.CsvWriterWrapper;
+using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
 
 namespace SMB3ExplorerTests.UtilsTests;
