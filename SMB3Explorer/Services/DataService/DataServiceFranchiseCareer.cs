@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using AutoMapper;
 using Microsoft.Data.Sqlite;
 using SMB3Explorer.Models;
+using SMB3Explorer.Models.Mappings;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Services.DataService;
@@ -21,58 +23,19 @@ public partial class DataService
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
         });
+        
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<CareerBattingStatisticMapper>();
+        });
+        
+        var mapper = new Mapper(config);
 
         var reader = await command.ExecuteReaderAsync();
 
         while (reader.Read())
         {
-            var positionPlayer = new CareerBattingStatistic();
-
-            positionPlayer.AggregatorId = int.Parse(reader["aggregatorID"].ToString()!);
-            positionPlayer.StatsPlayerId = int.Parse(reader["statsPlayerID"].ToString()!);
-            positionPlayer.PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid();
-            positionPlayer.CurrentTeam = reader["currentTeamName"].ToString()!;
-            positionPlayer.MostRecentTeam = reader["mostRecentTeamName"].ToString()!;
-            positionPlayer.SecondMostRecentTeam = reader["secondMostRecentTeamName"].ToString()!;
-            positionPlayer.FirstName = reader["firstName"].ToString()!;
-            positionPlayer.LastName = reader["lastName"].ToString()!;
-
-            positionPlayer.RetirementSeason = string.IsNullOrEmpty(reader["retirementSeason"].ToString())
-                ? null
-                : int.Parse(reader["retirementSeason"].ToString()!);
-
-            positionPlayer.RetirementAge = string.IsNullOrEmpty(reader["age"].ToString())
-                ? null
-                : int.Parse(reader["age"].ToString()!);
-
-            positionPlayer.PrimaryPositionNumber = int.Parse(reader["primaryPosition"].ToString()!);
-            positionPlayer.SecondaryPositionNumber = string.IsNullOrEmpty(reader["secondaryPosition"].ToString())
-                ? null
-                : int.Parse(reader["secondaryPosition"].ToString()!);
-
-            positionPlayer.PitcherRole = string.IsNullOrEmpty(reader["pitcherRole"].ToString())
-                ? null
-                : int.Parse(reader["pitcherRole"].ToString()!);
-
-            positionPlayer.GamesPlayed = int.Parse(reader["gamesPlayed"].ToString()!);
-            positionPlayer.GamesBatting = int.Parse(reader["gamesBatting"].ToString()!);
-            positionPlayer.AtBats = int.Parse(reader["atBats"].ToString()!);
-            positionPlayer.Runs = int.Parse(reader["runs"].ToString()!);
-            positionPlayer.Hits = int.Parse(reader["hits"].ToString()!);
-            positionPlayer.Doubles = int.Parse(reader["doubles"].ToString()!);
-            positionPlayer.Triples = int.Parse(reader["triples"].ToString()!);
-            positionPlayer.HomeRuns = int.Parse(reader["homeruns"].ToString()!);
-            positionPlayer.RunsBattedIn = int.Parse(reader["rbi"].ToString()!);
-            positionPlayer.StolenBases = int.Parse(reader["stolenBases"].ToString()!);
-            positionPlayer.CaughtStealing = int.Parse(reader["caughtStealing"].ToString()!);
-            positionPlayer.Walks = int.Parse(reader["baseOnBalls"].ToString()!);
-            positionPlayer.Strikeouts = int.Parse(reader["strikeOuts"].ToString()!);
-            positionPlayer.HitByPitch = int.Parse(reader["hitByPitch"].ToString()!);
-            positionPlayer.SacrificeHits = int.Parse(reader["sacrificeHits"].ToString()!);
-            positionPlayer.SacrificeFlies = int.Parse(reader["sacrificeFlies"].ToString()!);
-            positionPlayer.Errors = int.Parse(reader["errors"].ToString()!);
-            positionPlayer.PassedBalls = int.Parse(reader["passedBalls"].ToString()!);
-
+            var positionPlayer = mapper.Map<CareerBattingStatistic>(reader);
             yield return positionPlayer;
         }
     }
