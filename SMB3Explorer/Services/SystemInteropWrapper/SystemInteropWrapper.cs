@@ -10,11 +10,11 @@ namespace SMB3Explorer.Services.SystemInteropWrapper;
 
 public class SystemInteropWrapper : ISystemInteropWrapper
 {
-    private readonly IServiceScopeFactory  _serviceScopeFactory;
+    private readonly IServiceProvider  _serviceProvider;
     
-    public SystemInteropWrapper(IServiceScopeFactory  serviceProvider)
+    public SystemInteropWrapper(IServiceProvider  serviceProvider)
     {
-        _serviceScopeFactory = serviceProvider;
+        _serviceProvider = serviceProvider;
     }
     
     public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
@@ -81,8 +81,9 @@ public class SystemInteropWrapper : ISystemInteropWrapper
 
     public ICsvWriterWrapper CreateCsvWriter()
     {
-        using var scope = _serviceScopeFactory.CreateScope();
+        var scope = _serviceProvider.CreateScope();
         var csvWriterWrapper = scope.ServiceProvider.GetRequiredService<ICsvWriterWrapper>();
+        csvWriterWrapper.Scope = scope;
         return csvWriterWrapper;
     }
 }

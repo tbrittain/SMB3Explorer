@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using SMB3Explorer.Services.CsvWriterWrapper;
 using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Utils;
@@ -26,13 +28,13 @@ public static class CsvUtils
         if (systemInteropWrapper.FileExists(filePath)) systemInteropWrapper.FileDelete(filePath);
         await systemInteropWrapper.FileCreate(filePath);
 
+        var rowCount = 1;
         await using var writer = systemInteropWrapper.CreateStreamWriter(filePath);
         await using var csv = systemInteropWrapper.CreateCsvWriter();
         csv.Initialize(writer);
-        
+
         await csv.WriteHeaderAsync<T>();
 
-        var rowCount = 1;
         var enumerator = records.GetAsyncEnumerator();
         while (await enumerator.MoveNextAsync())
         {
@@ -42,6 +44,7 @@ public static class CsvUtils
             {
                 break;
             }
+
             rowCount++;
         }
 

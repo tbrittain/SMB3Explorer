@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using CsvHelper;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SMB3Explorer.Services.CsvWriterWrapper;
 
@@ -27,9 +28,19 @@ public class CsvWriterWrapper : ICsvWriterWrapper
         await CsvWriter.NextRecordAsync();
     }
 
+    public IServiceScope Scope { private get; set; } = null!;
+
     public async ValueTask DisposeAsync()
     {
+        Scope.Dispose();
         await CsvWriter.DisposeAsync();
+        GC.SuppressFinalize(this);
+    }
+
+    public void Dispose()
+    {
+        Scope.Dispose();
+        CsvWriter.Dispose();
         GC.SuppressFinalize(this);
     }
 }
