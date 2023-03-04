@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SMB3Explorer.Models;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.DataService;
 
 public interface IDataService
 {

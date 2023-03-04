@@ -6,8 +6,7 @@ using Ionic.Zlib;
 using Microsoft.Data.Sqlite;
 using SMB3Explorer.Utils;
 
-// ReSharper disable once CheckNamespace
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.DataService;
 
 public partial class DataService
 {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using SMB3Explorer.Services;
+using SMB3Explorer.Services.NavigationService;
 
 namespace SMB3Explorer.ViewModels;
 

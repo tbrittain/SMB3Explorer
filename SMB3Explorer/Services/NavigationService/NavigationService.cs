@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using SMB3Explorer.ViewModels;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.NavigationService;
 
 public sealed class NavigationService : INavigationService, INotifyPropertyChanged
 {

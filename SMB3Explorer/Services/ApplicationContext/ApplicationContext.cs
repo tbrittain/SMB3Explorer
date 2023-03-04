@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using SMB3Explorer.Models;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.ApplicationContext;
 
 public sealed class ApplicationContext : IApplicationContext, INotifyPropertyChanged
 {

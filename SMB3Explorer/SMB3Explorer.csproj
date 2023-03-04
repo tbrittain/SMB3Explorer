@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <IsPackable>false</IsPackable>
-        <Version>1.0.1</Version>
+        <Version>1.1.0</Version>
         <Title>SMB3 Explorer</Title>
         <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
         <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
@@ -20,6 +20,7 @@
       <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+      <PackageReference Include="OneOf" Version="3.0.223" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,7 +1,6 @@
-﻿using System;
-using SMB3Explorer.Models;
+﻿using SMB3Explorer.Models;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.ApplicationContext;
 
 public interface IApplicationContext
 {

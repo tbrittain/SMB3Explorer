@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.Data.Sqlite;
+using SMB3Explorer.Services.ApplicationContext;
 
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.DataService;
 
 public sealed partial class DataService : INotifyPropertyChanged, IDataService
 {
