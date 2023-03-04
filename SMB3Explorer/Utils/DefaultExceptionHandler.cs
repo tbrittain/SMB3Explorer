@@ -16,6 +16,11 @@ public static class DefaultExceptionHandler
                              "A full stack trace has been copied to your clipboard. " +
                              "Press OK to report this issue on GitHub.";
 
+        if (exception.InnerException is not null)
+        {
+            exception = exception.InnerException;
+        }
+
         var formattedMessage = $"{initialMessage}{Environment.NewLine}{exception.Message}";
 
         var openBrowser = systemInteropWrapper.ShowMessageBox(formattedMessage,
