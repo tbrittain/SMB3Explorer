@@ -45,8 +45,6 @@ public static class CsvUtils
             rowCount++;
         }
 
-        await writer.FlushAsync();
-
         return (filePath, rowCount);
     }
 }

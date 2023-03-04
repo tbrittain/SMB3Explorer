@@ -27,16 +27,9 @@ public class CsvWriterWrapper : ICsvWriterWrapper
         await CsvWriter.NextRecordAsync();
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        CsvWriter.Dispose();
+        await CsvWriter.DisposeAsync();
         GC.SuppressFinalize(this);
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        CsvWriter.Dispose();
-        GC.SuppressFinalize(this);
-        return default;
     }
 }

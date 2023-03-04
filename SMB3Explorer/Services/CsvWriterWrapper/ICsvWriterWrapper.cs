@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace SMB3Explorer.Services.CsvWriterWrapper;
 
-public interface ICsvWriterWrapper : IDisposable, IAsyncDisposable
+public interface ICsvWriterWrapper : IAsyncDisposable
 {
     void Initialize(StreamWriter writer);
     Task WriteHeaderAsync<T>() where T : notnull;

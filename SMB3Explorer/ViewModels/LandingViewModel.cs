@@ -82,7 +82,7 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        var hasError = await EstablishDbConnection(filePath);
+        var hasError = await EstablishDbConnection(filePath, false);
         HandleDatabaseConnection(hasError);
     }
 
