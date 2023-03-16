@@ -11,7 +11,7 @@ namespace SMB3Explorer.Utils;
 
 public static class SaveFile
 {
-    private const string DefaultSaveFileName = "savedata.sav";
+    public const string DefaultSaveFileName = "savedata.sav";
     private const string SaveGameFileFilter = "Save files (*.sav)|*.sav";
 
     public static string BaseGameDirectoryPath { get; } = Path.Combine(Environment.GetFolderPath(
