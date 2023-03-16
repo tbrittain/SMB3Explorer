@@ -86,7 +86,7 @@ public static class SaveFile
             InitialDirectory = directoryPath
         };
 
-        if (systemInteropWrapper.ShowOpenFileDialog(openFileDialog) != true) return new None();
+        if (systemInteropWrapper.ShowOpenFileDialog(openFileDialog) is not true) return new None();
 
         return openFileDialog.FileName;
     }
