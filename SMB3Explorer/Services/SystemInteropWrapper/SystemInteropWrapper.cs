@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using SMB3Explorer.Services.CsvWriterWrapper;
 
 namespace SMB3Explorer.Services.SystemInteropWrapper;
@@ -85,5 +86,10 @@ public class SystemInteropWrapper : ISystemInteropWrapper
         var csvWriterWrapper = scope.ServiceProvider.GetRequiredService<ICsvWriterWrapper>();
         csvWriterWrapper.Scope = scope;
         return csvWriterWrapper;
+    }
+
+    public bool ShowOpenFileDialog(OpenFileDialog openFileDialog)
+    {
+        return openFileDialog.ShowDialog() == true;
     }
 }
