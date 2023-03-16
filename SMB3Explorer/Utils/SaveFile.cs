@@ -11,7 +11,7 @@ namespace SMB3Explorer.Utils;
 
 public static class SaveFile
 {
-    private const string DefaultSaveFileName = "savedata.sav";
+    public const string DefaultSaveFileName = "savedata.sav";
     private const string SaveGameFileFilter = "Save files (*.sav)|*.sav";
 
     public static string BaseGameDirectoryPath { get; } = Path.Combine(Environment.GetFolderPath(
@@ -27,7 +27,7 @@ public static class SaveFile
                     "Default location not found", MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.No) return new None();
-            return GetUserProvidedFile(BaseGameDirectoryPath);
+            return GetUserProvidedFile(BaseGameDirectoryPath, systemInteropWrapper);
         }
 
         var subdirectories = systemInteropWrapper.DirectoryGetDirectories(BaseGameDirectoryPath);
@@ -74,19 +74,20 @@ public static class SaveFile
 
         var result2 = systemInteropWrapper.ShowMessageBox(message, caption, MessageBoxButton.YesNo);
         if (result2 == MessageBoxResult.No) return new None();
-        return GetUserProvidedFile(BaseGameDirectoryPath);
+        return GetUserProvidedFile(BaseGameDirectoryPath, systemInteropWrapper);
     }
 
-    public static OneOf<string, None> GetUserProvidedFile(string directoryPath, string filter = SaveGameFileFilter)
+    public static OneOf<string, None> GetUserProvidedFile(string directoryPath,
+        ISystemInteropWrapper systemInteropWrapper, string filter = SaveGameFileFilter)
     {
         var openFileDialog = new OpenFileDialog
         {
             Filter = filter,
             InitialDirectory = directoryPath
         };
-        
-        if (openFileDialog.ShowDialog() != true) return new None();
-        
+
+        if (systemInteropWrapper.ShowOpenFileDialog(openFileDialog) is not true) return new None();
+
         return openFileDialog.FileName;
     }
 }

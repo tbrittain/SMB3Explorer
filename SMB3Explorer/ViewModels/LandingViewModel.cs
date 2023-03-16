@@ -57,8 +57,9 @@ public partial class LandingViewModel : ViewModelBase
     private async Task ManuallySelectSaveFile()
     {
         Mouse.OverrideCursor = Cursors.Wait;
-        
-        var filePathResult = SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString());
+
+        var filePathResult =
+            SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), _systemInteropWrapper);
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
             Mouse.OverrideCursor = Cursors.Arrow;
@@ -73,8 +74,9 @@ public partial class LandingViewModel : ViewModelBase
     private async Task UseExistingDatabase()
     {
         Mouse.OverrideCursor = Cursors.Wait;
-        
+
         var filePathResult = SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(),
+            _systemInteropWrapper,
             "SQLite databases (*.db, *.sqlite)|*.db;*.sqlite");
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {

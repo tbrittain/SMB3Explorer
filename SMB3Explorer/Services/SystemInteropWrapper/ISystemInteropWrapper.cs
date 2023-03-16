@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using SMB3Explorer.Services.CsvWriterWrapper;
 
 namespace SMB3Explorer.Services.SystemInteropWrapper;
@@ -22,4 +22,5 @@ public interface ISystemInteropWrapper
     string[] DirectoryGetDirectories(string path);
     StreamWriter CreateStreamWriter(string path);
     ICsvWriterWrapper CreateCsvWriter();
+    bool ShowOpenFileDialog(OpenFileDialog openFileDialog);
 }
