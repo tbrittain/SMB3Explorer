@@ -14,7 +14,7 @@ public class CsvUtilsTests
         var expectedFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer", "export.csv");
         var records = new List<Foo> { new Foo { Id = 1, Name = "Bar" } }.ToAsyncEnumerable();
         
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
@@ -72,7 +72,7 @@ public class CsvUtilsTests
         var expectedFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer", "export.csv");
         var records = new List<Foo> { new Foo { Id = 1, Name = "Bar" } }.ToAsyncEnumerable();
 
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
@@ -139,7 +139,7 @@ public class CsvUtilsTests
             new Foo { Id = 3, Name = "Qux" }
         }.ToAsyncEnumerable();
 
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
@@ -198,7 +198,7 @@ public class CsvUtilsTests
         var expectedFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer", "export.csv");
         var records = new List<Foo> { new Foo { Id = 1, Name = "Bar" } }.ToAsyncEnumerable();
 
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))

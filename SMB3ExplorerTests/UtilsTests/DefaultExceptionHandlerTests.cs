@@ -15,7 +15,7 @@ public class DefaultExceptionHandlerTests
         const string userFriendlyMessage = "An error has occurred.";
         var exception = new Exception("Test exception");
 
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper.Setup(m => m.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<MessageBoxButton>(), It.IsAny<MessageBoxImage>()))
@@ -56,7 +56,7 @@ public class DefaultExceptionHandlerTests
             exception = e;
         }
 
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper.Setup(x => x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<MessageBoxButton>(),
@@ -88,7 +88,7 @@ public class DefaultExceptionHandlerTests
         // Arrange
         var exception = new Exception("Test Exception");
         
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
         mockSystemInteropWrapper.Setup(x => x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<MessageBoxButton>(),

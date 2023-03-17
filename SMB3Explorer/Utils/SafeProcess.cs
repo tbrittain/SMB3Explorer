@@ -6,7 +6,7 @@ namespace SMB3Explorer.Utils;
 
 public static class SafeProcess
 {
-    public static void Start(string fileName, ISystemInteropWrapper systemInteropWrapper)
+    public static void Start(string fileName, ISystemIoWrapper systemIoWrapper)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -17,11 +17,11 @@ public static class SafeProcess
 
         try
         {
-            systemInteropWrapper.StartProcess(startInfo);
+            systemIoWrapper.StartProcess(startInfo);
         }
         catch (Win32Exception e)
         {
-            DefaultExceptionHandler.HandleException(systemInteropWrapper, "Failed to start process.", e);
+            DefaultExceptionHandler.HandleException(systemIoWrapper, "Failed to start process.", e);
         }
     }
 }

@@ -14,12 +14,12 @@ public partial class LandingViewModel : ViewModelBase
 {
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
-    private readonly ISystemInteropWrapper _systemInteropWrapper;
+    private readonly ISystemIoWrapper _systemIoWrapper;
 
-    public LandingViewModel(IDataService dataService, INavigationService navigationService, ISystemInteropWrapper systemInteropWrapper)
+    public LandingViewModel(IDataService dataService, INavigationService navigationService, ISystemIoWrapper systemIoWrapper)
     {
         _navigationService = navigationService;
-        _systemInteropWrapper = systemInteropWrapper;
+        _systemIoWrapper = systemIoWrapper;
         _dataService = dataService;
 
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
@@ -42,7 +42,7 @@ public partial class LandingViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
-        var filePathResult =  SaveFile.GetSaveFilePath(_systemInteropWrapper);
+        var filePathResult =  SaveFile.GetSaveFilePath(_systemIoWrapper);
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
             Mouse.OverrideCursor = Cursors.Arrow;
@@ -59,7 +59,7 @@ public partial class LandingViewModel : ViewModelBase
         Mouse.OverrideCursor = Cursors.Wait;
 
         var filePathResult =
-            SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), _systemInteropWrapper);
+            SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), _systemIoWrapper);
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
             Mouse.OverrideCursor = Cursors.Arrow;
@@ -76,7 +76,7 @@ public partial class LandingViewModel : ViewModelBase
         Mouse.OverrideCursor = Cursors.Wait;
 
         var filePathResult = SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(),
-            _systemInteropWrapper,
+            _systemIoWrapper,
             "SQLite databases (*.db, *.sqlite)|*.db;*.sqlite");
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
@@ -106,7 +106,7 @@ public partial class LandingViewModel : ViewModelBase
                 if (task.Exception != null)
                 {
                     hasError = true;
-                    DefaultExceptionHandler.HandleException(_systemInteropWrapper, "Failed to connect to SMB3 database.", task.Exception);
+                    DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to connect to SMB3 database.", task.Exception);
                 }
 
                 Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);

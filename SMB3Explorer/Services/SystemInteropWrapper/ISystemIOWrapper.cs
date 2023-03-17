@@ -7,7 +7,7 @@ using SMB3Explorer.Services.CsvWriterWrapper;
 
 namespace SMB3Explorer.Services.SystemInteropWrapper;
 
-public interface ISystemInteropWrapper
+public interface ISystemIoWrapper
 {
     MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon);
     MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button);

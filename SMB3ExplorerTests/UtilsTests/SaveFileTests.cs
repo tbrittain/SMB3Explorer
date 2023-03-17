@@ -12,7 +12,7 @@ public class SaveFileTests
     public void GetUserProvidedFile_ReturnsFilePath()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
@@ -31,7 +31,7 @@ public class SaveFileTests
     public void GetUserProvidedFile_ReturnsNone()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
@@ -50,7 +50,7 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsAutomaticallyDetectedFilePath()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
@@ -82,7 +82,7 @@ public class SaveFileTests
     public void GetSaveFilePath_PromptsUserSelection_WhenDefaultDirectoryDoesNotExist()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
@@ -108,7 +108,7 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsNone_WhenDefaultDirectoryDoesNotExistAndUserCancels()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
@@ -131,7 +131,7 @@ public class SaveFileTests
     public void GetSaveFilePath_PromptsUserSelection_WhenDefaultDirectoryExistsButNoSaveFileExists()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
@@ -170,7 +170,7 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsNone_WhenDefaultDirectoryExistsButNoSaveFileExistsAndUserCancels()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
@@ -206,7 +206,7 @@ public class SaveFileTests
     public void GetSaveFilePath_PromptsUserSelection_WhenDefaultDirectoryExistsButNoSteamDirectoryExists()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
@@ -236,7 +236,7 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsNone_WhenDefaultDirectoryExistsButNoSteamDirectoryExistsAndUserCancels()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
@@ -263,7 +263,7 @@ public class SaveFileTests
     public void GetSaveFilePath_PromptsUserSelection_WhenDefaultDirectoryExistsAndMultipleSteamDirectoriesExist()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
@@ -310,7 +310,7 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsNone_WhenDefaultDirectoryExistsAndMultipleSteamDirectoriesExistAndUserCancels()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemInteropWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))

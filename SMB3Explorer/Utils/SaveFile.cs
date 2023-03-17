@@ -17,20 +17,20 @@ public static class SaveFile
     public static string BaseGameDirectoryPath { get; } = Path.Combine(Environment.GetFolderPath(
             Environment.SpecialFolder.LocalApplicationData), "Metalhead", "Super Mega Baseball 3");
 
-    public static OneOf<string, None> GetSaveFilePath(ISystemInteropWrapper systemInteropWrapper)
+    public static OneOf<string, None> GetSaveFilePath(ISystemIoWrapper systemIoWrapper)
     {
-        if (!systemInteropWrapper.DirectoryExists(BaseGameDirectoryPath))
+        if (!systemIoWrapper.DirectoryExists(BaseGameDirectoryPath))
         {
             var result =
-                systemInteropWrapper.ShowMessageBox("Default save file directory does not exist. " +
+                systemIoWrapper.ShowMessageBox("Default save file directory does not exist. " +
                                           "Would you like to select a save file directly?",
                     "Default location not found", MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.No) return new None();
-            return GetUserProvidedFile(BaseGameDirectoryPath, systemInteropWrapper);
+            return GetUserProvidedFile(BaseGameDirectoryPath, systemIoWrapper);
         }
 
-        var subdirectories = systemInteropWrapper.DirectoryGetDirectories(BaseGameDirectoryPath);
+        var subdirectories = systemIoWrapper.DirectoryGetDirectories(BaseGameDirectoryPath);
 
         var steamUserDirectories = subdirectories
             .Where(x =>
@@ -56,7 +56,7 @@ public static class SaveFile
                 var steamUserDirectory = steamUserDirectories[0];
                 var defaultFilePath = Path.Combine(steamUserDirectory, DefaultSaveFileName);
 
-                if (systemInteropWrapper.FileExists(defaultFilePath)) return defaultFilePath;
+                if (systemIoWrapper.FileExists(defaultFilePath)) return defaultFilePath;
                 
                 message = "Default file does not exist. " +
                           "Would you like to select a save file directly?";
@@ -72,13 +72,13 @@ public static class SaveFile
             }
         }
 
-        var result2 = systemInteropWrapper.ShowMessageBox(message, caption, MessageBoxButton.YesNo);
+        var result2 = systemIoWrapper.ShowMessageBox(message, caption, MessageBoxButton.YesNo);
         if (result2 == MessageBoxResult.No) return new None();
-        return GetUserProvidedFile(BaseGameDirectoryPath, systemInteropWrapper);
+        return GetUserProvidedFile(BaseGameDirectoryPath, systemIoWrapper);
     }
 
     public static OneOf<string, None> GetUserProvidedFile(string directoryPath,
-        ISystemInteropWrapper systemInteropWrapper, string filter = SaveGameFileFilter)
+        ISystemIoWrapper systemIoWrapper, string filter = SaveGameFileFilter)
     {
         var openFileDialog = new OpenFileDialog
         {
@@ -86,7 +86,7 @@ public static class SaveFile
             InitialDirectory = directoryPath
         };
 
-        if (systemInteropWrapper.ShowOpenFileDialog(openFileDialog) is not true) return new None();
+        if (systemIoWrapper.ShowOpenFileDialog(openFileDialog) is not true) return new None();
 
         return openFileDialog.FileName;
     }

@@ -9,11 +9,11 @@ using SMB3Explorer.Services.CsvWriterWrapper;
 
 namespace SMB3Explorer.Services.SystemInteropWrapper;
 
-public class SystemInteropWrapper : ISystemInteropWrapper
+public class SystemIoWrapper : ISystemIoWrapper
 {
     private readonly IServiceProvider  _serviceProvider;
     
-    public SystemInteropWrapper(IServiceProvider  serviceProvider)
+    public SystemIoWrapper(IServiceProvider  serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
