@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using Ionic.Zlib;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using SMB3Explorer.Services.CsvWriterWrapper;
@@ -58,6 +59,21 @@ public class SystemIoWrapper : ISystemIoWrapper
     public async ValueTask FileCreate(string path)
     {
         await File.Create(path).DisposeAsync();
+    }
+
+    public FileStream FileCreateStream(string path)
+    {
+        return File.Create(path);
+    }
+
+    public FileStream? FileOpenRead(string path)
+    {
+        return File.OpenRead(path);
+    }
+
+    public ZlibStream GetZlibDecompressionStream(Stream stream)
+    {
+        return new ZlibStream(stream, CompressionMode.Decompress);
     }
 
     public bool DirectoryExists(string path)
