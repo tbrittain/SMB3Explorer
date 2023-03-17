@@ -4,13 +4,14 @@ using System.IO;
 using System.Threading.Tasks;
 using Ionic.Zlib;
 using Microsoft.Data.Sqlite;
+using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Services.DataService;
 
 public partial class DataService
 {
-    public async Task<string> DecompressSaveGame(string filePath)
+    public async Task<string> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper)
     {
         // TODO: Need to move these to ISystemInteropWrapper
         await using var compressedStream = File.OpenRead(filePath);
@@ -43,7 +44,7 @@ public partial class DataService
         var decompressedFilePath = filePath;
         if (isCompressedSaveGame)
         {
-            decompressedFilePath = await DecompressSaveGame(filePath);
+            decompressedFilePath = await DecompressSaveGame(filePath, _systemIoWrapper);
         }
         else
         {

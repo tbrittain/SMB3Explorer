@@ -11,15 +11,19 @@ public interface ISystemIoWrapper
 {
     MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon);
     MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button);
+    
     void SetClipboardText(string text);
     string MessageBoxText { get; }
     Process? StartProcess(ProcessStartInfo startInfo);
+    
     bool FileExists(string path);
     bool FileDelete(string path);
     ValueTask FileCreate(string path);
+
     bool DirectoryExists(string path);
     void DirectoryCreate(string path);
     string[] DirectoryGetDirectories(string path);
+    
     StreamWriter CreateStreamWriter(string path);
     ICsvWriterWrapper CreateCsvWriter();
     bool ShowOpenFileDialog(OpenFileDialog openFileDialog);

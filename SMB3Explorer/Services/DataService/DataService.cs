@@ -4,19 +4,22 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.Data.Sqlite;
 using SMB3Explorer.Services.ApplicationContext;
+using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Services.DataService;
 
 public sealed partial class DataService : INotifyPropertyChanged, IDataService
 {
     private readonly IApplicationContext _applicationContext;
+    private readonly ISystemIoWrapper _systemIoWrapper;
 
     private SqliteConnection? _connection;
     private string _currentFilePath = string.Empty;
 
-    public DataService(IApplicationContext applicationContext)
+    public DataService(IApplicationContext applicationContext, ISystemIoWrapper systemIoWrapper)
     {
         _applicationContext = applicationContext;
+        _systemIoWrapper = systemIoWrapper;
     }
 
     private SqliteConnection? Connection
