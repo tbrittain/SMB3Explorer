@@ -55,6 +55,9 @@ public partial class HomeViewModel : ViewModelBase
             ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
             ExportFranchiseSeasonPitchingStatisticsCommand.NotifyCanExecuteChanged();
             ExportFranchiseSeasonPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
+            
+            ExportFranchiseTeamSeasonStandingsCommand.NotifyCanExecuteChanged();
+            ExportFranchiseTeamPlayoffStandingsCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -213,6 +216,46 @@ public partial class HomeViewModel : ViewModelBase
 
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
 
+        Mouse.OverrideCursor = Cursors.Arrow;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportFranchiseTeamSeasonStandings()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var teamsEnumerable = _dataService.GetFranchiseSeasonStandings();
+        
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_standings_" +
+                       $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, teamsEnumerable, fileName);
+        
+        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+        
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
+        
+        Mouse.OverrideCursor = Cursors.Arrow;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportFranchiseTeamPlayoffStandings()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var teamsEnumerable = _dataService.GetFranchisePlayoffStandings();
+        
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_playoff_standings_" +
+                       $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, teamsEnumerable, fileName);
+        
+        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+        
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
+        
         Mouse.OverrideCursor = Cursors.Arrow;
     }
     
