@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
-using OneOf;
-using OneOf.Types;
 using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
 

@@ -45,6 +45,7 @@ public partial class LandingViewModel : ViewModelBase
         var filePathResult =  SaveFile.GetSaveFilePath(_systemIoWrapper);
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
+            // TODO: Handle error
             Mouse.OverrideCursor = Cursors.Arrow;
             return;
         }
@@ -62,6 +63,7 @@ public partial class LandingViewModel : ViewModelBase
             SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), _systemIoWrapper);
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
+            // TODO: Handle error
             Mouse.OverrideCursor = Cursors.Arrow;
             return;
         }
@@ -80,6 +82,7 @@ public partial class LandingViewModel : ViewModelBase
             "SQLite databases (*.db, *.sqlite)|*.db;*.sqlite");
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
+            // TODO: Handle error
             Mouse.OverrideCursor = Cursors.Arrow;
             return;
         }

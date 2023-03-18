@@ -14,27 +14,27 @@ public class CsvUtilsTests
         var expectedFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer", "export.csv");
         var records = new List<Foo> { new Foo { Id = 1, Name = "Bar" } }.ToAsyncEnumerable();
         
-        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
             .Returns(true);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(expectedFilePath))
             .Returns(false);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileCreate(expectedFilePath))
             .Returns(ValueTask.CompletedTask);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.CreateStreamWriter(expectedFilePath))
             .Returns(new StreamWriter(Stream.Null));
 
         var mockCsvWriterWrapper = new Mock<ICsvWriterWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.CreateCsvWriter())
             .Returns(mockCsvWriterWrapper.Object);
 
@@ -58,11 +58,11 @@ public class CsvUtilsTests
             .Verifiable();
 
         // Act
-        var (actualFilePath, _) = await CsvUtils.ExportCsv(mockSystemInteropWrapper.Object, records, "export.csv");
+        var (actualFilePath, _) = await CsvUtils.ExportCsv(mockSystemIoWrapper.Object, records, "export.csv");
 
         // Assert
         actualFilePath.Should().Be(expectedFilePath);
-        mockSystemInteropWrapper.VerifyAll();
+        mockSystemIoWrapper.VerifyAll();
     }
     
     [Fact]
@@ -72,31 +72,31 @@ public class CsvUtilsTests
         var expectedFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer", "export.csv");
         var records = new List<Foo> { new Foo { Id = 1, Name = "Bar" } }.ToAsyncEnumerable();
 
-        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
             .Returns(false);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryCreate(CsvUtils.DefaultDirectory))
             .Verifiable();
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(expectedFilePath))
             .Returns(false);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileCreate(expectedFilePath))
             .Returns(ValueTask.CompletedTask);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.CreateStreamWriter(expectedFilePath))
             .Returns(new StreamWriter(Stream.Null));
 
         var mockCsvWriterWrapper = new Mock<ICsvWriterWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.CreateCsvWriter())
             .Returns(mockCsvWriterWrapper.Object);
 
@@ -120,11 +120,11 @@ public class CsvUtilsTests
             .Verifiable();
 
         // Act
-        var (actualFilePath, _) = await CsvUtils.ExportCsv(mockSystemInteropWrapper.Object, records, "export.csv");
+        var (actualFilePath, _) = await CsvUtils.ExportCsv(mockSystemIoWrapper.Object, records, "export.csv");
 
         // Assert
         actualFilePath.Should().Be(expectedFilePath);
-        mockSystemInteropWrapper.VerifyAll();
+        mockSystemIoWrapper.VerifyAll();
     }
     
     [Fact]
@@ -139,27 +139,27 @@ public class CsvUtilsTests
             new Foo { Id = 3, Name = "Qux" }
         }.ToAsyncEnumerable();
 
-        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
             .Returns(true);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(expectedFilePath))
             .Returns(false);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileCreate(expectedFilePath))
             .Returns(ValueTask.CompletedTask);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.CreateStreamWriter(expectedFilePath))
             .Returns(new StreamWriter(Stream.Null));
 
         var mockCsvWriterWrapper = new Mock<ICsvWriterWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.CreateCsvWriter())
             .Returns(mockCsvWriterWrapper.Object);
 
@@ -183,12 +183,12 @@ public class CsvUtilsTests
             .Verifiable();
 
         // Act
-        var (actualFilePath, rowCount) = await CsvUtils.ExportCsv(mockSystemInteropWrapper.Object, records, "export.csv", 2);
+        var (actualFilePath, rowCount) = await CsvUtils.ExportCsv(mockSystemIoWrapper.Object, records, "export.csv", 2);
 
         // Assert
         actualFilePath.Should().Be(expectedFilePath);
         rowCount.Should().Be(2);
-        mockSystemInteropWrapper.VerifyAll();
+        mockSystemIoWrapper.VerifyAll();
     }
     
     [Fact]
@@ -198,32 +198,32 @@ public class CsvUtilsTests
         var expectedFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer", "export.csv");
         var records = new List<Foo> { new Foo { Id = 1, Name = "Bar" } }.ToAsyncEnumerable();
 
-        var mockSystemInteropWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
             .Returns(true);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(expectedFilePath))
             .Returns(true);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileCreate(expectedFilePath))
             .Returns(ValueTask.CompletedTask);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileDelete(expectedFilePath))
             .Returns(true)
             .Verifiable();
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.CreateStreamWriter(expectedFilePath))
             .Returns(new StreamWriter(Stream.Null));
 
         var mockCsvWriterWrapper = new Mock<ICsvWriterWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.CreateCsvWriter())
             .Returns(mockCsvWriterWrapper.Object);
 
@@ -247,11 +247,11 @@ public class CsvUtilsTests
             .Verifiable();
 
         // Act
-        var (actualFilePath, _) = await CsvUtils.ExportCsv(mockSystemInteropWrapper.Object, records, "export.csv");
+        var (actualFilePath, _) = await CsvUtils.ExportCsv(mockSystemIoWrapper.Object, records, "export.csv");
 
         // Assert
         actualFilePath.Should().Be(expectedFilePath);
-        mockSystemInteropWrapper.VerifyAll();
+        mockSystemIoWrapper.VerifyAll();
     }
 
     private class Foo
