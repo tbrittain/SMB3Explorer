@@ -23,6 +23,11 @@
                 <ColumnDefinition Width="2*" MinWidth="200" />
             </Grid.ColumnDefinitions>
 
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
             <DockPanel IsEnabled="{Binding InteractionEnabled}">
                 <StackPanel DockPanel.Dock="Top"
                             Orientation="Vertical"
@@ -39,11 +44,13 @@
 
             </DockPanel>
 
-            <GroupBox Header="Career"
+            <GroupBox Header="Player Careers"
+                      Grid.Row="0"
                       Grid.Column="1"
                       Margin="5"
                       Padding="5">
-                <WrapPanel Orientation="Vertical">
+                <WrapPanel Orientation="Vertical"
+                           HorizontalAlignment="Stretch">
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -78,11 +85,13 @@
                 </WrapPanel>
             </GroupBox>
 
-            <GroupBox Header="By Season"
+            <GroupBox Header="Players By Season"
+                      Grid.Row="0"
                       Grid.Column="2"
                       Margin="5"
                       Padding="5">
-                <WrapPanel Orientation="Vertical">
+                <WrapPanel Orientation="Vertical"
+                           HorizontalAlignment="Stretch">
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -90,7 +99,7 @@
                         Height="50"
                         Command="{Binding ExportFranchiseSeasonBattingStatisticsCommand}"
                         Content="Export all regular season batting statistics" />
-                    
+
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -98,7 +107,7 @@
                         Height="50"
                         Command="{Binding ExportFranchiseSeasonPitchingStatisticsCommand}"
                         Content="Export all regular season pitching statistics" />
-                    
+
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -114,6 +123,31 @@
                         Height="50"
                         Command="{Binding ExportFranchiseSeasonPlayoffPitchingStatisticsCommand}"
                         Content="Export all playoff pitching statistics" />
+                </WrapPanel>
+            </GroupBox>
+
+            <GroupBox Header="Team Standings"
+                      Grid.Row="1"
+                      Grid.Column="1"
+                      Margin="5"
+                      Padding="5">
+                <WrapPanel Orientation="Vertical"
+                           HorizontalAlignment="Stretch">
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseTeamSeasonStandingsCommand}"
+                        Content="Export team season standings" />
+
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseTeamPlayoffStandingsCommand}"
+                        Content="Export team playoff standings" />
                 </WrapPanel>
             </GroupBox>
 

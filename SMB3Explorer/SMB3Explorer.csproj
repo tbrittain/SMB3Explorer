@@ -63,6 +63,10 @@
       <EmbeddedResource Include="Resources\Sql\DatabaseTables.sql" />
       <None Remove="Resources\Sql\Franchises.sql" />
       <EmbeddedResource Include="Resources\Sql\Franchises.sql" />
+      <None Remove="Resources\Sql\FranchisePlayoffStandings.sql" />
+      <EmbeddedResource Include="Resources\Sql\FranchisePlayoffStandings.sql" />
+      <None Remove="Resources\Sql\FranchiseSeasonStandings.sql" />
+      <EmbeddedResource Include="Resources\Sql\FranchiseSeasonStandings.sql" />
     </ItemGroup>
 
 </Project>
