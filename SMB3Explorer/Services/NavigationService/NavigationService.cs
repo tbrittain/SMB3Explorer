@@ -10,7 +10,7 @@ public sealed class NavigationService : INavigationService, INotifyPropertyChang
 {
     private readonly Func<Type, ViewModelBase> _viewModelFactory;
 
-    private ViewModelBase _currentViewModel;
+    private ViewModelBase _currentViewModel = null!;
 
     public NavigationService(Func<Type, ViewModelBase> viewModelFactory)
     {

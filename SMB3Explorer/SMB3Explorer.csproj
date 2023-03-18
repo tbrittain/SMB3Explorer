@@ -11,13 +11,13 @@
         <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
         <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
         <RepositoryUrl>https://github.com/tbrittain/SMB3Explorer.git</RepositoryUrl>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
       <PackageReference Include="CsvHelper" Version="30.0.1" />
       <PackageReference Include="DotNetZip" Version="1.16.0" />
-      <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
       <PackageReference Include="OneOf" Version="3.0.223" />
