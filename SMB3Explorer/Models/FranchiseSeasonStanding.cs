@@ -40,7 +40,7 @@ public class FranchiseSeasonStanding
     public int RunDifferential { get; set; }
     
     [Name("win_percentage"), Index(11)]
-    public long WinPercentage { get; set; }
+    public double WinPercentage { get; set; }
     
     [Name("games_back"), Index(12)]
     public int GamesBack { get; set; }

@@ -23,8 +23,23 @@ public partial class DataService
         
         while (reader.Read())
         {
-            // TODO: Implement this
-            yield return new FranchiseSeasonStanding();
+            var standing = new FranchiseSeasonStanding();
+
+            standing.Index = int.Parse(reader["index"].ToString()!);
+            standing.SeasonId = int.Parse(reader["seasonID"].ToString()!);
+            standing.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
+            standing.TeamName = reader["teamName"].ToString()!;
+            standing.DivisionName = reader["divisionName"].ToString()!;
+            standing.ConferenceName = reader["conferenceName"].ToString()!;
+            standing.Wins = int.Parse(reader["gamesWon"].ToString()!);
+            standing.Losses = int.Parse(reader["gamesLost"].ToString()!);
+            standing.RunsFor = int.Parse(reader["runsFor"].ToString()!);
+            standing.RunsAgainst = int.Parse(reader["runsAgainst"].ToString()!);
+            standing.RunDifferential = int.Parse(reader["runDifferential"].ToString()!);
+            standing.WinPercentage = double.Parse(reader["winPct"].ToString()!);
+            standing.GamesBack = int.Parse(reader["gamesBack"].ToString()!);
+            
+            yield return standing;
         }
     }
 
@@ -43,8 +58,21 @@ public partial class DataService
 
         while (reader.Read())
         {
-            // TODO: Implement this
-            yield return new FranchisePlayoffStanding();
+            var standing = new FranchisePlayoffStanding();
+
+            standing.Index = int.Parse(reader["index"].ToString()!);
+            standing.SeasonId = int.Parse(reader["seasonID"].ToString()!);
+            standing.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
+            standing.TeamName = reader["teamName"].ToString()!;
+            standing.DivisionName = reader["divisionName"].ToString()!;
+            standing.ConferenceName = reader["conferenceName"].ToString()!;
+            standing.Wins = int.Parse(reader["gamesWon"].ToString()!);
+            standing.Losses = int.Parse(reader["gamesLost"].ToString()!);
+            standing.RunsFor = int.Parse(reader["runsFor"].ToString()!);
+            standing.RunsAgainst = int.Parse(reader["runsAgainst"].ToString()!);
+            standing.RunDifferential = int.Parse(reader["runDifferential"].ToString()!);
+
+            yield return standing;
         }
     }
 }
