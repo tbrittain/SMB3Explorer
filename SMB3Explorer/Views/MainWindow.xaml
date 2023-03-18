@@ -12,21 +12,29 @@
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
+
             <MenuItem Header="_File">
-                <MenuItem Header="_Open exports folder" />
-                <MenuItem Header="_Deselect current save file" />
+                <MenuItem Header="_Open exports folder" Command="{Binding OpenExportsFolderCommand}" />
+                <MenuItem Header="_Deselect current save file" /> <!-- TODO -->
+                <MenuItem Header="_Purge application data" /> <!-- TODO -->
             </MenuItem>
+
             <MenuItem Header="_Help">
+                <MenuItem Header="Open _GitHub repository" Command="{Binding OpenGithubRepoCommand}" />
                 <MenuItem Header="_Issues">
-                    <MenuItem Header="_Report an issue" />
-                    <MenuItem Header="_View open issues" />
+                    <MenuItem Header="_View open issues" Command="{Binding OpenIssuesCommand}" />
+                    <MenuItem Header="_Report a bug" Command="{Binding SubmitBugReportCommand}" />
                 </MenuItem>
-                <MenuItem Header="_Wiki" />
-                <MenuItem Header="_Submit a feature request" />
-                <MenuItem Header="_Discussions" />
+                <MenuItem Header="_Wiki" Command="{Binding OpenWikiCommand}" />
+                <MenuItem Header="_Submit a feature request" Command="{Binding SubmitFeatureRequestCommand}" />
+                <MenuItem Header="_Discussions" Command="{Binding OpenDiscussionsCommand}" />
+
+                <!-- TODO Conditionally display a menu item here if an update is available -->
+
                 <Label Content="{x:Static viewModels:MainWindowViewModel.CurrentVersionString}"
                        IsEnabled="False" />
             </MenuItem>
+
         </Menu>
         <ContentControl Content="{Binding NavigationService.CurrentView}"
                         VerticalAlignment="Stretch"
