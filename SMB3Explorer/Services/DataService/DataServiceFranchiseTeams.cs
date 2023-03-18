@@ -13,12 +13,13 @@ public partial class DataService
         var command = Connection!.CreateCommand();
         var commandText = SqlRunner.GetSqlCommand(SqlFile.FranchiseSeasonStandings);
         command.CommandText = commandText;
-        var reader = await command.ExecuteReaderAsync();
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
         });
+
+        var reader = await command.ExecuteReaderAsync();
 
         while (reader.Read())
         {
@@ -36,7 +37,7 @@ public partial class DataService
             standing.RunsAgainst = int.Parse(reader["runsAgainst"].ToString()!);
             standing.RunDifferential = int.Parse(reader["runDifferential"].ToString()!);
             standing.WinPercentage = double.Parse(reader["winPct"].ToString()!);
-            standing.GamesBack = int.Parse(reader["gamesBack"].ToString()!);
+            standing.GamesBack = double.Parse(reader["gamesBack"].ToString()!);
 
             yield return standing;
         }
@@ -47,12 +48,13 @@ public partial class DataService
         var command = Connection!.CreateCommand();
         var commandText = SqlRunner.GetSqlCommand(SqlFile.FranchisePlayoffStandings);
         command.CommandText = commandText;
-        var reader = await command.ExecuteReaderAsync();
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
         });
+
+        var reader = await command.ExecuteReaderAsync();
 
         while (reader.Read())
         {

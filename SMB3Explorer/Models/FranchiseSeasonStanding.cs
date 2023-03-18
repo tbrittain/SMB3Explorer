@@ -43,5 +43,5 @@ public class FranchiseSeasonStanding
     public double WinPercentage { get; set; }
     
     [Name("games_back"), Index(12)]
-    public int GamesBack { get; set; }
+    public double GamesBack { get; set; }
 }
