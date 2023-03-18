@@ -10,7 +10,26 @@
         Width="1280"
         FontFamily="Segoe UI"
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}">
-    <ContentControl Content="{Binding NavigationService.CurrentView}"
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch" />
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open exports folder" />
+                <MenuItem Header="_Deselect current save file" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_Issues">
+                    <MenuItem Header="_Report an issue" />
+                    <MenuItem Header="_View open issues" />
+                </MenuItem>
+                <MenuItem Header="_Wiki" />
+                <MenuItem Header="_Submit a feature request" />
+                <MenuItem Header="_Discussions" />
+                <Label Content="{x:Static viewModels:MainWindowViewModel.CurrentVersionString}"
+                       IsEnabled="False" />
+            </MenuItem>
+        </Menu>
+        <ContentControl Content="{Binding NavigationService.CurrentView}"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch" />
+    </DockPanel>
 </Window>
