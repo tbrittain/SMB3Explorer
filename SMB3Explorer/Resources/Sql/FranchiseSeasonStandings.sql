@@ -10,6 +10,7 @@ SELECT ROW_NUMBER() OVER (
     ORDER BY fs.ID, vss.conferenceGUID, vss.divisionGUID, vss.gamesBack, vss.runsFor - vss.runsAgainst DESC
     )                                AS `index`,
        fs.ID                         AS seasonID,
+       DENSE_RANK() OVER (ORDER BY fs.ID  ) AS seasonNum,
        vss.*,
        vss.runsFor - vss.runsAgainst AS runDifferential,
        tc.name                       AS conferenceName,
