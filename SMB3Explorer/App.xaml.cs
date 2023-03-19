@@ -6,6 +6,7 @@ using SMB3Explorer.Services;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.CsvWriterWrapper;
 using SMB3Explorer.Services.DataService;
+using SMB3Explorer.Services.HttpClient;
 using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.ViewModels;
@@ -33,6 +34,7 @@ public partial class App
     private static Task ConfigureServices(IServiceCollection services)
     {
         services.AddHttpClient();
+        services.AddSingleton<IHttpService, HttpService>();
         services.AddSingleton<IDataService, DataService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IApplicationContext, ApplicationContext>();
