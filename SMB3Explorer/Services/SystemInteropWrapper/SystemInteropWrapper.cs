@@ -51,13 +51,27 @@ public class SystemInteropWrapper : ISystemInteropWrapper
 
     public bool FileDelete(string path)
     {
-        File.Delete(path);
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+
         return true;
     }
 
     public async ValueTask FileCreate(string path)
     {
         await File.Create(path).DisposeAsync();
+    }
+
+    public long FileGetSize(string path)
+    {
+        return new FileInfo(path).Length;
     }
 
     public bool DirectoryExists(string path)
@@ -73,6 +87,11 @@ public class SystemInteropWrapper : ISystemInteropWrapper
     public string[] DirectoryGetDirectories(string path)
     {
         return Directory.GetDirectories(path);
+    }
+
+    public string[] DirectoryGetFiles(string path, string searchPattern)
+    {
+        return Directory.GetFiles(path, searchPattern);
     }
 
     public StreamWriter CreateStreamWriter(string path)
