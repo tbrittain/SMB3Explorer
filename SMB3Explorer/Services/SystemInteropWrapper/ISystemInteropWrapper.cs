@@ -17,9 +17,11 @@ public interface ISystemInteropWrapper
     bool FileExists(string path);
     bool FileDelete(string path);
     ValueTask FileCreate(string path);
+    long FileGetSize(string path);
     bool DirectoryExists(string path);
     void DirectoryCreate(string path);
     string[] DirectoryGetDirectories(string path);
+    string[] DirectoryGetFiles(string path, string searchPattern);
     StreamWriter CreateStreamWriter(string path);
     ICsvWriterWrapper CreateCsvWriter();
     bool ShowOpenFileDialog(OpenFileDialog openFileDialog);
