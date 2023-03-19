@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using OneOf.Types;
+using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.DataService;
+using SMB3Explorer.Services.HttpClient;
 using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
@@ -18,24 +21,45 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private readonly ISystemInteropWrapper _systemInteropWrapper;
     private readonly IDataService _dataService;
+    private readonly IHttpService _httpService;
+    private bool _isUpdateAvailable;
+    private string _updateVersion = string.Empty;
+    private AppUpdateResult? _appUpdateResult;
 
     public MainWindowViewModel(INavigationService navigationService, ISystemInteropWrapper systemInteropWrapper,
-        IDataService dataService)
+        IDataService dataService, IHttpService httpService)
     {
         NavigationService = navigationService;
         _systemInteropWrapper = systemInteropWrapper;
         _dataService = dataService;
+        _httpService = httpService;
     }
 
-    public Task Initialize()
+    public async Task Initialize()
     {
         NavigationService.NavigateTo<LandingViewModel>();
-        return Task.CompletedTask;
+        await CheckForUpdates();
     }
 
     private static string CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "Unknown";
 
     public static string CurrentVersionString => $"Version {CurrentVersion}";
+
+    public bool IsUpdateAvailable
+    {
+        get => _isUpdateAvailable;
+        set => SetField(ref _isUpdateAvailable, value);
+    }
+
+    public AppUpdateResult? AppUpdateResult
+    {
+        get => _appUpdateResult;
+        set
+        {
+            SetField(ref _appUpdateResult, value);
+            IsUpdateAvailable = true;
+        }
+    }
 
     [RelayCommand]
     private Task OpenExportsFolder()
@@ -139,5 +163,32 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _systemInteropWrapper.ShowMessageBox(failedMessage.ToString(), "Failed to delete", MessageBoxButton.OK,
             MessageBoxImage.Warning);
+    }
+    
+    private async Task CheckForUpdates()
+    {
+        var updateResult = await _httpService.CheckForUpdates();
+
+        if (updateResult.TryPickT2(out var error, out var rest))
+        {
+            _systemInteropWrapper.ShowMessageBox($"Failed to check for updates: {error.Value}", "Update Check Failed",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        if (rest.TryPickT1(out var _, out var appUpdateResult))
+        {
+            // No update available
+            return;
+        }
+        
+        AppUpdateResult = appUpdateResult;
+
+        var messageBoxResult = _systemInteropWrapper.ShowMessageBox($"An update is available ({CurrentVersion} -> {appUpdateResult.Version}). Would you like open the release page?",
+            "Update Available", MessageBoxButton.YesNo, MessageBoxImage.Information);
+        
+        if (messageBoxResult != MessageBoxResult.Yes) return;
+        
+        SafeProcess.Start(appUpdateResult.ReleasePageUrl, _systemInteropWrapper);
     }
 }
