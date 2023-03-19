@@ -36,13 +36,23 @@ public partial class MainWindowViewModel : ViewModelBase
         _httpService = httpService;
     }
 
-    public async Task Initialize()
+    public Task Initialize()
     {
         NavigationService.NavigateTo<LandingViewModel>();
-        await CheckForUpdates();
+        _ = Task.Run(async () => await CheckForUpdates());
+        return Task.CompletedTask;
     }
 
-    private static string CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "Unknown";
+    private static Version CurrentVersion
+    {
+        get
+        {
+            var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version;
+            return currentVersion is null 
+                ? new Version(0, 0, 0, 0) 
+                : new Version(currentVersion.Major, currentVersion.Minor, currentVersion.Build);
+        }
+    }
 
     public static string CurrentVersionString => $"Version {CurrentVersion}";
 
@@ -74,7 +84,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     public string UpdateAvailableDisplayText => IsUpdateAvailable
-        ? $"Update Available: {AppUpdateResult?.Version}"
+        ? $"Update Available: {AppUpdateResult?.Version.ToString()}"
         : "No Updates Available";
 
     [RelayCommand]
