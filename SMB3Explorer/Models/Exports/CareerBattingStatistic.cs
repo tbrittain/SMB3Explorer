@@ -1,11 +1,12 @@
 ﻿using CsvHelper.Configuration.Attributes;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Utils;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace SMB3Explorer.Models;
+namespace SMB3Explorer.Models.Exports;
 
 public class CareerBattingStatistic : CareerStatistic
 {

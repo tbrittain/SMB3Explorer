@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SMB3Explorer.Models;
+using SMB3Explorer.Models.Exports;
+using SMB3Explorer.Models.Internal;
 
 namespace SMB3Explorer.Services.DataService;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using OneOf;
+using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Utils;
@@ -39,7 +39,3 @@ public static class AppData
         return Task.FromResult(results);
     }
 }
-
-public record struct AppDataSummary(int NumberOfFiles, long TotalSize);
-
-public record struct AppDataFailedPurgeResult(string FileName, long Size);

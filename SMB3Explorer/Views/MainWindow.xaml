@@ -29,7 +29,9 @@
                 <MenuItem Header="_Submit a feature request" Command="{Binding SubmitFeatureRequestCommand}" />
                 <MenuItem Header="_Discussions" Command="{Binding OpenDiscussionsCommand}" />
 
-                <!-- TODO Conditionally display a menu item here if an update is available -->
+                <MenuItem Header="{Binding UpdateAvailableDisplayText}"
+                          Visibility="{Binding UpdateAvailableVisibility}"
+                          Command="{Binding OpenUpdateVersionReleasePageCommand}" />
 
                 <Label Content="{x:Static viewModels:MainWindowViewModel.CurrentVersionString}"
                        IsEnabled="False" />

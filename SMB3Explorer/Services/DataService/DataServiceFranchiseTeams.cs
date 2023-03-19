@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
-using SMB3Explorer.Models;
+using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Services.DataService;

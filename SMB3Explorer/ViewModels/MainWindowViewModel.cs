@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using OneOf.Types;
+using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.DataService;
+using SMB3Explorer.Services.HttpClient;
 using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
@@ -18,24 +21,71 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private readonly ISystemInteropWrapper _systemInteropWrapper;
     private readonly IDataService _dataService;
+    private readonly IHttpService _httpService;
+    private bool _isUpdateAvailable;
+    private string _updateVersion = string.Empty;
+    private AppUpdateResult? _appUpdateResult;
+    private Visibility _updateAvailableVisibility = Visibility.Collapsed;
 
     public MainWindowViewModel(INavigationService navigationService, ISystemInteropWrapper systemInteropWrapper,
-        IDataService dataService)
+        IDataService dataService, IHttpService httpService)
     {
         NavigationService = navigationService;
         _systemInteropWrapper = systemInteropWrapper;
         _dataService = dataService;
+        _httpService = httpService;
     }
 
     public Task Initialize()
     {
         NavigationService.NavigateTo<LandingViewModel>();
+        _ = Task.Run(async () => await CheckForUpdates());
         return Task.CompletedTask;
     }
 
-    private static string CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "Unknown";
+    private static Version CurrentVersion
+    {
+        get
+        {
+            var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version;
+            return currentVersion is null 
+                ? new Version(0, 0, 0, 0) 
+                : new Version(currentVersion.Major, currentVersion.Minor, currentVersion.Build);
+        }
+    }
 
     public static string CurrentVersionString => $"Version {CurrentVersion}";
+
+    private bool IsUpdateAvailable
+    {
+        get => _isUpdateAvailable;
+        set
+        {
+            SetField(ref _isUpdateAvailable, value);
+            OnPropertyChanged(nameof(UpdateAvailableDisplayText));
+            UpdateAvailableVisibility = Visibility.Visible;
+        }
+    }
+
+    private AppUpdateResult? AppUpdateResult
+    {
+        get => _appUpdateResult;
+        set
+        {
+            SetField(ref _appUpdateResult, value);
+            IsUpdateAvailable = true;
+        }
+    }
+
+    public Visibility UpdateAvailableVisibility
+    {
+        get => _updateAvailableVisibility;
+        set => SetField(ref _updateAvailableVisibility, value);
+    }
+
+    public string UpdateAvailableDisplayText => IsUpdateAvailable
+        ? $"Update Available: {AppUpdateResult?.Version.ToString()}"
+        : "No Updates Available";
 
     [RelayCommand]
     private Task OpenExportsFolder()
@@ -139,5 +189,42 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _systemInteropWrapper.ShowMessageBox(failedMessage.ToString(), "Failed to delete", MessageBoxButton.OK,
             MessageBoxImage.Warning);
+    }
+    
+    [RelayCommand]
+    private Task OpenUpdateVersionReleasePage()
+    {
+        SafeProcess.Start(AppUpdateResult!.Value.ReleasePageUrl, _systemInteropWrapper);
+        return Task.CompletedTask;
+    }
+    
+    private async Task CheckForUpdates()
+    {
+        var updateResult = await _httpService.CheckForUpdates();
+
+        if (updateResult.TryPickT2(out var error, out var rest))
+        {
+            _systemInteropWrapper.ShowMessageBox($"Failed to check for updates: {error.Value}", "Update Check Failed",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        if (rest.TryPickT1(out var _, out var appUpdateResult))
+        {
+            // No update available
+            return;
+        }
+        
+        AppUpdateResult = appUpdateResult;
+        
+        var message = $"An update is available ({CurrentVersion} --> {appUpdateResult.Version}, released " +
+                      $"{appUpdateResult.DaysSinceRelease} days ago). Would you like open the release page?";
+
+        var messageBoxResult = _systemInteropWrapper.ShowMessageBox(message, "Update Available", 
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+        
+        if (messageBoxResult != MessageBoxResult.Yes) return;
+        
+        SafeProcess.Start(appUpdateResult.ReleasePageUrl, _systemInteropWrapper);
     }
 }
