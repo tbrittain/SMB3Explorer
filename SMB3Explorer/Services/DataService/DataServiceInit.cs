@@ -77,14 +77,36 @@ public partial class DataService
             throw new Exception("Invalid save file, missing expected tables");
     }
 
-    public Task Disconnect()
+    public async Task Disconnect()
     {
-        Connection?.Close();
-        Connection?.Dispose();
+        if (Connection is not null)
+        {
+            try
+            {
+                // Ensure all transactions are committed
+                var command = Connection.CreateCommand();
+                command.CommandText = "COMMIT";
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (SqliteException)
+            {
+                // no-op, may throw if there are no transactions to commit
+            }
+            finally
+            {
+                // Remove reference to connection object
+                var conn = Connection;
+                Connection = null;
 
-        Connection = null;
+                // Close and dispose of the connection object
+                conn.Close();
+                conn.Dispose();
+
+                // Clear all connections from the connection pool
+                SqliteConnection.ClearAllPools();
+            }
+        }
+        
         CurrentFilePath = string.Empty;
-
-        return Task.CompletedTask;
     }
 }

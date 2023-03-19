@@ -15,7 +15,9 @@
 
             <MenuItem Header="_File">
                 <MenuItem Header="_Open exports folder" Command="{Binding OpenExportsFolderCommand}" />
-                <MenuItem Header="_Deselect current save file" /> <!-- TODO -->
+                <MenuItem Header="_Deselect current save file"
+                          Command="{Binding DeselectSaveGameCommand}"
+                          Visibility="{Binding DeselectSaveGameVisibility}" />
                 <MenuItem Header="_Purge application data" Command="{Binding PurgeApplicationDataCommand}" />
             </MenuItem>
 
