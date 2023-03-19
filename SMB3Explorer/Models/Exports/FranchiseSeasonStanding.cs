@@ -1,10 +1,11 @@
 ﻿using CsvHelper.Configuration.Attributes;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedMember.Global
 
-namespace SMB3Explorer.Models;
+namespace SMB3Explorer.Models.Exports;
 
-public class FranchisePlayoffStanding
+public class FranchiseSeasonStanding
 {
     [Name("index"), Index(0)]
     public int Index { get; set; }
@@ -38,4 +39,10 @@ public class FranchisePlayoffStanding
     
     [Name("run_differential"), Index(10)]
     public int RunDifferential { get; set; }
+    
+    [Name("win_percentage"), Index(11)]
+    public double WinPercentage { get; set; }
+    
+    [Name("games_back"), Index(12)]
+    public double GamesBack { get; set; }
 }

@@ -1,9 +1,10 @@
 ﻿using System;
 using CsvHelper.Configuration.Attributes;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedMember.Global
 
-namespace SMB3Explorer.Models;
+namespace SMB3Explorer.Models.Exports;
 
 public class CareerStatistic
 {

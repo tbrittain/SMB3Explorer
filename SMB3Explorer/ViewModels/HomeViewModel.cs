@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using SMB3Explorer.Models;
+using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.NavigationService;
