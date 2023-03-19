@@ -20,6 +20,7 @@
       <PackageReference Include="DotNetZip" Version="1.16.0" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
       <PackageReference Include="OneOf" Version="3.0.223" />
     </ItemGroup>
 

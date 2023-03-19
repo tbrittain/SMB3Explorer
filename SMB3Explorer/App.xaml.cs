@@ -32,6 +32,7 @@ public partial class App
 
     private static Task ConfigureServices(IServiceCollection services)
     {
+        services.AddHttpClient();
         services.AddSingleton<IDataService, DataService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IApplicationContext, ApplicationContext>();
