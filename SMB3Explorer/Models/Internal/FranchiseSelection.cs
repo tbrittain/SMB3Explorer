@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace SMB3Explorer.Models;
+namespace SMB3Explorer.Models.Internal;
 
 public record FranchiseSelection
 {

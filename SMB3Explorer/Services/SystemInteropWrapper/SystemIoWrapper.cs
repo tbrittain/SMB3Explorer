@@ -52,7 +52,16 @@ public class SystemIoWrapper : ISystemIoWrapper
 
     public bool FileDelete(string path)
     {
-        File.Delete(path);
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+
         return true;
     }
 
@@ -76,6 +85,11 @@ public class SystemIoWrapper : ISystemIoWrapper
         return new ZlibStream(stream, CompressionMode.Decompress);
     }
 
+    public long FileGetSize(string path)
+    {
+        return new FileInfo(path).Length;
+    }
+
     public bool DirectoryExists(string path)
     {
         return Directory.Exists(path);
@@ -89,6 +103,11 @@ public class SystemIoWrapper : ISystemIoWrapper
     public string[] DirectoryGetDirectories(string path)
     {
         return Directory.GetDirectories(path);
+    }
+
+    public string[] DirectoryGetFiles(string path, string searchPattern)
+    {
+        return Directory.GetFiles(path, searchPattern);
     }
 
     public StreamWriter CreateStreamWriter(string path)

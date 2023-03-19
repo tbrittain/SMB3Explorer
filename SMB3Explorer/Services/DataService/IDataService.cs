@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SMB3Explorer.Models;
+using SMB3Explorer.Models.Exports;
+using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Services.DataService;
@@ -21,4 +22,6 @@ public interface IDataService
     IAsyncEnumerable<CareerPitchingStatistic> GetFranchiseCareerPitchingStatistics(bool isRegularSeason = true);
     IAsyncEnumerable<BattingSeasonStatistic> GetFranchiseSeasonBattingStatistics(bool isRegularSeason = true);
     IAsyncEnumerable<PitchingSeasonStatistic> GetFranchiseSeasonPitchingStatistics(bool isRegularSeason = true);
+    IAsyncEnumerable<FranchiseSeasonStanding> GetFranchiseSeasonStandings();
+    IAsyncEnumerable<FranchisePlayoffStanding> GetFranchisePlayoffStandings();
 }

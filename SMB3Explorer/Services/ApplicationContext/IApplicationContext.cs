@@ -1,4 +1,4 @@
-﻿using SMB3Explorer.Models;
+﻿using SMB3Explorer.Models.Internal;
 
 namespace SMB3Explorer.Services.ApplicationContext;
 

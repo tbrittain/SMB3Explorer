@@ -41,6 +41,12 @@ public enum SqlFile
     
     [Description("SeasonStatsPitching.sql")]
     SeasonStatsPitching,
+    
+    [Description("FranchiseSeasonStandings.sql")]
+    FranchiseSeasonStandings,
+    
+    [Description("FranchisePlayoffStandings.sql")]
+    FranchisePlayoffStandings,
 }
 
 public static class SqlRunner

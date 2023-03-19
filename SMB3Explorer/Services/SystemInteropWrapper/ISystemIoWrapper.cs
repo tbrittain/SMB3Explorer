@@ -24,12 +24,15 @@ public interface ISystemIoWrapper
     ValueTask FileCreate(string path);
     FileStream FileCreateStream(string path);
     FileStream? FileOpenRead(string path);
+    long FileGetSize(string path);
+    
     ZlibStream GetZlibDecompressionStream(Stream stream);
-
+    
     bool DirectoryExists(string path);
     void DirectoryCreate(string path);
     string[] DirectoryGetDirectories(string path);
-
+    string[] DirectoryGetFiles(string path, string searchPattern);
+    
     StreamWriter CreateStreamWriter(string path);
     ICsvWriterWrapper CreateCsvWriter();
     bool ShowOpenFileDialog(OpenFileDialog openFileDialog);
