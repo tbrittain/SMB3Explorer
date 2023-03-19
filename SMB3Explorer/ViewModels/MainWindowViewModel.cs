@@ -103,8 +103,15 @@ public partial class MainWindowViewModel : ViewModelBase
     private async Task PurgeApplicationData()
     {
         var appDataSummary = AppData.GetApplicationDataSize(_systemInteropWrapper, _dataService.CurrentFilePath);
+        if (appDataSummary.NumberOfFiles == 0)
+        {
+            _systemInteropWrapper.ShowMessageBox("No application data to delete.", "No Application Data",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        
         var message = $"Are you sure you want to delete {appDataSummary.NumberOfFiles} .sqlite files " +
-                      $"totalling {FormattedStringBytes.BytesToString(appDataSummary.TotalSize)} bytes?";
+                      $"totalling {appDataSummary.TotalSize.ToFileSizeString()}?";
 
         var result = _systemInteropWrapper.ShowMessageBox(message, "Purge Application Data", MessageBoxButton.YesNo,
             MessageBoxImage.Question);
@@ -127,7 +134,7 @@ public partial class MainWindowViewModel : ViewModelBase
         foreach (var _ in failedPurgeResults)
         {
             failedMessage.AppendLine(
-                $"{Environment.NewLine}{_.FileName} ({FormattedStringBytes.BytesToString(_.Size)})");
+                $"{Environment.NewLine}{_.FileName} ({_.Size.ToFileSizeString()})");
         }
 
         _systemInteropWrapper.ShowMessageBox(failedMessage.ToString(), "Failed to delete", MessageBoxButton.OK,

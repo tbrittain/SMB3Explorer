@@ -4,7 +4,7 @@ namespace SMB3Explorer.Utils;
 
 public static class FormattedStringBytes
 {
-    public static string BytesToString(long byteCount)
+    public static string ToFileSizeString(this long byteCount)
     {
         return byteCount switch
         {
