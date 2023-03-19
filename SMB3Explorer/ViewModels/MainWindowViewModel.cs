@@ -26,6 +26,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private string _updateVersion = string.Empty;
     private AppUpdateResult? _appUpdateResult;
     private Visibility _updateAvailableVisibility = Visibility.Collapsed;
+    private Visibility _deselectSaveGameVisibility = Visibility.Collapsed;
 
     public MainWindowViewModel(INavigationService navigationService, ISystemInteropWrapper systemInteropWrapper,
         IDataService dataService, IHttpService httpService)
@@ -34,6 +35,15 @@ public partial class MainWindowViewModel : ViewModelBase
         _systemInteropWrapper = systemInteropWrapper;
         _dataService = dataService;
         _httpService = httpService;
+        
+        _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
+    }
+
+    private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
+    {
+        DeselectSaveGameVisibility = _dataService.IsConnected
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 
     public Task Initialize()
@@ -81,6 +91,12 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         get => _updateAvailableVisibility;
         set => SetField(ref _updateAvailableVisibility, value);
+    }
+
+    public Visibility DeselectSaveGameVisibility
+    {
+        get => _deselectSaveGameVisibility;
+        set => SetField(ref _deselectSaveGameVisibility, value);
     }
 
     public string UpdateAvailableDisplayText => IsUpdateAvailable
@@ -197,7 +213,7 @@ public partial class MainWindowViewModel : ViewModelBase
         SafeProcess.Start(AppUpdateResult!.Value.ReleasePageUrl, _systemInteropWrapper);
         return Task.CompletedTask;
     }
-    
+
     private async Task CheckForUpdates()
     {
         var updateResult = await _httpService.CheckForUpdates();
@@ -226,5 +242,12 @@ public partial class MainWindowViewModel : ViewModelBase
         if (messageBoxResult != MessageBoxResult.Yes) return;
         
         SafeProcess.Start(appUpdateResult.ReleasePageUrl, _systemInteropWrapper);
+    }
+
+    [RelayCommand]
+    private async Task DeselectSaveGame()
+    {
+        await _dataService.Disconnect();
+        NavigationService.NavigateTo<LandingViewModel>();
     }
 }
