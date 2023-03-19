@@ -25,6 +25,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool _isUpdateAvailable;
     private string _updateVersion = string.Empty;
     private AppUpdateResult? _appUpdateResult;
+    private Visibility _updateAvailableVisibility = Visibility.Collapsed;
 
     public MainWindowViewModel(INavigationService navigationService, ISystemInteropWrapper systemInteropWrapper,
         IDataService dataService, IHttpService httpService)
@@ -45,13 +46,18 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public static string CurrentVersionString => $"Version {CurrentVersion}";
 
-    public bool IsUpdateAvailable
+    private bool IsUpdateAvailable
     {
         get => _isUpdateAvailable;
-        set => SetField(ref _isUpdateAvailable, value);
+        set
+        {
+            SetField(ref _isUpdateAvailable, value);
+            OnPropertyChanged(nameof(UpdateAvailableDisplayText));
+            UpdateAvailableVisibility = Visibility.Visible;
+        }
     }
 
-    public AppUpdateResult? AppUpdateResult
+    private AppUpdateResult? AppUpdateResult
     {
         get => _appUpdateResult;
         set
@@ -60,6 +66,16 @@ public partial class MainWindowViewModel : ViewModelBase
             IsUpdateAvailable = true;
         }
     }
+
+    public Visibility UpdateAvailableVisibility
+    {
+        get => _updateAvailableVisibility;
+        set => SetField(ref _updateAvailableVisibility, value);
+    }
+
+    public string UpdateAvailableDisplayText => IsUpdateAvailable
+        ? $"Update Available: {AppUpdateResult?.Version}"
+        : "No Updates Available";
 
     [RelayCommand]
     private Task OpenExportsFolder()
@@ -165,6 +181,13 @@ public partial class MainWindowViewModel : ViewModelBase
             MessageBoxImage.Warning);
     }
     
+    [RelayCommand]
+    private Task OpenUpdateVersionReleasePage()
+    {
+        SafeProcess.Start(AppUpdateResult!.Value.ReleasePageUrl, _systemInteropWrapper);
+        return Task.CompletedTask;
+    }
+    
     private async Task CheckForUpdates()
     {
         var updateResult = await _httpService.CheckForUpdates();
@@ -183,9 +206,12 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         
         AppUpdateResult = appUpdateResult;
+        
+        var message = $"An update is available ({CurrentVersion} --> {appUpdateResult.Version}, released " +
+                      $"{appUpdateResult.DaysSinceRelease} days ago). Would you like open the release page?";
 
-        var messageBoxResult = _systemInteropWrapper.ShowMessageBox($"An update is available ({CurrentVersion} -> {appUpdateResult.Version}). Would you like open the release page?",
-            "Update Available", MessageBoxButton.YesNo, MessageBoxImage.Information);
+        var messageBoxResult = _systemInteropWrapper.ShowMessageBox(message, "Update Available", 
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
         
         if (messageBoxResult != MessageBoxResult.Yes) return;
         

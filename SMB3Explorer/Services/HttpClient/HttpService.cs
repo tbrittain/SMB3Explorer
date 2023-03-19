@@ -51,7 +51,6 @@ public class HttpService : IHttpService
             Version = result.Version,
             ReleasePageUrl = result.HtmlUrl,
             ReleaseDate = result.PublishedAt,
-            Name = result.Name
         };
     }
 }
