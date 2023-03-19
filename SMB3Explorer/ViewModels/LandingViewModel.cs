@@ -103,17 +103,17 @@ public partial class LandingViewModel : ViewModelBase
     private async Task<bool> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
     {
         var hasError = false;
-        await _dataService.EstablishDbConnection(filePath, isCompressedSaveGame)
-            .ContinueWith(task =>
-            {
-                if (task.Exception != null)
-                {
-                    hasError = true;
-                    DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to connect to SMB3 database.", task.Exception);
-                }
+        var connectionResult = await _dataService.EstablishDbConnection(filePath, isCompressedSaveGame);
+        
+        if (connectionResult.TryPickT1(out var error, out _))
+        {
+            hasError = true;
+            DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to connect to SMB3 database.",
+                new Exception(error.Value));
+        }
 
-                Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
-            });
+        Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
+        
         return hasError;
     }
 

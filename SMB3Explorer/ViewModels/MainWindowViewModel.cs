@@ -19,7 +19,7 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     public INavigationService NavigationService { get; }
 
-    private readonly ISystemInteropWrapper _systemInteropWrapper;
+    private readonly ISystemIoWrapper _systemIoWrapper;
     private readonly IDataService _dataService;
     private readonly IHttpService _httpService;
     private bool _isUpdateAvailable;
@@ -28,11 +28,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private Visibility _updateAvailableVisibility = Visibility.Collapsed;
     private Visibility _deselectSaveGameVisibility = Visibility.Collapsed;
 
-    public MainWindowViewModel(INavigationService navigationService, ISystemInteropWrapper systemInteropWrapper,
+    public MainWindowViewModel(INavigationService navigationService, ISystemIoWrapper systemIoWrapper,
         IDataService dataService, IHttpService httpService)
     {
         NavigationService = navigationService;
-        _systemInteropWrapper = systemInteropWrapper;
+        _systemIoWrapper = systemIoWrapper;
         _dataService = dataService;
         _httpService = httpService;
         
@@ -108,12 +108,12 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         var defaultDirectory = CsvUtils.DefaultDirectory;
 
-        if (!_systemInteropWrapper.DirectoryExists(defaultDirectory))
+        if (!_systemIoWrapper.DirectoryExists(defaultDirectory))
         {
-            _systemInteropWrapper.DirectoryCreate(defaultDirectory);
+            _systemIoWrapper.DirectoryCreate(defaultDirectory);
         }
 
-        SafeProcess.Start(defaultDirectory, _systemInteropWrapper);
+        SafeProcess.Start(defaultDirectory, _systemIoWrapper);
         return Task.CompletedTask;
     }
 
@@ -121,7 +121,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenWiki()
     {
         const string wikiUrl = "https://github.com/tbrittain/SMB3Explorer/wiki";
-        SafeProcess.Start(wikiUrl, _systemInteropWrapper);
+        SafeProcess.Start(wikiUrl, _systemIoWrapper);
         return Task.CompletedTask;
     }
 
@@ -129,7 +129,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task SubmitFeatureRequest()
     {
         const string featureRequestUrl = "https://github.com/tbrittain/SMB3Explorer/discussions/new?category=ideas";
-        SafeProcess.Start(featureRequestUrl, _systemInteropWrapper);
+        SafeProcess.Start(featureRequestUrl, _systemIoWrapper);
         return Task.CompletedTask;
     }
 
@@ -137,7 +137,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenDiscussions()
     {
         const string discussionsUrl = "https://github.com/tbrittain/SMB3Explorer/discussions";
-        SafeProcess.Start(discussionsUrl, _systemInteropWrapper);
+        SafeProcess.Start(discussionsUrl, _systemIoWrapper);
         return Task.CompletedTask;
     }
 
@@ -145,7 +145,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenIssues()
     {
         const string issuesUrl = "https://github.com/tbrittain/SMB3Explorer/issues";
-        SafeProcess.Start(issuesUrl, _systemInteropWrapper);
+        SafeProcess.Start(issuesUrl, _systemIoWrapper);
         return Task.CompletedTask;
     }
 
@@ -153,7 +153,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task SubmitBugReport()
     {
         const string bugUrl = "https://github.com/tbrittain/SMB3Explorer/issues/new?labels=bug&template=bug_report.md";
-        SafeProcess.Start(bugUrl, _systemInteropWrapper);
+        SafeProcess.Start(bugUrl, _systemIoWrapper);
         return Task.CompletedTask;
     }
 
@@ -161,17 +161,17 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenGithubRepo()
     {
         const string githubUrl = "https://github.com/tbrittain/SMB3Explorer";
-        SafeProcess.Start(githubUrl, _systemInteropWrapper);
+        SafeProcess.Start(githubUrl, _systemIoWrapper);
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private async Task PurgeApplicationData()
     {
-        var appDataSummary = AppData.GetApplicationDataSize(_systemInteropWrapper, _dataService.CurrentFilePath);
+        var appDataSummary = AppData.GetApplicationDataSize(_systemIoWrapper, _dataService.CurrentFilePath);
         if (appDataSummary.NumberOfFiles == 0)
         {
-            _systemInteropWrapper.ShowMessageBox("No application data to delete.", "No Application Data",
+            _systemIoWrapper.ShowMessageBox("No application data to delete.", "No Application Data",
                 MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
@@ -179,19 +179,19 @@ public partial class MainWindowViewModel : ViewModelBase
         var message = $"Are you sure you want to delete {appDataSummary.NumberOfFiles} .sqlite files " +
                       $"totalling {appDataSummary.TotalSize.ToFileSizeString()}?";
 
-        var result = _systemInteropWrapper.ShowMessageBox(message, "Purge Application Data", MessageBoxButton.YesNo,
+        var result = _systemIoWrapper.ShowMessageBox(message, "Purge Application Data", MessageBoxButton.YesNo,
             MessageBoxImage.Question);
 
         if (result != MessageBoxResult.Yes) return;
 
         Mouse.OverrideCursor = Cursors.Wait;
-        var failedPurgeResults = await AppData.PurgeApplicationData(_systemInteropWrapper,
+        var failedPurgeResults = await AppData.PurgeApplicationData(_systemIoWrapper,
             _dataService.CurrentFilePath);
         Mouse.OverrideCursor = Cursors.Arrow;
         
         if (failedPurgeResults.Count == 0)
         {
-            _systemInteropWrapper.ShowMessageBox("All files deleted successfully.", "Success",
+            _systemIoWrapper.ShowMessageBox("All files deleted successfully.", "Success",
                 MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
@@ -203,14 +203,14 @@ public partial class MainWindowViewModel : ViewModelBase
                 $"{Environment.NewLine}{_.FileName} ({_.Size.ToFileSizeString()})");
         }
 
-        _systemInteropWrapper.ShowMessageBox(failedMessage.ToString(), "Failed to delete", MessageBoxButton.OK,
+        _systemIoWrapper.ShowMessageBox(failedMessage.ToString(), "Failed to delete", MessageBoxButton.OK,
             MessageBoxImage.Warning);
     }
     
     [RelayCommand]
     private Task OpenUpdateVersionReleasePage()
     {
-        SafeProcess.Start(AppUpdateResult!.Value.ReleasePageUrl, _systemInteropWrapper);
+        SafeProcess.Start(AppUpdateResult!.Value.ReleasePageUrl, _systemIoWrapper);
         return Task.CompletedTask;
     }
 
@@ -220,7 +220,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         if (updateResult.TryPickT2(out var error, out var rest))
         {
-            _systemInteropWrapper.ShowMessageBox($"Failed to check for updates: {error.Value}", "Update Check Failed",
+            _systemIoWrapper.ShowMessageBox($"Failed to check for updates: {error.Value}", "Update Check Failed",
                 MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
@@ -236,12 +236,12 @@ public partial class MainWindowViewModel : ViewModelBase
         var message = $"An update is available ({CurrentVersion} --> {appUpdateResult.Version}, released " +
                       $"{appUpdateResult.DaysSinceRelease} days ago). Would you like open the release page?";
 
-        var messageBoxResult = _systemInteropWrapper.ShowMessageBox(message, "Update Available", 
+        var messageBoxResult = _systemIoWrapper.ShowMessageBox(message, "Update Available", 
             MessageBoxButton.YesNo, MessageBoxImage.Information);
         
         if (messageBoxResult != MessageBoxResult.Yes) return;
         
-        SafeProcess.Start(appUpdateResult.ReleasePageUrl, _systemInteropWrapper);
+        SafeProcess.Start(appUpdateResult.ReleasePageUrl, _systemIoWrapper);
     }
 
     [RelayCommand]

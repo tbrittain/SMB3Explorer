@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
+using OneOf;
+using OneOf.Types;
 using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
 
@@ -10,9 +12,13 @@ namespace SMB3Explorer.Services.DataService;
 
 public partial class DataService
 {
-    public async Task<string> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper)
+    public async Task<OneOf<string, Error<string>>> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper)
     {
         await using var compressedStream = systemIoWrapper.FileOpenRead(filePath);
+        if (compressedStream is null)
+        {
+            return new Error<string>("Could not open file.");
+        }
         await using var zlibStream = systemIoWrapper.GetZlibDecompressionStream(compressedStream);
         using var decompressedStream = new MemoryStream();
 
@@ -37,12 +43,16 @@ public partial class DataService
         return decompressedFilePath;
     }
 
-    public async Task EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
+    public async Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
     {
         var decompressedFilePath = filePath;
         if (isCompressedSaveGame)
         {
-            decompressedFilePath = await DecompressSaveGame(filePath, _systemIoWrapper);
+            var decompressResult = await DecompressSaveGame(filePath, _systemIoWrapper);
+            if (decompressResult.TryPickT1(out var error, out decompressedFilePath))
+            {
+                return new Error<string>(error.Value);
+            }
         }
         else
         {
@@ -74,7 +84,11 @@ public partial class DataService
 
         // Using t_stats as a test table since it is an important one for this application
         if (!tableNames.Contains("t_stats"))
-            throw new Exception("Invalid save file, missing expected tables");
+        {
+            return new Error<string>("Invalid save file, missing expected tables");
+        }
+        
+        return new Success();
     }
 
     public async Task Disconnect()

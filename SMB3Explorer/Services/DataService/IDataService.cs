@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OneOf;
+using OneOf.Types;
 using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.SystemInteropWrapper;
@@ -10,8 +12,8 @@ namespace SMB3Explorer.Services.DataService;
 public interface IDataService
 {
     bool IsConnected { get; }
-    Task<string> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper);
-    Task EstablishDbConnection(string filePath, bool isCompressedSaveGame = true);
+    Task<OneOf<string, Error<string>>> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper);
+    Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true);
     Task<List<FranchiseSelection>> GetFranchises();
 
     event EventHandler<EventArgs> ConnectionChanged;
