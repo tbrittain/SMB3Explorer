@@ -70,12 +70,12 @@ public class SystemIoWrapper : ISystemIoWrapper
         await File.Create(path).DisposeAsync();
     }
 
-    public FileStream FileCreateStream(string path)
+    public Stream FileCreateStream(string path)
     {
         return File.Create(path);
     }
 
-    public FileStream? FileOpenRead(string path)
+    public Stream? FileOpenRead(string path)
     {
         return File.OpenRead(path);
     }

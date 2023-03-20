@@ -22,8 +22,8 @@ public interface ISystemIoWrapper
     bool FileExists(string path);
     bool FileDelete(string path);
     ValueTask FileCreate(string path);
-    FileStream FileCreateStream(string path);
-    FileStream? FileOpenRead(string path);
+    Stream FileCreateStream(string path);
+    Stream? FileOpenRead(string path);
     long FileGetSize(string path);
     
     ZlibStream GetZlibDecompressionStream(Stream stream);
