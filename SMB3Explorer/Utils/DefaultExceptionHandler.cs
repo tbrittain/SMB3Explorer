@@ -9,7 +9,7 @@ public static class DefaultExceptionHandler
 {
     public const string GithubNewIssueUrl = "https://github.com/tbrittain/SMB3Explorer/issues/new";
 
-    public static void HandleException(ISystemInteropWrapper systemInteropWrapper, string userFriendlyMessage,
+    public static void HandleException(ISystemIoWrapper systemIoWrapper, string userFriendlyMessage,
         Exception exception)
     {
         var initialMessage = $"{userFriendlyMessage} " +
@@ -23,14 +23,14 @@ public static class DefaultExceptionHandler
 
         var formattedMessage = $"{initialMessage}{Environment.NewLine}{exception.Message}";
 
-        var openBrowser = systemInteropWrapper.ShowMessageBox(formattedMessage,
+        var openBrowser = systemIoWrapper.ShowMessageBox(formattedMessage,
             "Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
         
         var stackTrace = exception.StackTrace ?? "Unknown error";
-        systemInteropWrapper.SetClipboardText($"{exception.Message}{stackTrace}");
+        systemIoWrapper.SetClipboardText($"{exception.Message}{stackTrace}");
 
         if (openBrowser != MessageBoxResult.OK) return;
 
-        systemInteropWrapper.StartProcess(new ProcessStartInfo("cmd", $"/c start {GithubNewIssueUrl}"));
+        systemIoWrapper.StartProcess(new ProcessStartInfo("cmd", $"/c start {GithubNewIssueUrl}"));
     }
 }

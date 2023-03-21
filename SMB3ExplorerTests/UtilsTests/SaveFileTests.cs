@@ -12,14 +12,14 @@ public class SaveFileTests
     public void GetUserProvidedFile_ReturnsFilePath()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
             .Returns(true);
 
         // Act
-        var result = SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), mockSystemIoWrapper.Object);
 
         // Assert
         result.Should().NotBeNull();
@@ -31,14 +31,14 @@ public class SaveFileTests
     public void GetUserProvidedFile_ReturnsNone()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
             .Returns(false);
 
         // Act
-        var result = SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), mockSystemIoWrapper.Object);
 
         // Assert
         result.Should().NotBeNull();
@@ -50,27 +50,27 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsAutomaticallyDetectedFilePath()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(true);
 
         var steamDirectory = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory});
 
         var saveFilePath =
             Path.Combine(steamDirectory, SaveFile.DefaultSaveFileName);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(saveFilePath))
             .Returns(true);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();
@@ -82,21 +82,21 @@ public class SaveFileTests
     public void GetSaveFilePath_PromptsUserSelection_WhenDefaultDirectoryDoesNotExist()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(false);
 
-        mockSystemInteropWrapper.Setup(x =>
+        mockSystemIoWrapper.Setup(x =>
                 x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>()))
             .Returns(MessageBoxResult.Yes);
 
-        mockSystemInteropWrapper.Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
+        mockSystemIoWrapper.Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
             .Returns(true);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();
@@ -108,18 +108,18 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsNone_WhenDefaultDirectoryDoesNotExistAndUserCancels()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(false);
 
-        mockSystemInteropWrapper.Setup(x =>
+        mockSystemIoWrapper.Setup(x =>
                 x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>()))
             .Returns(MessageBoxResult.No);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();
@@ -131,34 +131,34 @@ public class SaveFileTests
     public void GetSaveFilePath_PromptsUserSelection_WhenDefaultDirectoryExistsButNoSaveFileExists()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(true);
 
         var steamDirectory = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory});
 
         var saveFilePath =
             Path.Combine(steamDirectory, SaveFile.DefaultSaveFileName);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(saveFilePath))
             .Returns(false);
 
-        mockSystemInteropWrapper.Setup(x =>
+        mockSystemIoWrapper.Setup(x =>
                 x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>()))
             .Returns(MessageBoxResult.Yes);
 
-        mockSystemInteropWrapper.Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
+        mockSystemIoWrapper.Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
             .Returns(true);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();
@@ -170,31 +170,31 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsNone_WhenDefaultDirectoryExistsButNoSaveFileExistsAndUserCancels()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(true);
 
         var steamDirectory = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory});
 
         var saveFilePath =
             Path.Combine(steamDirectory, SaveFile.DefaultSaveFileName);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(saveFilePath))
             .Returns(false);
 
-        mockSystemInteropWrapper.Setup(x =>
+        mockSystemIoWrapper.Setup(x =>
                 x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>()))
             .Returns(MessageBoxResult.No);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();
@@ -206,25 +206,25 @@ public class SaveFileTests
     public void GetSaveFilePath_PromptsUserSelection_WhenDefaultDirectoryExistsButNoSteamDirectoryExists()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(true);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
             .Returns(Array.Empty<string>());
 
-        mockSystemInteropWrapper.Setup(x =>
+        mockSystemIoWrapper.Setup(x =>
                 x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>()))
             .Returns(MessageBoxResult.Yes);
 
-        mockSystemInteropWrapper.Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
+        mockSystemIoWrapper.Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
             .Returns(true);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();
@@ -236,22 +236,22 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsNone_WhenDefaultDirectoryExistsButNoSteamDirectoryExistsAndUserCancels()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(true);
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
             .Returns(Array.Empty<string>());
 
-        mockSystemInteropWrapper.Setup(x =>
+        mockSystemIoWrapper.Setup(x =>
                 x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>()))
             .Returns(MessageBoxResult.No);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();
@@ -263,42 +263,42 @@ public class SaveFileTests
     public void GetSaveFilePath_PromptsUserSelection_WhenDefaultDirectoryExistsAndMultipleSteamDirectoriesExist()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(true);
 
         var steamDirectory1 = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
         var steamDirectory2 = Path.Combine(SaveFile.BaseGameDirectoryPath, "654321");
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory1, steamDirectory2});
 
         var saveFilePath1 =
             Path.Combine(steamDirectory1, SaveFile.DefaultSaveFileName);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(saveFilePath1))
             .Returns(false);
 
         var saveFilePath2 =
             Path.Combine(steamDirectory2, SaveFile.DefaultSaveFileName);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(saveFilePath2))
             .Returns(false);
 
-        mockSystemInteropWrapper.Setup(x =>
+        mockSystemIoWrapper.Setup(x =>
                 x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>()))
             .Returns(MessageBoxResult.Yes);
 
-        mockSystemInteropWrapper.Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
+        mockSystemIoWrapper.Setup(x => x.ShowOpenFileDialog(It.IsAny<OpenFileDialog>()))
             .Returns(true);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();
@@ -310,39 +310,39 @@ public class SaveFileTests
     public void GetSaveFilePath_ReturnsNone_WhenDefaultDirectoryExistsAndMultipleSteamDirectoriesExistAndUserCancels()
     {
         // Arrange
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
             .Returns(true);
 
         var steamDirectory1 = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
         var steamDirectory2 = Path.Combine(SaveFile.BaseGameDirectoryPath, "654321");
 
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory1, steamDirectory2});
 
         var saveFilePath1 =
             Path.Combine(steamDirectory1, SaveFile.DefaultSaveFileName);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(saveFilePath1))
             .Returns(false);
 
         var saveFilePath2 =
             Path.Combine(steamDirectory2, SaveFile.DefaultSaveFileName);
         
-        mockSystemInteropWrapper
+        mockSystemIoWrapper
             .Setup(x => x.FileExists(saveFilePath2))
             .Returns(false);
 
-        mockSystemInteropWrapper.Setup(x =>
+        mockSystemIoWrapper.Setup(x =>
                 x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButton>()))
             .Returns(MessageBoxResult.No);
         
         // Act
-        var result = SaveFile.GetSaveFilePath(mockSystemInteropWrapper.Object);
+        var result = SaveFile.GetSaveFilePath(mockSystemIoWrapper.Object);
         
         // Assert
         result.Should().NotBeNull();

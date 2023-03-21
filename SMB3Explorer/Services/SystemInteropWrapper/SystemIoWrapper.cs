@@ -3,17 +3,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using Ionic.Zlib;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using SMB3Explorer.Services.CsvWriterWrapper;
 
 namespace SMB3Explorer.Services.SystemInteropWrapper;
 
-public class SystemInteropWrapper : ISystemInteropWrapper
+public class SystemIoWrapper : ISystemIoWrapper
 {
     private readonly IServiceProvider  _serviceProvider;
     
-    public SystemInteropWrapper(IServiceProvider  serviceProvider)
+    public SystemIoWrapper(IServiceProvider  serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
@@ -67,6 +68,21 @@ public class SystemInteropWrapper : ISystemInteropWrapper
     public async ValueTask FileCreate(string path)
     {
         await File.Create(path).DisposeAsync();
+    }
+
+    public Stream FileCreateStream(string path)
+    {
+        return File.Create(path);
+    }
+
+    public Stream? FileOpenRead(string path)
+    {
+        return File.OpenRead(path);
+    }
+
+    public ZlibStream GetZlibDecompressionStream(Stream stream)
+    {
+        return new ZlibStream(stream, CompressionMode.Decompress);
     }
 
     public long FileGetSize(string path)

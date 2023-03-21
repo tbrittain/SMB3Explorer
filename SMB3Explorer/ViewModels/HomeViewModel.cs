@@ -17,7 +17,7 @@ namespace SMB3Explorer.ViewModels;
 public partial class HomeViewModel : ViewModelBase
 {
     private readonly IApplicationContext _applicationContext;
-    private readonly ISystemInteropWrapper _systemInteropWrapper;
+    private readonly ISystemIoWrapper _systemIoWrapper;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
 
@@ -27,12 +27,12 @@ public partial class HomeViewModel : ViewModelBase
     private FranchiseSelection? _selectedFranchise;
 
     public HomeViewModel(INavigationService navigationService, IDataService dataService,
-        IApplicationContext applicationContext, ISystemInteropWrapper systemInteropWrapper)
+        IApplicationContext applicationContext, ISystemIoWrapper systemIoWrapper)
     {
         _navigationService = navigationService;
         _dataService = dataService;
         _applicationContext = applicationContext;
-        _systemInteropWrapper = systemInteropWrapper;
+        _systemIoWrapper = systemIoWrapper;
 
         GetFranchises();
     }
@@ -113,12 +113,12 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_career_batting_{battingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, playersEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -145,12 +145,12 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_career_pitching_{pitchingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, playersEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -177,12 +177,12 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_batting_{battingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, playersEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -209,12 +209,12 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_pitching_{pitchingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
-        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, playersEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -229,12 +229,12 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_standings_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
-        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, teamsEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, teamsEnumerable, fileName);
         
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
         
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
         
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -249,12 +249,12 @@ public partial class HomeViewModel : ViewModelBase
         var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_playoff_standings_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
-        var (filePath, _) = await CsvUtils.ExportCsv(_systemInteropWrapper, teamsEnumerable, fileName);
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, teamsEnumerable, fileName);
         
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
         
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemInteropWrapper);
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
         
         Mouse.OverrideCursor = Cursors.Arrow;
     }
@@ -270,7 +270,7 @@ public partial class HomeViewModel : ViewModelBase
             {
                 if (task.Exception != null)
                 {
-                    DefaultExceptionHandler.HandleException(_systemInteropWrapper, "Failed to get franchises.", task.Exception);
+                    DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to get franchises.", task.Exception);
                     LoadingSpinnerVisible = Visibility.Collapsed;
                     return;
                 }

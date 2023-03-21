@@ -15,26 +15,26 @@ public class DefaultExceptionHandlerTests
         const string userFriendlyMessage = "An error has occurred.";
         var exception = new Exception("Test exception");
 
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper.Setup(m => m.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
+        mockSystemIoWrapper.Setup(m => m.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<MessageBoxButton>(), It.IsAny<MessageBoxImage>()))
             .Returns(MessageBoxResult.OK);
  
-        mockSystemInteropWrapper.Setup(m => m.SetClipboardText(It.IsAny<string>()));
+        mockSystemIoWrapper.Setup(m => m.SetClipboardText(It.IsAny<string>()));
         
-        mockSystemInteropWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
+        mockSystemIoWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
             .Returns(It.IsAny<Process>());
         
-        mockSystemInteropWrapper.SetupGet(m => m.MessageBoxText)
+        mockSystemIoWrapper.SetupGet(m => m.MessageBoxText)
             .Returns(userFriendlyMessage);
 
         // Act
-        DefaultExceptionHandler.HandleException(mockSystemInteropWrapper.Object, userFriendlyMessage, exception);
+        DefaultExceptionHandler.HandleException(mockSystemIoWrapper.Object, userFriendlyMessage, exception);
 
         // Assert
         // Ensure that the user-friendly message is displayed in the message box
-        var messageBoxText = mockSystemInteropWrapper.Object.MessageBoxText;
+        var messageBoxText = mockSystemIoWrapper.Object.MessageBoxText;
         Assert.Contains(userFriendlyMessage, messageBoxText);
     }
 
@@ -56,29 +56,29 @@ public class DefaultExceptionHandlerTests
             exception = e;
         }
 
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
-        mockSystemInteropWrapper.Setup(x => x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
+        mockSystemIoWrapper.Setup(x => x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<MessageBoxButton>(),
                 It.IsAny<MessageBoxImage>()))
             .Returns(MessageBoxResult.OK);
         
-        mockSystemInteropWrapper.Setup(x => x.SetClipboardText(It.IsAny<string>()));
+        mockSystemIoWrapper.Setup(x => x.SetClipboardText(It.IsAny<string>()));
         
-        mockSystemInteropWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
+        mockSystemIoWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
             .Returns(It.IsAny<Process>());
 
         // Act
-        DefaultExceptionHandler.HandleException(mockSystemInteropWrapper.Object, userFriendlyMessage, exception);
+        DefaultExceptionHandler.HandleException(mockSystemIoWrapper.Object, userFriendlyMessage, exception);
 
         // Assert
-        mockSystemInteropWrapper.Verify(x => x.ShowMessageBox(
+        mockSystemIoWrapper.Verify(x => x.ShowMessageBox(
             It.Is<string>(message => message.Contains(userFriendlyMessage)),
             It.IsAny<string>(),
             MessageBoxButton.OKCancel,
             MessageBoxImage.Error), Times.Once);
 
-        mockSystemInteropWrapper.Verify(
+        mockSystemIoWrapper.Verify(
             x => x.SetClipboardText(It.Is<string>(text => text.Contains($"{exception.Message}{exception.StackTrace}"))), Times.Once);
     }
 
@@ -88,23 +88,23 @@ public class DefaultExceptionHandlerTests
         // Arrange
         var exception = new Exception("Test Exception");
         
-        var mockSystemInteropWrapper = new Mock<ISystemInteropWrapper>(MockBehavior.Strict);
+        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
-        mockSystemInteropWrapper.Setup(x => x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
+        mockSystemIoWrapper.Setup(x => x.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<MessageBoxButton>(),
                 It.IsAny<MessageBoxImage>()))
             .Returns(MessageBoxResult.OK);
         
-        mockSystemInteropWrapper.Setup(x => x.SetClipboardText(It.IsAny<string>()));
+        mockSystemIoWrapper.Setup(x => x.SetClipboardText(It.IsAny<string>()));
         
-        mockSystemInteropWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
+        mockSystemIoWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
             .Returns(It.IsAny<Process>());
 
         // Act
-        DefaultExceptionHandler.HandleException(mockSystemInteropWrapper.Object, "Test Message", exception);
+        DefaultExceptionHandler.HandleException(mockSystemIoWrapper.Object, "Test Message", exception);
 
         // Assert
-        mockSystemInteropWrapper.Verify(
+        mockSystemIoWrapper.Verify(
             m => m.StartProcess(It.Is<ProcessStartInfo>(p =>
                 p.Arguments.Contains(DefaultExceptionHandler.GithubNewIssueUrl))), Times.Once);
     }

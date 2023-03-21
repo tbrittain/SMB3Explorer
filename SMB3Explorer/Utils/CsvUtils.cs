@@ -15,22 +15,22 @@ public static class CsvUtils
 
     private static string GetDefaultFilePath(string fileName) => Path.Combine(DefaultDirectory, fileName);
 
-    public static async Task<(string, int)> ExportCsv<T>(ISystemInteropWrapper systemInteropWrapper,
+    public static async Task<(string, int)> ExportCsv<T>(ISystemIoWrapper systemIoWrapper,
         IAsyncEnumerable<T> records, string fileName, int limit = int.MaxValue) where T : notnull
     {
-        if (!systemInteropWrapper.DirectoryExists(DefaultDirectory))
+        if (!systemIoWrapper.DirectoryExists(DefaultDirectory))
         {
-            systemInteropWrapper.DirectoryCreate(DefaultDirectory);
+            systemIoWrapper.DirectoryCreate(DefaultDirectory);
         }
         
         var filePath = GetDefaultFilePath(fileName);
         
-        if (systemInteropWrapper.FileExists(filePath)) systemInteropWrapper.FileDelete(filePath);
-        await systemInteropWrapper.FileCreate(filePath);
+        if (systemIoWrapper.FileExists(filePath)) systemIoWrapper.FileDelete(filePath);
+        await systemIoWrapper.FileCreate(filePath);
 
         var rowCount = 1;
-        await using var writer = systemInteropWrapper.CreateStreamWriter(filePath);
-        await using var csv = systemInteropWrapper.CreateCsvWriter();
+        await using var writer = systemIoWrapper.CreateStreamWriter(filePath);
+        await using var csv = systemIoWrapper.CreateCsvWriter();
         csv.Initialize(writer);
 
         await csv.WriteHeaderAsync<T>();

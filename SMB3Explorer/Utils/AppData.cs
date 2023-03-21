@@ -10,28 +10,28 @@ namespace SMB3Explorer.Utils;
 
 public static class AppData
 {
-    private static IEnumerable<string> GetApplicationDataFiles(ISystemInteropWrapper systemInteropWrapper, string ignoreFile)
+    private static IEnumerable<string> GetApplicationDataFiles(ISystemIoWrapper systemIoWrapper, string ignoreFile)
     {
         var tempPath = Path.GetTempPath();
-        return systemInteropWrapper.DirectoryGetFiles(tempPath, "smb3_explorer_*.sqlite")
+        return systemIoWrapper.DirectoryGetFiles(tempPath, "smb3_explorer_*.sqlite")
             .Where(_ => !_.Equals(ignoreFile, StringComparison.OrdinalIgnoreCase));
     }
     
-    public static AppDataSummary GetApplicationDataSize(ISystemInteropWrapper systemInteropWrapper, string ignoreFile)
+    public static AppDataSummary GetApplicationDataSize(ISystemIoWrapper systemIoWrapper, string ignoreFile)
     {
-        var files = GetApplicationDataFiles(systemInteropWrapper, ignoreFile).ToList();
-        return new AppDataSummary(files.Count, files.Sum(systemInteropWrapper.FileGetSize));
+        var files = GetApplicationDataFiles(systemIoWrapper, ignoreFile).ToList();
+        return new AppDataSummary(files.Count, files.Sum(systemIoWrapper.FileGetSize));
     }
     
-    public static Task<List<AppDataFailedPurgeResult>> PurgeApplicationData(ISystemInteropWrapper systemInteropWrapper, string ignoreFile)
+    public static Task<List<AppDataFailedPurgeResult>> PurgeApplicationData(ISystemIoWrapper systemIoWrapper, string ignoreFile)
     {
-        var files = GetApplicationDataFiles(systemInteropWrapper, ignoreFile);
+        var files = GetApplicationDataFiles(systemIoWrapper, ignoreFile);
         
         var results = new List<AppDataFailedPurgeResult>();
         foreach (var file in files)
         {
-            var size = systemInteropWrapper.FileGetSize(file);
-            var ok = systemInteropWrapper.FileDelete(file);
+            var size = systemIoWrapper.FileGetSize(file);
+            var ok = systemIoWrapper.FileDelete(file);
             
             if (!ok) results.Add(new AppDataFailedPurgeResult(file, size));
         }
