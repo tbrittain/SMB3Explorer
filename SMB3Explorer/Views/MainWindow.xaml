@@ -10,7 +10,38 @@
         Width="1280"
         FontFamily="Segoe UI"
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}">
-    <ContentControl Content="{Binding NavigationService.CurrentView}"
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch" />
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open exports folder" Command="{Binding OpenExportsFolderCommand}" />
+                <MenuItem Header="_Deselect current save file"
+                          Command="{Binding DeselectSaveGameCommand}"
+                          Visibility="{Binding DeselectSaveGameVisibility}" />
+                <MenuItem Header="_Purge application data" Command="{Binding PurgeApplicationDataCommand}" />
+            </MenuItem>
+
+            <MenuItem Header="_Help">
+                <MenuItem Header="Open _GitHub repository" Command="{Binding OpenGithubRepoCommand}" />
+                <MenuItem Header="_Issues">
+                    <MenuItem Header="_View open issues" Command="{Binding OpenIssuesCommand}" />
+                    <MenuItem Header="_Report a bug" Command="{Binding SubmitBugReportCommand}" />
+                </MenuItem>
+                <MenuItem Header="_Wiki" Command="{Binding OpenWikiCommand}" />
+                <MenuItem Header="_Submit a feature request" Command="{Binding SubmitFeatureRequestCommand}" />
+                <MenuItem Header="_Discussions" Command="{Binding OpenDiscussionsCommand}" />
+
+                <MenuItem Header="{Binding UpdateAvailableDisplayText}"
+                          Visibility="{Binding UpdateAvailableVisibility}"
+                          Command="{Binding OpenUpdateVersionReleasePageCommand}" />
+
+                <Label Content="{x:Static viewModels:MainWindowViewModel.CurrentVersionString}"
+                       IsEnabled="False" />
+            </MenuItem>
+
+        </Menu>
+        <ContentControl Content="{Binding NavigationService.CurrentView}"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch" />
+    </DockPanel>
 </Window>

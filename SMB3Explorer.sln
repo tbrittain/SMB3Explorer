@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMB3Explorer", "SMB3Explorer\SMB3Explorer.csproj", "{6DA11A3D-CD77-4EBE-B712-6F6C815F70B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMB3ExplorerTests", "SMB3ExplorerTests\SMB3ExplorerTests.csproj", "{00B74DF2-B00D-4460-A77E-C05E3B823B58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{6DA11A3D-CD77-4EBE-B712-6F6C815F70B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DA11A3D-CD77-4EBE-B712-6F6C815F70B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DA11A3D-CD77-4EBE-B712-6F6C815F70B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00B74DF2-B00D-4460-A77E-C05E3B823B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00B74DF2-B00D-4460-A77E-C05E3B823B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00B74DF2-B00D-4460-A77E-C05E3B823B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00B74DF2-B00D-4460-A77E-C05E3B823B58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
-using SMB3Explorer.Models;
+using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Utils;
 
-// ReSharper disable once CheckNamespace
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.DataService;
 
 public partial class DataService
 {

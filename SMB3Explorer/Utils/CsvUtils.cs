@@ -1,53 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using CsvHelper;
+using Microsoft.Extensions.DependencyInjection;
+using SMB3Explorer.Services.CsvWriterWrapper;
+using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Utils;
 
 public static class CsvUtils
 {
-    private static readonly string DefaultDirectory =
+    public static readonly string DefaultDirectory =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer");
 
     private static string GetDefaultFilePath(string fileName) => Path.Combine(DefaultDirectory, fileName);
 
-    public static async Task<string> ExportCsv<T>(IAsyncEnumerable<T> records, string fileName,
-        int limit = int.MaxValue)
+    public static async Task<(string, int)> ExportCsv<T>(ISystemIoWrapper systemIoWrapper,
+        IAsyncEnumerable<T> records, string fileName, int limit = int.MaxValue) where T : notnull
     {
-        if (!Directory.Exists(DefaultDirectory))
+        if (!systemIoWrapper.DirectoryExists(DefaultDirectory))
         {
-            Directory.CreateDirectory(DefaultDirectory);
+            systemIoWrapper.DirectoryCreate(DefaultDirectory);
         }
         
         var filePath = GetDefaultFilePath(fileName);
         
-        if (File.Exists(filePath)) File.Delete(filePath);
-        await File.Create(filePath).DisposeAsync();
+        if (systemIoWrapper.FileExists(filePath)) systemIoWrapper.FileDelete(filePath);
+        await systemIoWrapper.FileCreate(filePath);
 
-        await using var writer = new StreamWriter(filePath);
-        await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+        var rowCount = 1;
+        await using var writer = systemIoWrapper.CreateStreamWriter(filePath);
+        await using var csv = systemIoWrapper.CreateCsvWriter();
+        csv.Initialize(writer);
 
-        csv.WriteHeader<T>();
-        await csv.NextRecordAsync();
+        await csv.WriteHeaderAsync<T>();
 
-        var row = 0;
         var enumerator = records.GetAsyncEnumerator();
         while (await enumerator.MoveNextAsync())
         {
-            csv.WriteRecord(enumerator.Current);
-            await csv.NextRecordAsync();
+            await csv.WriteRecordAsync(enumerator.Current);
 
-            if (row++ >= limit)
+            if (rowCount >= limit)
             {
                 break;
             }
+
+            rowCount++;
         }
 
-        await writer.FlushAsync();
-
-        return filePath;
+        return (filePath, rowCount);
     }
 }

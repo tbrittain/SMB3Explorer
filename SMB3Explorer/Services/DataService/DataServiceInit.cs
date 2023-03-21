@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Ionic.Zlib;
 using Microsoft.Data.Sqlite;
+using OneOf;
+using OneOf.Types;
+using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
 
-// ReSharper disable once CheckNamespace
-namespace SMB3Explorer.Services;
+namespace SMB3Explorer.Services.DataService;
 
 public partial class DataService
 {
-    public async Task<string> DecompressSaveGame(string filePath)
+    public async Task<OneOf<string, Error<string>>> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper)
     {
-        await using var compressedStream = File.OpenRead(filePath);
-        await using var zlibStream = new ZlibStream(compressedStream, CompressionMode.Decompress);
+        await using var compressedStream = systemIoWrapper.FileOpenRead(filePath);
+        if (compressedStream is null)
+        {
+            return new Error<string>("Could not open file.");
+        }
+        await using var zlibStream = systemIoWrapper.GetZlibDecompressionStream(compressedStream);
         using var decompressedStream = new MemoryStream();
 
         var buffer = new byte[4096];
@@ -32,18 +37,22 @@ public partial class DataService
 
         CurrentFilePath = decompressedFilePath;
 
-        await using var fileStream = File.Create(decompressedFilePath);
+        await using var fileStream = systemIoWrapper.FileCreateStream(decompressedFilePath);
         await decompressedStream.CopyToAsync(fileStream);
 
         return decompressedFilePath;
     }
 
-    public async Task EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
+    public async Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
     {
         var decompressedFilePath = filePath;
         if (isCompressedSaveGame)
         {
-            decompressedFilePath = await DecompressSaveGame(filePath);
+            var decompressResult = await DecompressSaveGame(filePath, _systemIoWrapper);
+            if (decompressResult.TryPickT1(out var error, out decompressedFilePath))
+            {
+                return new Error<string>(error.Value);
+            }
         }
         else
         {
@@ -75,17 +84,43 @@ public partial class DataService
 
         // Using t_stats as a test table since it is an important one for this application
         if (!tableNames.Contains("t_stats"))
-            throw new Exception("Invalid save file, missing expected tables");
+        {
+            return new Error<string>("Invalid save file, missing expected tables");
+        }
+        
+        return new Success();
     }
 
-    public Task Disconnect()
+    public async Task Disconnect()
     {
-        Connection?.Close();
-        Connection?.Dispose();
+        if (Connection is not null)
+        {
+            try
+            {
+                // Ensure all transactions are committed
+                var command = Connection.CreateCommand();
+                command.CommandText = "COMMIT";
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (SqliteException)
+            {
+                // no-op, may throw if there are no transactions to commit
+            }
+            finally
+            {
+                // Remove reference to connection object
+                var conn = Connection;
+                Connection = null;
 
-        Connection = null;
+                // Close and dispose of the connection object
+                conn.Close();
+                conn.Dispose();
+
+                // Clear all connections from the connection pool
+                SqliteConnection.ClearAllPools();
+            }
+        }
+        
         CurrentFilePath = string.Empty;
-
-        return Task.CompletedTask;
     }
 }

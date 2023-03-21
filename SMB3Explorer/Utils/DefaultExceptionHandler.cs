@@ -1,27 +1,36 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Utils;
 
 public static class DefaultExceptionHandler
 {
-    public static void HandleException(string userFriendlyMessage, Exception? exception)
+    public const string GithubNewIssueUrl = "https://github.com/tbrittain/SMB3Explorer/issues/new";
+
+    public static void HandleException(ISystemIoWrapper systemIoWrapper, string userFriendlyMessage,
+        Exception exception)
     {
         var initialMessage = $"{userFriendlyMessage} " +
                              "A full stack trace has been copied to your clipboard. " +
                              "Press OK to report this issue on GitHub.";
 
-        var formattedMessage = $"{initialMessage}{Environment.NewLine}{exception?.Message ?? "Unknown error"}";
+        if (exception.InnerException is not null)
+        {
+            exception = exception.InnerException;
+        }
 
-        var openBrowser = MessageBox.Show(formattedMessage,
+        var formattedMessage = $"{initialMessage}{Environment.NewLine}{exception.Message}";
+
+        var openBrowser = systemIoWrapper.ShowMessageBox(formattedMessage,
             "Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-
-        Application.Current.Dispatcher.Invoke(() => Clipboard.SetText(exception?.StackTrace ?? "Unknown error"));
         
+        var stackTrace = exception.StackTrace ?? "Unknown error";
+        systemIoWrapper.SetClipboardText($"{exception.Message}{stackTrace}");
+
         if (openBrowser != MessageBoxResult.OK) return;
 
-        const string url = "https://github.com/tbrittain/SMB3Explorer/issues/new";
-        Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+        systemIoWrapper.StartProcess(new ProcessStartInfo("cmd", $"/c start {GithubNewIssueUrl}"));
     }
 }
