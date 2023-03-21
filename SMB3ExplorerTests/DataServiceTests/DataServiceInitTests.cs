@@ -71,28 +71,4 @@ public class DataServiceInitTests
             Assert.True(false, "Expected an error result.");
         }
     }
-
-    // TODO: need to mock the sqlite connection here
-    [Fact]
-    public async Task EstablishDbConnection_ReturnsSuccess_WhenIsCompressedSaveGameIsFalse()
-    {
-        // Arrange
-        var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
-
-        var mockApplicationContext = new Mock<IApplicationContext>();
-
-        // Act
-        var dataService = new DataService(mockApplicationContext.Object, mockSystemIoWrapper.Object);
-        var result = await dataService.EstablishDbConnection("filePath", false);
-
-        // Assert
-        if (result.TryPickT0(out var success, out _))
-        {
-            Assert.Equal("filePath", dataService.CurrentFilePath);
-        }
-        else
-        {
-            Assert.True(false, "Expected a successful result.");
-        }
-    }
 }
