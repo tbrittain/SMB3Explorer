@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using SMB3Explorer.Services.ApplicationContext;
@@ -19,6 +20,11 @@ public partial class App
 {
     private IServiceProvider ServiceProvider { get; set; } = null!;
     private IServiceCollection Services { get; set; } = null!;
+
+    public App()
+    {
+        DispatcherUnhandledException += App_DispatcherUnhandledException;
+    }
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -59,6 +65,18 @@ public partial class App
         
         Log.Information("Finished configuring services");
         return Task.CompletedTask;
+    }
+
+    private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        Log.Fatal(e.Exception, "Unhandled exception");
+
+        var systemIoWrapper = ServiceProvider.GetRequiredService<ISystemIoWrapper>();
+        DefaultExceptionHandler.HandleException(systemIoWrapper,
+            "An unexpected error occurred that caused the termination of the program.", e.Exception);
+        e.Handled = true;
+
+        Shutdown();
     }
 
     protected override void OnExit(ExitEventArgs e)
