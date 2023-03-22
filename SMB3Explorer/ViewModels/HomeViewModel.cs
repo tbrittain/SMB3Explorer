@@ -268,7 +268,7 @@ public partial class HomeViewModel : ViewModelBase
         _dataService.GetFranchises()
             .ContinueWith(async task =>
             {
-                if (task.Exception != null)
+                if (task.Exception is not null)
                 {
                     DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to get franchises.", task.Exception);
                     LoadingSpinnerVisible = Visibility.Collapsed;

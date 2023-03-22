@@ -152,8 +152,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private Task SubmitBugReport()
     {
-        const string bugUrl = "https://github.com/tbrittain/SMB3Explorer/issues/new?labels=bug&template=bug_report.md";
-        SafeProcess.Start(bugUrl, _systemIoWrapper);
+        SafeProcess.Start(DefaultExceptionHandler.GithubNewBugUrl, _systemIoWrapper);
         return Task.CompletedTask;
     }
 

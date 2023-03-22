@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using SMB3Explorer.Services;
+using Serilog;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.CsvWriterWrapper;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.HttpClient;
 using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Utils;
 using SMB3Explorer.ViewModels;
 using SMB3Explorer.Views;
 
@@ -22,6 +23,7 @@ public partial class App
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        Logger.InitializeLogger();
         Services = new ServiceCollection();
         await ConfigureServices(Services);
         ServiceProvider = Services.BuildServiceProvider();
@@ -33,6 +35,7 @@ public partial class App
 
     private static Task ConfigureServices(IServiceCollection services)
     {
+        Log.Information("Configuring services...");
         services.AddHttpClient();
         services.AddSingleton<IHttpService, HttpService>();
         services.AddSingleton<IDataService, DataService>();
@@ -54,6 +57,13 @@ public partial class App
         services.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider =>
             viewModelType => (ViewModelBase) serviceProvider.GetRequiredService(viewModelType));
         
+        Log.Information("Finished configuring services");
         return Task.CompletedTask;
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        Log.CloseAndFlush();
+        base.OnExit(e);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
+using Serilog;
 using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Utils;
@@ -21,6 +22,7 @@ public static class SafeProcess
         }
         catch (Win32Exception e)
         {
+            Log.Error(e, "Failed to start process {FileName}", fileName);
             DefaultExceptionHandler.HandleException(systemIoWrapper, "Failed to start process.", e);
         }
     }

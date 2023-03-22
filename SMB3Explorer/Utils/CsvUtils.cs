@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using SMB3Explorer.Services.CsvWriterWrapper;
+using Serilog;
 using SMB3Explorer.Services.SystemInteropWrapper;
 
 namespace SMB3Explorer.Utils;
@@ -20,6 +19,7 @@ public static class CsvUtils
     {
         if (!systemIoWrapper.DirectoryExists(DefaultDirectory))
         {
+            Log.Debug("Creating directory {DefaultDirectory}", DefaultDirectory);
             systemIoWrapper.DirectoryCreate(DefaultDirectory);
         }
         
@@ -27,6 +27,7 @@ public static class CsvUtils
         
         if (systemIoWrapper.FileExists(filePath)) systemIoWrapper.FileDelete(filePath);
         await systemIoWrapper.FileCreate(filePath);
+        Log.Debug("Created file {FilePath}", filePath);
 
         var rowCount = 1;
         await using var writer = systemIoWrapper.CreateStreamWriter(filePath);
@@ -35,6 +36,7 @@ public static class CsvUtils
 
         await csv.WriteHeaderAsync<T>();
 
+        Log.Debug("Writing records to {FilePath}", filePath);
         var enumerator = records.GetAsyncEnumerator();
         while (await enumerator.MoveNextAsync())
         {
@@ -47,6 +49,8 @@ public static class CsvUtils
 
             rowCount++;
         }
+        
+        Log.Debug("Finished writing {RowCount} records to {FilePath}", rowCount, filePath);
 
         return (filePath, rowCount);
     }
