@@ -48,6 +48,8 @@ public partial class HomeViewModel : ViewModelBase
             SetField(ref _selectedFranchise, value);
             _applicationContext.SelectedFranchise = value;
             OnPropertyChanged(nameof(FranchiseSelected));
+            
+            Log.Information("Changed current league to {League}", value?.LeagueName ?? "None");
 
             if (_selectedFranchise is null)
             {

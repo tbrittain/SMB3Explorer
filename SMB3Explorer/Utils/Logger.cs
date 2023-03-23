@@ -19,7 +19,7 @@ public static class Logger
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .WriteTo.File(LogPath)
-            .MinimumLevel.Warning()
+            .MinimumLevel.Information()
             .CreateLogger();
 #else
         Log.Logger = new LoggerConfiguration()
