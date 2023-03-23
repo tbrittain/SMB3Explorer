@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using Serilog;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.DataService;
@@ -33,6 +34,8 @@ public partial class HomeViewModel : ViewModelBase
         _dataService = dataService;
         _applicationContext = applicationContext;
         _systemIoWrapper = systemIoWrapper;
+        
+        Log.Information("Initializing HomeViewModel");
 
         GetFranchises();
     }
@@ -45,6 +48,15 @@ public partial class HomeViewModel : ViewModelBase
             SetField(ref _selectedFranchise, value);
             _applicationContext.SelectedFranchise = value;
             OnPropertyChanged(nameof(FranchiseSelected));
+
+            if (_selectedFranchise is null)
+            {
+                Log.Debug("Disabling export commands");
+            }
+            else
+            {
+                Log.Debug("Enabling export commands");
+            }
 
             ExportFranchiseCareerBattingStatisticsCommand.NotifyCanExecuteChanged();
             ExportFranchiseCareerPitchingStatisticsCommand.NotifyCanExecuteChanged();
@@ -89,7 +101,7 @@ public partial class HomeViewModel : ViewModelBase
         set => SetField(ref _interactionEnabled, value);
     }
 
-    public bool FranchiseSelected => SelectedFranchise != null;
+    public bool FranchiseSelected => SelectedFranchise is not null;
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchiseCareerBattingStatistics()
@@ -105,6 +117,7 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task HandleFranchiseCareerBattingExport(bool isRegularSeason = true)
     {
+        Log.Debug("Exporting franchise career batting statistics when isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseCareerBattingStatistics(isRegularSeason);
@@ -121,6 +134,7 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
+        Log.Debug("Finished exporting franchise career batting statistics to {FilePath}", filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -137,6 +151,7 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task HandleFranchiseCareerPitchingExport(bool isRegularSeason = true)
     {
+        Log.Debug("Exporting franchise career pitching statistics where isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseCareerPitchingStatistics(isRegularSeason);
@@ -153,6 +168,7 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
+        Log.Debug("Finished exporting franchise career pitching statistics to {FilePath}", filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -169,6 +185,7 @@ public partial class HomeViewModel : ViewModelBase
     
     private async Task HandleFranchiseSeasonBattingExport(bool isRegularSeason = true)
     {
+        Log.Debug("Exporting franchise season batting statistics where isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseSeasonBattingStatistics(isRegularSeason);
@@ -185,6 +202,7 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
+        Log.Debug("Finished exporting franchise season batting statistics to {FilePath}", filePath);
     }
     
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -201,6 +219,7 @@ public partial class HomeViewModel : ViewModelBase
     
     private async Task HandleFranchiseSeasonPitchingExport(bool isRegularSeason = true)
     {
+        Log.Debug("Exporting franchise season pitching statistics where isRegularSeason={IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseSeasonPitchingStatistics(isRegularSeason);
@@ -217,11 +236,13 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
+        Log.Debug("Finished exporting franchise season pitching statistics to {FilePath}", filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchiseTeamSeasonStandings()
     {
+        Log.Debug("Exporting franchise season standings...");
         Mouse.OverrideCursor = Cursors.Wait;
 
         var teamsEnumerable = _dataService.GetFranchiseSeasonStandings();
@@ -237,11 +258,13 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
         
         Mouse.OverrideCursor = Cursors.Arrow;
+        Log.Debug("Finished exporting franchise season standings to {FilePath}", filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchiseTeamPlayoffStandings()
     {
+        Log.Debug("Exporting franchise playoff standings...");
         Mouse.OverrideCursor = Cursors.Wait;
 
         var teamsEnumerable = _dataService.GetFranchisePlayoffStandings();
@@ -250,13 +273,14 @@ public partial class HomeViewModel : ViewModelBase
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, teamsEnumerable, fileName);
-        
+
         var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
         
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
         
         Mouse.OverrideCursor = Cursors.Arrow;
+        Log.Debug("Exported franchise playoff standings to {FilePath}", filePath);
     }
     
     private bool CanExport() => FranchiseSelected;
@@ -265,6 +289,7 @@ public partial class HomeViewModel : ViewModelBase
     {
         LoadingSpinnerVisible = Visibility.Visible;
 
+        Log.Debug("Getting franchises...");
         _dataService.GetFranchises()
             .ContinueWith(async task =>
             {
@@ -277,11 +302,13 @@ public partial class HomeViewModel : ViewModelBase
 
                 if (task.Result.Any())
                 {
+                    Log.Debug("{Count} Franchises found", task.Result.Count);
                     Franchises = new ObservableCollection<FranchiseSelection>(task.Result);
                     InteractionEnabled = true;
                 }
                 else
                 {
+                    Log.Debug("No franchises found, navigating to landing page");
                     MessageBox.Show("No franchises found. Please select a different save file.");
                     await _dataService.Disconnect();
                     _navigationService.NavigateTo<LandingViewModel>();
