@@ -9,6 +9,7 @@ public static class SafeProcess
 {
     public static void Start(string fileName, ISystemIoWrapper systemIoWrapper)
     {
+        Log.Debug("Starting process {FileName}", fileName);
         var startInfo = new ProcessStartInfo
         {
             FileName = fileName,

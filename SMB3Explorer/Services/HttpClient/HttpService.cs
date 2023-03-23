@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OneOf;
 using OneOf.Types;
+using Serilog;
 using SMB3Explorer.Models.Internal;
 
 namespace SMB3Explorer.Services.HttpClient;
@@ -24,6 +25,7 @@ public class HttpService : IHttpService
         var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version;
         if (currentVersion is null)
         {
+            Log.Error("Unable to determine current version");
             return new Error<string>("Unable to determine current version.");
         }
 
@@ -35,13 +37,17 @@ public class HttpService : IHttpService
         var response = await httpClient.GetAsync(url);
 
         if (!response.IsSuccessStatusCode)
+        {
+            Log.Error("Unable to check for updates: {Reason}", response.ReasonPhrase ?? "An unknown error occurred.");
             return new Error<string>(response.ReasonPhrase ?? "An unknown error occurred.");
+        }
 
         var content = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<GitHubReleaseResponse>(content);
 
         if (result is null)
         {
+            Log.Error("Unable to parse latest release response");
             return new Error<string>("Unable to parse latest release response.");
         }
 

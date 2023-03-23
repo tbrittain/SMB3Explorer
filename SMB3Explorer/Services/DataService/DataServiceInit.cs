@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using OneOf;
 using OneOf.Types;
+using Serilog;
 using SMB3Explorer.Services.SystemInteropWrapper;
 using SMB3Explorer.Utils;
 
@@ -12,19 +13,24 @@ namespace SMB3Explorer.Services.DataService;
 
 public partial class DataService
 {
-    public async Task<OneOf<string, Error<string>>> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper)
+    public async Task<OneOf<string, Error<string>>> DecompressSaveGame(string filePath,
+        ISystemIoWrapper systemIoWrapper)
     {
+        Log.Information("Decompressing save game at {FilePath}", filePath);
         await using var compressedStream = systemIoWrapper.FileOpenRead(filePath);
         if (compressedStream is null)
         {
+            Log.Error("Failed to open file, the file stream was null");
             return new Error<string>("Could not open file.");
         }
+
         await using var zlibStream = systemIoWrapper.GetZlibDecompressionStream(compressedStream);
         using var decompressedStream = new MemoryStream();
 
         var buffer = new byte[4096];
         int count;
 
+        Log.Debug("Writing decompressed data to memory stream");
         while ((count = zlibStream.Read(buffer, 0, buffer.Length)) != 0)
         {
             decompressedStream.Write(buffer, 0, count);
@@ -37,14 +43,20 @@ public partial class DataService
 
         CurrentFilePath = decompressedFilePath;
 
+        Log.Debug("Writing decompressed data to file at {FilePath}", decompressedFilePath);
         await using var fileStream = systemIoWrapper.FileCreateStream(decompressedFilePath);
         await decompressedStream.CopyToAsync(fileStream);
 
+        Log.Information("Finished decompressing save game");
         return decompressedFilePath;
     }
 
-    public async Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
+    public async Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath,
+        bool isCompressedSaveGame = true)
     {
+        Log.Information(
+            "Establishing database connection to {FilePath}, with isCompressedSaveGame={IsCompressedSaveGame}",
+            filePath, isCompressedSaveGame);
         var decompressedFilePath = filePath;
         if (isCompressedSaveGame)
         {
@@ -66,10 +78,12 @@ public partial class DataService
             Cache = SqliteCacheMode.Shared
         };
 
+        Log.Debug("Opening connection to database at {FilePath}", decompressedFilePath);
+
         Connection = new SqliteConnection(connectionStringBuilder.ToString());
         Connection.Open();
 
-        // Test connection by querying the schema and getting the table names
+        Log.Debug("Testing connection to database");
         var command = Connection.CreateCommand();
         var commandText = SqlRunner.GetSqlCommand(SqlFile.DatabaseTables);
         command.CommandText = commandText;
@@ -85,29 +99,34 @@ public partial class DataService
         // Using t_stats as a test table since it is an important one for this application
         if (!tableNames.Contains("t_stats"))
         {
+            Log.Error("Invalid save file, missing expected tables");
             return new Error<string>("Invalid save file, missing expected tables");
         }
-        
+
+        Log.Information("Successfully established database connection");
         return new Success();
     }
 
     public async Task Disconnect()
     {
+        Log.Information("Disconnecting from database");
         if (Connection is not null)
         {
             try
             {
-                // Ensure all transactions are committed
+                Log.Debug("Committing all transactions");
                 var command = Connection.CreateCommand();
                 command.CommandText = "COMMIT";
                 await command.ExecuteNonQueryAsync();
             }
             catch (SqliteException)
             {
+                Log.Debug("No transactions to commit");
                 // no-op, may throw if there are no transactions to commit
             }
             finally
             {
+                Log.Debug("Closing and disposing of connection");
                 // Remove reference to connection object
                 var conn = Connection;
                 Connection = null;
@@ -120,7 +139,8 @@ public partial class DataService
                 SqliteConnection.ClearAllPools();
             }
         }
-        
+
         CurrentFilePath = string.Empty;
+        Log.Debug("Connection to database closed");
     }
 }

@@ -117,7 +117,7 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task HandleFranchiseCareerBattingExport(bool isRegularSeason = true)
     {
-        Log.Debug("Exporting franchise career batting statistics when isRegularSeason = {IsRegularSeason}", isRegularSeason);
+        Log.Information("Exporting franchise career batting statistics when isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseCareerBattingStatistics(isRegularSeason);
@@ -134,7 +134,7 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
-        Log.Debug("Finished exporting franchise career batting statistics to {FilePath}", filePath);
+        Log.Information("Finished exporting franchise career batting statistics to {FilePath}", filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -151,7 +151,7 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task HandleFranchiseCareerPitchingExport(bool isRegularSeason = true)
     {
-        Log.Debug("Exporting franchise career pitching statistics where isRegularSeason = {IsRegularSeason}", isRegularSeason);
+        Log.Information("Exporting franchise career pitching statistics where isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseCareerPitchingStatistics(isRegularSeason);
@@ -168,7 +168,7 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
-        Log.Debug("Finished exporting franchise career pitching statistics to {FilePath}", filePath);
+        Log.Information("Finished exporting franchise career pitching statistics to {FilePath}", filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -185,7 +185,7 @@ public partial class HomeViewModel : ViewModelBase
     
     private async Task HandleFranchiseSeasonBattingExport(bool isRegularSeason = true)
     {
-        Log.Debug("Exporting franchise season batting statistics where isRegularSeason = {IsRegularSeason}", isRegularSeason);
+        Log.Information("Exporting franchise season batting statistics where isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseSeasonBattingStatistics(isRegularSeason);
@@ -202,7 +202,7 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
-        Log.Debug("Finished exporting franchise season batting statistics to {FilePath}", filePath);
+        Log.Information("Finished exporting franchise season batting statistics to {FilePath}", filePath);
     }
     
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -219,7 +219,7 @@ public partial class HomeViewModel : ViewModelBase
     
     private async Task HandleFranchiseSeasonPitchingExport(bool isRegularSeason = true)
     {
-        Log.Debug("Exporting franchise season pitching statistics where isRegularSeason={IsRegularSeason}", isRegularSeason);
+        Log.Information("Exporting franchise season pitching statistics where isRegularSeason={IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseSeasonPitchingStatistics(isRegularSeason);
@@ -236,13 +236,13 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
 
         Mouse.OverrideCursor = Cursors.Arrow;
-        Log.Debug("Finished exporting franchise season pitching statistics to {FilePath}", filePath);
+        Log.Information("Finished exporting franchise season pitching statistics to {FilePath}", filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchiseTeamSeasonStandings()
     {
-        Log.Debug("Exporting franchise season standings...");
+        Log.Information("Exporting franchise season standings...");
         Mouse.OverrideCursor = Cursors.Wait;
 
         var teamsEnumerable = _dataService.GetFranchiseSeasonStandings();
@@ -258,13 +258,13 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
         
         Mouse.OverrideCursor = Cursors.Arrow;
-        Log.Debug("Finished exporting franchise season standings to {FilePath}", filePath);
+        Log.Information("Finished exporting franchise season standings to {FilePath}", filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchiseTeamPlayoffStandings()
     {
-        Log.Debug("Exporting franchise playoff standings...");
+        Log.Information("Exporting franchise playoff standings...");
         Mouse.OverrideCursor = Cursors.Wait;
 
         var teamsEnumerable = _dataService.GetFranchisePlayoffStandings();
@@ -280,7 +280,7 @@ public partial class HomeViewModel : ViewModelBase
         if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
         
         Mouse.OverrideCursor = Cursors.Arrow;
-        Log.Debug("Exported franchise playoff standings to {FilePath}", filePath);
+        Log.Information("Exported franchise playoff standings to {FilePath}", filePath);
     }
     
     private bool CanExport() => FranchiseSelected;
@@ -289,7 +289,7 @@ public partial class HomeViewModel : ViewModelBase
     {
         LoadingSpinnerVisible = Visibility.Visible;
 
-        Log.Debug("Getting franchises...");
+        Log.Information("Getting franchises...");
         _dataService.GetFranchises()
             .ContinueWith(async task =>
             {
