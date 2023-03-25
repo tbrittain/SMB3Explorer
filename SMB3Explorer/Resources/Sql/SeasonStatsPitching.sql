@@ -1,25 +1,31 @@
 ﻿WITH teams AS
          (SELECT ttli.GUID AS teamGUID, tt.teamName
           FROM t_team_local_ids ttli
-                   JOIN t_teams tt ON ttli.GUID = tt.GUID)
+                   JOIN t_teams tt ON ttli.GUID = tt.GUID),
+     seasons AS (SELECT id                        AS seasonID,
+                        RANK() OVER (ORDER BY id) AS seasonNum
+                 FROM t_seasons
+                          JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
+                 WHERE t_leagues.GUID = CAST(@leagueId AS BLOB))
 SELECT baseballPlayerGUID,
        tsea.completionDate,
-       tsea.ID                                        AS seasonId,
+       tsea.ID                             AS seasonId,
+       s.seasonNum,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[firstName]
-           ELSE vbpi.[firstName] END                  AS firstName,
+           ELSE vbpi.[firstName] END       AS firstName,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[lastName]
-           ELSE vbpi.[lastName] END                   AS lastName,
+           ELSE vbpi.[lastName] END        AS lastName,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[primaryPos]
-           ELSE vbpi.[primaryPosition] END            AS primaryPosition,
+           ELSE vbpi.[primaryPosition] END AS primaryPosition,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[pitcherRole]
-           ELSE vbpi.[pitcherRole] END                AS pitcherRole,
+           ELSE vbpi.[pitcherRole] END     AS pitcherRole,
        tspitch.*,
-       currentTeam.teamName AS currentTeam,
-       previousTeam.teamName AS previousTeam
+       currentTeam.teamName                AS currentTeam,
+       previousTeam.teamName               AS previousTeam
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
@@ -29,6 +35,7 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
 
          JOIN t_seasons tsea ON tss.seasonID = tsea.ID
+         JOIN seasons s ON tsea.ID = s.seasonID
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
 
