@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using Serilog;
 using SMB3Explorer.Services.SystemInteropWrapper;

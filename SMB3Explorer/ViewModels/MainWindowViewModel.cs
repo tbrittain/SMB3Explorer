@@ -36,6 +36,8 @@ public partial class MainWindowViewModel : ViewModelBase
         _dataService = dataService;
         _httpService = httpService;
         
+        Log.Information("Initializing MainWindowViewModel");
+        
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
     }
 
