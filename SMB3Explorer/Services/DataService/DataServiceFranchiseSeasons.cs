@@ -152,4 +152,14 @@ public partial class DataService
             yield return pitcherStatistic;
         }
     }
+
+    public IAsyncEnumerable<BattingSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(bool isRookies = false)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IAsyncEnumerable<PitchingSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(bool isRookies = false)
+    {
+        throw new NotImplementedException();
+    }
 }

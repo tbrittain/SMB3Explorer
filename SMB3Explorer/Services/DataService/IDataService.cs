@@ -26,4 +26,6 @@ public interface IDataService
     IAsyncEnumerable<PitchingSeasonStatistic> GetFranchiseSeasonPitchingStatistics(bool isRegularSeason = true);
     IAsyncEnumerable<FranchiseSeasonStanding> GetFranchiseSeasonStandings();
     IAsyncEnumerable<FranchisePlayoffStanding> GetFranchisePlayoffStandings();
+    IAsyncEnumerable<BattingSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(bool isRookies = false);
+    IAsyncEnumerable<PitchingSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(bool isRookies = false);
 }
