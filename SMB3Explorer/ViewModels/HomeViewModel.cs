@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using Serilog;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.DataService;
@@ -34,6 +35,8 @@ public partial class HomeViewModel : ViewModelBase
         _dataService = dataService;
         _applicationContext = applicationContext;
         _systemIoWrapper = systemIoWrapper;
+        
+        Log.Information("Initializing HomeViewModel");
 
         _applicationContext.PropertyChanged += ApplicationContextOnPropertyChanged;
 
@@ -47,6 +50,9 @@ public partial class HomeViewModel : ViewModelBase
         {
             SetField(ref _selectedFranchise, value);
             _applicationContext.SelectedFranchise = value;
+            
+            var leagueName = value?.LeagueNameSafe ?? "None";
+            Log.Information("Set selected league to {LeagueNameSafe}", leagueName);
             OnPropertyChanged(nameof(FranchiseSelected));
         }
     }
@@ -135,6 +141,7 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task HandleFranchiseCareerBattingExport(bool isRegularSeason = true)
     {
+        Log.Information("Exporting franchise career batting statistics when isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseCareerBattingStatistics(isRegularSeason);
@@ -162,6 +169,7 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task HandleFranchiseCareerPitchingExport(bool isRegularSeason = true)
     {
+        Log.Information("Exporting franchise career pitching statistics where isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseCareerPitchingStatistics(isRegularSeason);
@@ -189,6 +197,7 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task HandleFranchiseSeasonBattingExport(bool isRegularSeason = true)
     {
+        Log.Information("Exporting franchise season batting statistics where isRegularSeason = {IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseSeasonBattingStatistics(isRegularSeason);
@@ -216,6 +225,7 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task HandleFranchiseSeasonPitchingExport(bool isRegularSeason = true)
     {
+        Log.Information("Exporting franchise season pitching statistics where isRegularSeason={IsRegularSeason}", isRegularSeason);
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetFranchiseSeasonPitchingStatistics(isRegularSeason);
@@ -232,6 +242,7 @@ public partial class HomeViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchiseTeamSeasonStandings()
     {
+        Log.Information("Exporting franchise season standings...");
         Mouse.OverrideCursor = Cursors.Wait;
 
         var teamsEnumerable = _dataService.GetFranchiseSeasonStandings();
@@ -247,6 +258,7 @@ public partial class HomeViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchiseTeamPlayoffStandings()
     {
+        Log.Information("Exporting franchise playoff standings...");
         Mouse.OverrideCursor = Cursors.Wait;
 
         var teamsEnumerable = _dataService.GetFranchisePlayoffStandings();
@@ -335,11 +347,13 @@ public partial class HomeViewModel : ViewModelBase
 
                 if (task.Result.Any())
                 {
+                    Log.Debug("{Count} Franchises found", task.Result.Count);
                     Franchises = new ObservableCollection<FranchiseSelection>(task.Result);
                     InteractionEnabled = true;
                 }
                 else
                 {
+                    Log.Debug("No franchises found, navigating to landing page");
                     MessageBox.Show("No franchises found. Please select a different save file.");
                     await _dataService.Disconnect();
                     _navigationService.NavigateTo<LandingViewModel>();

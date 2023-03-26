@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Data.Sqlite;
+using Serilog;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.SystemInteropWrapper;
 
@@ -36,6 +38,7 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
             {
                 if (_applicationContext.SelectedFranchise is null)
                 {
+                    Log.Information("Clearing cached franchise seasons");
                     _applicationContext.FranchiseSeasons.Clear();
                     _applicationContext.MostRecentFranchiseSeason = null;
                     break;
@@ -45,14 +48,19 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
                 _applicationContext.FranchiseSeasonsLoading = true;
                 Task.Run(async () =>
                 {
+                    Log.Information("Setting cached franchise seasons");
                     var seasons = await GetFranchiseSeasons();
                     _applicationContext.FranchiseSeasons.Clear();
                     foreach (var season in seasons)
                     {
                         _applicationContext.FranchiseSeasons.Add(season);
                     }
-                    
-                    _applicationContext.MostRecentFranchiseSeason = seasons.MaxBy(x => x.SeasonNum);
+    
+                    var mostRecentSeason = seasons.MaxBy(x => x.SeasonNum);
+
+                    Debug.Assert(mostRecentSeason != null, nameof(mostRecentSeason) + " != null");
+                    Log.Information("Most recent franchise season: {SeasonNum}", mostRecentSeason.SeasonNum);
+                    _applicationContext.MostRecentFranchiseSeason = mostRecentSeason;
                     _applicationContext.FranchiseSeasonsLoading = false;
                     
                     Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
@@ -69,6 +77,9 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
         set
         {
             SetField(ref _connection, value);
+            
+            var isConnectionNull = value is null;
+            Log.Debug("Connection changed, is null: {IsConnectionNull}", isConnectionNull);
             ConnectionChanged?.Invoke(this, EventArgs.Empty);
         }
     }

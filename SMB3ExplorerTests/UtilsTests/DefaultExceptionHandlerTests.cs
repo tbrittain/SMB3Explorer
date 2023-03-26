@@ -106,6 +106,6 @@ public class DefaultExceptionHandlerTests
         // Assert
         mockSystemIoWrapper.Verify(
             m => m.StartProcess(It.Is<ProcessStartInfo>(p =>
-                p.Arguments.Contains(DefaultExceptionHandler.GithubNewIssueUrl))), Times.Once);
+                p.Arguments.Contains(DefaultExceptionHandler.GithubNewBugUrl))), Times.Once);
     }
 }

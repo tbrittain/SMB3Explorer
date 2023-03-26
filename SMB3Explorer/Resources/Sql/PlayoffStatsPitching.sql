@@ -1,10 +1,19 @@
 ﻿WITH teams AS
          (SELECT ttli.GUID AS teamGUID, tt.teamName
           FROM t_team_local_ids ttli
-                   JOIN t_teams tt ON ttli.GUID = tt.GUID)
+                   JOIN t_teams tt ON ttli.GUID = tt.GUID),
+     seasons AS (
+         SELECT id AS seasonID,
+                RANK() OVER (ORDER BY id) AS seasonNum
+         FROM t_seasons
+                  JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
+                  JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
+         WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
+     )
 SELECT baseballPlayerGUID,
        tsea.completionDate,
        tsea.ID                                        AS seasonId,
+       s.seasonNum,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[firstName]
            ELSE vbpi.[firstName] END                  AS firstName,
@@ -28,6 +37,7 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_playoff_stats tps ON ts.aggregatorID = tps.aggregatorID
 
          JOIN t_seasons tsea ON tps.seasonID = tsea.ID
+         JOIN seasons s ON tsea.ID = s.seasonID
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
 

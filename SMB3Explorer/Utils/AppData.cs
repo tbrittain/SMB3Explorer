@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.SystemInteropWrapper;
 
@@ -20,11 +21,13 @@ public static class AppData
     public static AppDataSummary GetApplicationDataSize(ISystemIoWrapper systemIoWrapper, string ignoreFile)
     {
         var files = GetApplicationDataFiles(systemIoWrapper, ignoreFile).ToList();
+        Log.Debug("Found {Count} files in application data", files.Count);
         return new AppDataSummary(files.Count, files.Sum(systemIoWrapper.FileGetSize));
     }
     
     public static Task<List<AppDataFailedPurgeResult>> PurgeApplicationData(ISystemIoWrapper systemIoWrapper, string ignoreFile)
     {
+        Log.Debug("Purging application data...");
         var files = GetApplicationDataFiles(systemIoWrapper, ignoreFile);
         
         var results = new List<AppDataFailedPurgeResult>();
@@ -35,6 +38,11 @@ public static class AppData
             
             if (!ok) results.Add(new AppDataFailedPurgeResult(file, size));
         }
+        
+        if (results.Count > 0)
+            Log.Warning("Failed to purge {Count} files from application data", results.Count);
+        else
+            Log.Debug("Finished purging application data");
         
         return Task.FromResult(results);
     }

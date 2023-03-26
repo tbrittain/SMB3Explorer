@@ -208,8 +208,7 @@ public partial class DataService
         return pitcherStatistic;
     }
 
-    private static BattingSeasonStatistic GetPositionPlayerSeasonStatistic(bool isRegularSeason,
-        SqliteDataReader reader)
+    private static BattingSeasonStatistic GetPositionPlayerSeasonStatistic(bool isRegularSeason, IDataRecord reader)
     {
         var positionPlayerStatistic = new BattingSeasonStatistic();
 
