@@ -2,6 +2,7 @@
 using System.Windows;
 using Serilog;
 using SMB3Explorer.Services.SystemIoWrapper;
+using static SMB3Explorer.Constants.FileExports;
 
 namespace SMB3Explorer.Utils;
 
@@ -36,7 +37,7 @@ public static class DefaultExceptionHandler
         Log.Debug("Opening log directory and browser to report bug");
         Logger.FlushAndRestartLogger();
 
-        SafeProcess.Start(Logger.LogDirectory, systemIoWrapper);
+        SafeProcess.Start(LogDirectory, systemIoWrapper);
         SafeProcess.Start(GithubNewBugUrl, systemIoWrapper);
     }
 }

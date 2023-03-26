@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Windows;
 using Microsoft.Win32;
 using OneOf;
 using OneOf.Types;
 using SMB3Explorer.Services.SystemIoWrapper;
+using static SMB3Explorer.Constants.FileExports;
 
 namespace SMB3Explorer.Utils;
 
@@ -13,9 +13,6 @@ public static class SaveFile
 {
     public const string DefaultSaveFileName = "savedata.sav";
     private const string SaveGameFileFilter = "Save files (*.sav)|*.sav";
-
-    public static string BaseGameDirectoryPath { get; } = Path.Combine(Environment.GetFolderPath(
-            Environment.SpecialFolder.LocalApplicationData), "Metalhead", "Super Mega Baseball 3");
 
     public static OneOf<string, None> GetSaveFilePath(ISystemIoWrapper systemIoWrapper)
     {

@@ -12,7 +12,8 @@ using SMB3Explorer.Services.HttpClient;
 using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
-
+using static SMB3Explorer.Constants.FileExports;
+    
 namespace SMB3Explorer.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -110,7 +111,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         Log.Information("Opening exports folder");
         
-        var defaultDirectory = CsvUtils.DefaultDirectory;
+        var defaultDirectory = BaseExportsDirectory;
 
         if (!_systemIoWrapper.DirectoryExists(defaultDirectory))
         {
