@@ -50,6 +50,9 @@ public partial class HomeViewModel : ViewModelBase
         {
             SetField(ref _selectedFranchise, value);
             _applicationContext.SelectedFranchise = value;
+            
+            var leagueName = value?.LeagueNameSafe ?? "None";
+            Log.Information("Set selected league to {LeagueNameSafe}", leagueName);
             OnPropertyChanged(nameof(FranchiseSelected));
         }
     }
