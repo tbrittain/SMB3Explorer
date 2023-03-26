@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using Microsoft.Data.Sqlite;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.SystemInteropWrapper;
@@ -20,6 +24,43 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
     {
         _applicationContext = applicationContext;
         _systemIoWrapper = systemIoWrapper;
+        
+        _applicationContext.PropertyChanged += ApplicationContextOnPropertyChanged;
+    }
+
+    private void ApplicationContextOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(IApplicationContext.SelectedFranchise):
+            {
+                if (_applicationContext.SelectedFranchise is null)
+                {
+                    _applicationContext.FranchiseSeasons.Clear();
+                    _applicationContext.MostRecentFranchiseSeason = null;
+                    break;
+                }
+
+                Mouse.OverrideCursor = Cursors.Wait;
+                _applicationContext.FranchiseSeasonsLoading = true;
+                Task.Run(async () =>
+                {
+                    var seasons = await GetFranchiseSeasons();
+                    _applicationContext.FranchiseSeasons.Clear();
+                    foreach (var season in seasons)
+                    {
+                        _applicationContext.FranchiseSeasons.Add(season);
+                    }
+                    
+                    _applicationContext.MostRecentFranchiseSeason = seasons.MaxBy(x => x.SeasonNum);
+                    _applicationContext.FranchiseSeasonsLoading = false;
+                    
+                    Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
+                });
+
+                break;
+            }
+        }
     }
 
     private SqliteConnection? Connection

@@ -15,6 +15,7 @@ public interface IDataService
     Task<OneOf<string, Error<string>>> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper);
     Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true);
     Task<List<FranchiseSelection>> GetFranchises();
+    Task<List<FranchiseSeason>> GetFranchiseSeasons();
 
     event EventHandler<EventArgs> ConnectionChanged;
     
@@ -26,4 +27,6 @@ public interface IDataService
     IAsyncEnumerable<PitchingSeasonStatistic> GetFranchiseSeasonPitchingStatistics(bool isRegularSeason = true);
     IAsyncEnumerable<FranchiseSeasonStanding> GetFranchiseSeasonStandings();
     IAsyncEnumerable<FranchisePlayoffStanding> GetFranchisePlayoffStandings();
+    IAsyncEnumerable<BattingSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(bool isRookies = false);
+    IAsyncEnumerable<PitchingSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(bool isRookies = false);
 }
