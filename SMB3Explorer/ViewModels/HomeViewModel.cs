@@ -18,13 +18,14 @@ namespace SMB3Explorer.ViewModels;
 public partial class HomeViewModel : ViewModelBase
 {
     private readonly IApplicationContext _applicationContext;
-    private readonly ISystemIoWrapper _systemIoWrapper;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
+    private readonly ISystemIoWrapper _systemIoWrapper;
 
     private ObservableCollection<FranchiseSelection> _franchises = new();
     private bool _interactionEnabled;
     private FranchiseSelection? _selectedFranchise;
+    private bool _atLeastOneFranchiseSeasonExists;
 
     public HomeViewModel(INavigationService navigationService, IDataService dataService,
         IApplicationContext applicationContext, ISystemIoWrapper systemIoWrapper)
@@ -33,41 +34,10 @@ public partial class HomeViewModel : ViewModelBase
         _dataService = dataService;
         _applicationContext = applicationContext;
         _systemIoWrapper = systemIoWrapper;
-        
+
         _applicationContext.PropertyChanged += ApplicationContextOnPropertyChanged;
 
         GetFranchises();
-    }
-
-    private void ApplicationContextOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        switch (e.PropertyName)
-        {
-            case nameof(ApplicationContext.MostRecentFranchiseSeason):
-            {
-                AtLeastOneFranchiseSeasonExists = _applicationContext.MostRecentFranchiseSeason is not null;
-                
-                ExportFranchiseCareerBattingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseCareerPitchingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseCareerPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseCareerPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
-
-                ExportFranchiseSeasonBattingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseSeasonPitchingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseSeasonPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
-
-                ExportFranchiseTeamSeasonStandingsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseTeamPlayoffStandingsCommand.NotifyCanExecuteChanged();
-            
-                ExportTopPerformersBattingCommand.NotifyCanExecuteChanged();
-                ExportTopRookiesBattingCommand.NotifyCanExecuteChanged();
-                ExportTopPerformersPitchingCommand.NotifyCanExecuteChanged();
-                ExportTopRookiesPitchingCommand.NotifyCanExecuteChanged();
-                
-                break;
-            }
-        }
     }
 
     public FranchiseSelection? SelectedFranchise
@@ -92,10 +62,53 @@ public partial class HomeViewModel : ViewModelBase
         get => _interactionEnabled;
         set => SetField(ref _interactionEnabled, value);
     }
+    
+    public Visibility NoFranchiseSeasonsVisibility => AtLeastOneFranchiseSeasonExists 
+        ? Visibility.Collapsed 
+        : Visibility.Visible;
 
     private bool FranchiseSelected => SelectedFranchise is not null;
-    
-    private bool AtLeastOneFranchiseSeasonExists { get; set; }
+
+    private bool AtLeastOneFranchiseSeasonExists
+    {
+        get => _atLeastOneFranchiseSeasonExists;
+        set
+        {
+            _atLeastOneFranchiseSeasonExists = value;
+            OnPropertyChanged(nameof(NoFranchiseSeasonsVisibility));
+        }
+    }
+
+    private void ApplicationContextOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(ApplicationContext.MostRecentFranchiseSeason):
+            {
+                AtLeastOneFranchiseSeasonExists = _applicationContext.MostRecentFranchiseSeason is not null;
+
+                ExportFranchiseCareerBattingStatisticsCommand.NotifyCanExecuteChanged();
+                ExportFranchiseCareerPitchingStatisticsCommand.NotifyCanExecuteChanged();
+                ExportFranchiseCareerPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
+                ExportFranchiseCareerPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
+
+                ExportFranchiseSeasonBattingStatisticsCommand.NotifyCanExecuteChanged();
+                ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
+                ExportFranchiseSeasonPitchingStatisticsCommand.NotifyCanExecuteChanged();
+                ExportFranchiseSeasonPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
+
+                ExportFranchiseTeamSeasonStandingsCommand.NotifyCanExecuteChanged();
+                ExportFranchiseTeamPlayoffStandingsCommand.NotifyCanExecuteChanged();
+
+                ExportTopPerformersBattingCommand.NotifyCanExecuteChanged();
+                ExportTopRookiesBattingCommand.NotifyCanExecuteChanged();
+                ExportTopPerformersPitchingCommand.NotifyCanExecuteChanged();
+                ExportTopRookiesPitchingCommand.NotifyCanExecuteChanged();
+
+                break;
+            }
+        }
+    }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportFranchiseCareerBattingStatistics()
@@ -292,7 +305,10 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    private bool CanExport() => FranchiseSelected && AtLeastOneFranchiseSeasonExists;
+    private bool CanExport()
+    {
+        return FranchiseSelected && AtLeastOneFranchiseSeasonExists;
+    }
 
     private void GetFranchises()
     {
