@@ -54,4 +54,4 @@ FROM [v_baseball_player_info] vbpi
 
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
 ORDER BY homeruns DESC
-LIMIT 15
+LIMIT 25

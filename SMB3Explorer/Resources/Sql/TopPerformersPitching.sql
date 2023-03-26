@@ -63,4 +63,4 @@ WHERE tl.GUID = CAST(@leagueId AS BLOB)
              JOIN mostRecentSeason s ON tsea.ID = s.seasonID
 )
 ORDER BY strikeOuts DESC
-LIMIT 15
+LIMIT 25
