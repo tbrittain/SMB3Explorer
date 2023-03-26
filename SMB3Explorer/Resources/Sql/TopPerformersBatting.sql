@@ -2,14 +2,14 @@
          (SELECT ttli.GUID AS teamGUID, tt.teamName
           FROM t_team_local_ids ttli
                    JOIN t_teams tt ON ttli.GUID = tt.GUID),
-     seasons AS (
-         SELECT id AS seasonID,
-                RANK() OVER (ORDER BY id) AS seasonNum
-         FROM t_seasons
-                  JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
-                  JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
-         WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
-     )
+     mostRecentSeason AS (SELECT id                        AS seasonID,
+                                 RANK() OVER (ORDER BY id) AS seasonNum
+                          FROM t_seasons
+                                   JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
+                                   JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
+                          WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
+                          ORDER BY ID DESC
+                          LIMIT 1)
 SELECT baseballPlayerGUID,
        tsea.completionDate,
        tsea.ID                                        AS seasonId,
@@ -39,7 +39,7 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
 
          JOIN t_seasons tsea ON tss.seasonID = tsea.ID
-         JOIN seasons s ON tsea.ID = s.seasonID
+         JOIN mostRecentSeason s ON tsea.ID = s.seasonID
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
 
@@ -53,4 +53,5 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
 
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
-ORDER BY baseballPlayerGUID, seasonNum
+ORDER BY homeruns DESC
+LIMIT 25

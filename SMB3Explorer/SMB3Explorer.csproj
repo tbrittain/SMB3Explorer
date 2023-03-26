@@ -69,6 +69,16 @@
       <EmbeddedResource Include="Resources\Sql\FranchisePlayoffStandings.sql" />
       <None Remove="Resources\Sql\FranchiseSeasonStandings.sql" />
       <EmbeddedResource Include="Resources\Sql\FranchiseSeasonStandings.sql" />
+      <None Remove="Resources\Sql\TopPerformersBatting.sql" />
+      <EmbeddedResource Include="Resources\Sql\TopPerformersBatting.sql" />
+      <None Remove="Resources\Sql\TopPerformersPitching.sql" />
+      <EmbeddedResource Include="Resources\Sql\TopPerformersPitching.sql" />
+      <None Remove="Resources\Sql\TopPerformersRookiesBatting.sql" />
+      <EmbeddedResource Include="Resources\Sql\TopPerformersRookiesBatting.sql" />
+      <None Remove="Resources\Sql\TopPerformersRookiesPitching.sql" />
+      <EmbeddedResource Include="Resources\Sql\TopPerformersRookiesPitching.sql" />
+      <None Remove="Resources\Sql\GetFranchiseSeasons.sql" />
+      <EmbeddedResource Include="Resources\Sql\FranchiseSeasons.sql" />
     </ItemGroup>
 
 </Project>
