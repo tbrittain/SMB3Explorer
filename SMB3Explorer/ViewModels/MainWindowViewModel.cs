@@ -13,7 +13,8 @@ using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
 using static SMB3Explorer.Constants.FileExports;
-    
+using static SMB3Explorer.Constants.Github;
+
 namespace SMB3Explorer.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -36,9 +37,9 @@ public partial class MainWindowViewModel : ViewModelBase
         _systemIoWrapper = systemIoWrapper;
         _dataService = dataService;
         _httpService = httpService;
-        
+
         Log.Information("Initializing MainWindowViewModel");
-        
+
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
     }
 
@@ -61,8 +62,8 @@ public partial class MainWindowViewModel : ViewModelBase
         get
         {
             var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version;
-            return currentVersion is null 
-                ? new Version(0, 0, 0, 0) 
+            return currentVersion is null
+                ? new Version(0, 0, 0, 0)
                 : new Version(currentVersion.Major, currentVersion.Minor, currentVersion.Build);
         }
     }
@@ -110,7 +111,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenExportsFolder()
     {
         Log.Information("Opening exports folder");
-        
+
         var defaultDirectory = BaseExportsDirectory;
 
         if (!_systemIoWrapper.DirectoryExists(defaultDirectory))
@@ -120,7 +121,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         SafeProcess.Start(defaultDirectory, _systemIoWrapper);
-        
+
         Log.Information("Opened exports folder");
         return Task.CompletedTask;
     }
@@ -129,10 +130,9 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenWiki()
     {
         Log.Information("Opening wiki");
-        
-        const string wikiUrl = "https://github.com/tbrittain/SMB3Explorer/wiki";
-        SafeProcess.Start(wikiUrl, _systemIoWrapper);
-        
+
+        SafeProcess.Start(WikiUrl, _systemIoWrapper);
+
         Log.Information("Opened wiki");
         return Task.CompletedTask;
     }
@@ -142,9 +142,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         Log.Information("Opening feature request page");
         
-        const string featureRequestUrl = "https://github.com/tbrittain/SMB3Explorer/discussions/new?category=ideas";
-        SafeProcess.Start(featureRequestUrl, _systemIoWrapper);
-        
+        SafeProcess.Start(FeatureRequestUrl, _systemIoWrapper);
+
         Log.Information("Opened feature request page");
         return Task.CompletedTask;
     }
@@ -153,10 +152,10 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenDiscussions()
     {
         Log.Information("Opening discussions page");
+
         
-        const string discussionsUrl = "https://github.com/tbrittain/SMB3Explorer/discussions";
-        SafeProcess.Start(discussionsUrl, _systemIoWrapper);
-        
+        SafeProcess.Start(DiscussionsUrl, _systemIoWrapper);
+
         Log.Information("Opened discussions page");
         return Task.CompletedTask;
     }
@@ -165,10 +164,10 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenIssues()
     {
         Log.Information("Opening issues page");
+
         
-        const string issuesUrl = "https://github.com/tbrittain/SMB3Explorer/issues";
-        SafeProcess.Start(issuesUrl, _systemIoWrapper);
-        
+        SafeProcess.Start(IssuesUrl, _systemIoWrapper);
+
         Log.Information("Opened issues page");
         return Task.CompletedTask;
     }
@@ -177,9 +176,9 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task SubmitBugReport()
     {
         Log.Information("Opening bug report page");
-        
-        SafeProcess.Start(DefaultExceptionHandler.GithubNewBugUrl, _systemIoWrapper);
-        
+
+        SafeProcess.Start(NewBugUrl, _systemIoWrapper);
+
         Log.Information("Opened bug report page");
         return Task.CompletedTask;
     }
@@ -188,10 +187,10 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task OpenGithubRepo()
     {
         Log.Information("Opening github repo");
+
         
-        const string githubUrl = "https://github.com/tbrittain/SMB3Explorer";
-        SafeProcess.Start(githubUrl, _systemIoWrapper);
-        
+        SafeProcess.Start(RepoUrl, _systemIoWrapper);
+
         Log.Information("Opened github repo");
         return Task.CompletedTask;
     }
@@ -200,7 +199,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private async Task PurgeApplicationData()
     {
         Log.Information("Purging application data");
-        
+
         var appDataSummary = AppData.GetApplicationDataSize(_systemIoWrapper, _dataService.CurrentFilePath);
         if (appDataSummary.NumberOfFiles == 0)
         {
@@ -209,7 +208,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
-        
+
         var message = $"Are you sure you want to delete {appDataSummary.NumberOfFiles} .sqlite files " +
                       $"totalling {appDataSummary.TotalSize.ToFileSizeString()}?";
 
@@ -222,7 +221,7 @@ public partial class MainWindowViewModel : ViewModelBase
         var failedPurgeResults = await AppData.PurgeApplicationData(_systemIoWrapper,
             _dataService.CurrentFilePath);
         Mouse.OverrideCursor = Cursors.Arrow;
-        
+
         if (failedPurgeResults.Count == 0)
         {
             Log.Debug("All files deleted successfully");
@@ -243,14 +242,14 @@ public partial class MainWindowViewModel : ViewModelBase
         _systemIoWrapper.ShowMessageBox(failedMessage.ToString(), "Failed to delete", MessageBoxButton.OK,
             MessageBoxImage.Warning);
     }
-    
+
     [RelayCommand]
     private Task OpenUpdateVersionReleasePage()
     {
         Log.Information("Opening update version release page");
-        
+
         SafeProcess.Start(AppUpdateResult!.Value.ReleasePageUrl, _systemIoWrapper);
-        
+
         Log.Information("Opened update version release page");
         return Task.CompletedTask;
     }
@@ -273,18 +272,18 @@ public partial class MainWindowViewModel : ViewModelBase
             // No update available
             return;
         }
-        
+
         AppUpdateResult = appUpdateResult;
-        
+
         Log.Debug("Displaying update available message box");
         var message = $"An update is available ({CurrentVersion} --> {appUpdateResult.Version}, released " +
                       $"{appUpdateResult.DaysSinceRelease} days ago). Would you like open the release page?";
 
-        var messageBoxResult = _systemIoWrapper.ShowMessageBox(message, "Update Available", 
+        var messageBoxResult = _systemIoWrapper.ShowMessageBox(message, "Update Available",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
-        
+
         if (messageBoxResult != MessageBoxResult.Yes) return;
-        
+
         SafeProcess.Start(appUpdateResult.ReleasePageUrl, _systemIoWrapper);
     }
 

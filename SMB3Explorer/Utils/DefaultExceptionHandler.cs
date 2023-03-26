@@ -3,14 +3,12 @@ using System.Windows;
 using Serilog;
 using SMB3Explorer.Services.SystemIoWrapper;
 using static SMB3Explorer.Constants.FileExports;
+using static SMB3Explorer.Constants.Github;
 
 namespace SMB3Explorer.Utils;
 
 public static class DefaultExceptionHandler
 {
-    public const string GithubNewBugUrl =
-        "https://github.com/tbrittain/SMB3Explorer/issues/new?labels=bug&template=bug_report.md";
-
     public static void HandleException(ISystemIoWrapper systemIoWrapper, string userFriendlyMessage,
         Exception exception)
     {
@@ -38,6 +36,6 @@ public static class DefaultExceptionHandler
         Logger.FlushAndRestartLogger();
 
         SafeProcess.Start(LogDirectory, systemIoWrapper);
-        SafeProcess.Start(GithubNewBugUrl, systemIoWrapper);
+        SafeProcess.Start(NewBugUrl, systemIoWrapper);
     }
 }

@@ -4,6 +4,7 @@ using Moq;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
 using static SMB3Explorer.Constants.FileExports;
+using static SMB3Explorer.Constants.Github;
 
 namespace SMB3ExplorerTests.UtilsTests;
 
@@ -102,6 +103,6 @@ public class DefaultExceptionHandlerTests
 
         mockSystemIoWrapper.Verify(
             m => m.StartProcess(It.Is<ProcessStartInfo>(p =>
-                p.FileName.Contains(DefaultExceptionHandler.GithubNewBugUrl))), Times.Once);
+                p.FileName.Contains(NewBugUrl))), Times.Once);
     }
 }
