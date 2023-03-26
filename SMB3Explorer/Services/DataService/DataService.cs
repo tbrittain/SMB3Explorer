@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.Data.Sqlite;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.SystemInteropWrapper;
@@ -20,6 +22,39 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
     {
         _applicationContext = applicationContext;
         _systemIoWrapper = systemIoWrapper;
+        
+        _applicationContext.PropertyChanged += ApplicationContextOnPropertyChanged;
+    }
+
+    private void ApplicationContextOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(IApplicationContext.SelectedFranchise):
+            {
+                if (_applicationContext.SelectedFranchise is null)
+                {
+                    _applicationContext.FranchiseSeasons.Clear();
+                }
+
+                Mouse.OverrideCursor = Cursors.Wait;
+                _applicationContext.FranchiseSeasonsLoading = true;
+                Task.Run(async () =>
+                {
+                    var seasons = await GetFranchiseSeasons();
+                    _applicationContext.FranchiseSeasons.Clear();
+                    foreach (var season in seasons)
+                    {
+                        _applicationContext.FranchiseSeasons.Add(season);
+                    }
+                    
+                    _applicationContext.FranchiseSeasonsLoading = false;
+                    Mouse.OverrideCursor = Cursors.Arrow;
+                });
+
+                break;
+            }
+        }
     }
 
     private SqliteConnection? Connection

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using SMB3Explorer.Models.Internal;
 
@@ -8,6 +10,7 @@ namespace SMB3Explorer.Services.ApplicationContext;
 public sealed class ApplicationContext : IApplicationContext, INotifyPropertyChanged
 {
     private FranchiseSelection? _selectedFranchise;
+    private bool _franchiseSeasonsLoading;
 
     /// <summary>
     /// For right now, the application only supports franchise mode.
@@ -23,6 +26,18 @@ public sealed class ApplicationContext : IApplicationContext, INotifyPropertyCha
     }
 
     public bool IsFranchiseSelected => SelectedFranchise is not null;
+
+    public ConcurrentBag<FranchiseSeason> FranchiseSeasons { get; } = new();
+
+    public FranchiseSeason? MostRecentFranchiseSeason => !FranchiseSeasons.IsEmpty 
+        ? FranchiseSeasons.OrderByDescending(_ => _.SeasonNum).Single()
+        : null;
+
+    public bool FranchiseSeasonsLoading
+    {
+        get => _franchiseSeasonsLoading;
+        set => SetField(ref _franchiseSeasonsLoading, value);
+    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

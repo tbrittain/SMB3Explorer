@@ -78,7 +78,7 @@
       <None Remove="Resources\Sql\TopPerformersRookiesPitching.sql" />
       <EmbeddedResource Include="Resources\Sql\TopPerformersRookiesPitching.sql" />
       <None Remove="Resources\Sql\GetFranchiseSeasons.sql" />
-      <EmbeddedResource Include="Resources\Sql\GetFranchiseSeasons.sql" />
+      <EmbeddedResource Include="Resources\Sql\FranchiseSeasons.sql" />
     </ItemGroup>
 
 </Project>

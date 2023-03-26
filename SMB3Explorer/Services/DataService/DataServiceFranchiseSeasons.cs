@@ -1,14 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using SMB3Explorer.Models.Exports;
+using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Services.DataService;
 
 public partial class DataService
 {
+    public async Task<List<FranchiseSeason>> GetFranchiseSeasons()
+    {
+        var command = Connection!.CreateCommand();
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.FranchiseSeasons);
+
+        command.CommandText = commandText;
+
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        });
+
+        var reader = await command.ExecuteReaderAsync();
+
+        List<FranchiseSeason> seasons = new();
+        while (reader.Read())
+        {
+            var seasonId = int.Parse(reader["seasonId"].ToString()!);
+            var seasonNum = int.Parse(reader["seasonNum"].ToString()!);
+            var seasonBytes = reader["seasonGUID"] as byte[] ?? Array.Empty<byte>();
+            var seasonGuid = seasonBytes.ToGuid();
+            var season = new FranchiseSeason(seasonId, seasonNum, seasonGuid);
+            seasons.Add(season);
+        }
+
+        return seasons;
+    }
+
     public async IAsyncEnumerable<BattingSeasonStatistic> GetFranchiseSeasonBattingStatistics(
         bool isRegularSeason = true)
     {
@@ -68,61 +98,63 @@ public partial class DataService
             yield return pitcherStatistic;
         }
     }
-    
-    public async IAsyncEnumerable<BattingSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(bool isRookies = false)
+
+    public async IAsyncEnumerable<BattingSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(
+        bool isRookies = false)
     {
         var command = Connection!.CreateCommand();
-        
+
         var sqlFile = isRookies ? SqlFile.TopPerformersRookiesBatting : SqlFile.TopPerformersBatting;
-        
+
         var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
-        
+
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
         });
-        
+
         command.Parameters.Add(new SqliteParameter("@franchiseId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.FranchiseId.ToBlob()
         });
-        
+
         var reader = await command.ExecuteReaderAsync();
-        
+
         while (reader.Read())
         {
             var positionPlayerStatistic = GetPositionPlayerSeasonStatistic(true, reader);
-            
+
             yield return positionPlayerStatistic;
         }
     }
 
-    public async IAsyncEnumerable<PitchingSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(bool isRookies = false)
+    public async IAsyncEnumerable<PitchingSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(
+        bool isRookies = false)
     {
         var command = Connection!.CreateCommand();
-        
+
         var sqlFile = isRookies ? SqlFile.TopPerformersRookiesPitching : SqlFile.TopPerformersPitching;
-        
+
         var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
-        
+
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
         });
-        
+
         command.Parameters.Add(new SqliteParameter("@franchiseId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.FranchiseId.ToBlob()
         });
-        
+
         var reader = await command.ExecuteReaderAsync();
-        
+
         while (reader.Read())
         {
             var pitcherStatistic = GetPitchingSeasonStatistic(true, reader);
-            
+
             yield return pitcherStatistic;
         }
     }
@@ -173,8 +205,9 @@ public partial class DataService
 
         return pitcherStatistic;
     }
-    
-        private static BattingSeasonStatistic GetPositionPlayerSeasonStatistic(bool isRegularSeason, SqliteDataReader reader)
+
+    private static BattingSeasonStatistic GetPositionPlayerSeasonStatistic(bool isRegularSeason,
+        SqliteDataReader reader)
     {
         var positionPlayerStatistic = new BattingSeasonStatistic();
 

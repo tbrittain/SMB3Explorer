@@ -115,12 +115,7 @@ public partial class HomeViewModel : ViewModelBase
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
-        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
-            MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
-
-        Mouse.OverrideCursor = Cursors.Arrow;
+        HandleExportSuccess(filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -147,12 +142,7 @@ public partial class HomeViewModel : ViewModelBase
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
-        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
-            MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
-
-        Mouse.OverrideCursor = Cursors.Arrow;
+        HandleExportSuccess(filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -179,12 +169,7 @@ public partial class HomeViewModel : ViewModelBase
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
-        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
-            MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
-
-        Mouse.OverrideCursor = Cursors.Arrow;
+        HandleExportSuccess(filePath);
     }
     
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -211,12 +196,7 @@ public partial class HomeViewModel : ViewModelBase
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
-        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
-            MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
-
-        Mouse.OverrideCursor = Cursors.Arrow;
+        HandleExportSuccess(filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -231,12 +211,7 @@ public partial class HomeViewModel : ViewModelBase
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, teamsEnumerable, fileName);
         
-        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
-            MessageBoxButton.YesNo, MessageBoxImage.Information);
-        
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
-        
-        Mouse.OverrideCursor = Cursors.Arrow;
+        HandleExportSuccess(filePath);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -251,12 +226,41 @@ public partial class HomeViewModel : ViewModelBase
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, teamsEnumerable, fileName);
         
-        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
-            MessageBoxButton.YesNo, MessageBoxImage.Information);
+        HandleExportSuccess(filePath);
+    }
+
+    // TODO implement in commands
+    private async Task HandleTopPerformersBattingExport(bool isRookies = false)
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var playersEnumerable = _dataService.GetMostRecentSeasonTopBattingStatistics(isRookies);
         
-        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
+        var rookieType = isRookies ? "rookies" : "all";
+        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_top_batting_{rookieType}" +
+                       $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
-        Mouse.OverrideCursor = Cursors.Arrow;
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
+        
+        HandleExportSuccess(filePath);
+    }
+    
+    // TODO implement in commands
+    private async Task HandleTopPerformersPitchingExport(bool isRookies = false)
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var playersEnumerable = _dataService.GetMostRecentSeasonTopPitchingStatistics(isRookies);
+        
+        var rookieType = isRookies ? "rookies" : "all";
+        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_top_pitching_{rookieType}" +
+                       $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
+        
+        HandleExportSuccess(filePath);
     }
     
     private bool CanExport() => FranchiseSelected;
@@ -289,5 +293,15 @@ public partial class HomeViewModel : ViewModelBase
 
                 LoadingSpinnerVisible = Visibility.Collapsed;
             });
+    }
+    
+    private void HandleExportSuccess(string filePath)
+    {
+        var ok = MessageBox.Show("Export successful. Would you like to open the file?", "Success",
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+        if (ok == MessageBoxResult.Yes) SafeProcess.Start(filePath, _systemIoWrapper);
+
+        Mouse.OverrideCursor = Cursors.Arrow;
     }
 }

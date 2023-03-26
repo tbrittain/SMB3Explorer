@@ -18,6 +18,9 @@ public enum SqlFile
     [Description("Franchises.sql")]
     Franchises,
     
+    [Description("FranchiseSeasons.sql")]
+    FranchiseSeasons,
+    
     [Description("CareerStatsBatting.sql")]
     CareerStatsBatting,
     
