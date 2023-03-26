@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using Serilog;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.DataService;
-using SMB3Explorer.Services.HttpClient;
+using SMB3Explorer.Services.HttpService;
 using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
