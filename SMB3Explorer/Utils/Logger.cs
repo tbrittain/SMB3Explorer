@@ -6,8 +6,8 @@ namespace SMB3Explorer.Utils;
 
 public static class Logger
 {
-    internal static string LogDirectory { get; private set; } = string.Empty;
-    internal static string LogPath { get; private set; } = string.Empty;
+    public static string LogDirectory { get; private set; } = string.Empty;
+    private static string LogPath { get; set; } = string.Empty;
     
     public static void InitializeLogger()
     {
