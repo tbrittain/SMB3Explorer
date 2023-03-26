@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
 using SMB3Explorer.Models.Internal;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 
 namespace SMB3Explorer.Utils;
 

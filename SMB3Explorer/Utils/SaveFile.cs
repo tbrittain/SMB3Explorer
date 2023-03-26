@@ -5,7 +5,7 @@ using System.Windows;
 using Microsoft.Win32;
 using OneOf;
 using OneOf.Types;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 
 namespace SMB3Explorer.Utils;
 

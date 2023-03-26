@@ -10,7 +10,7 @@ using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.HttpClient;
 using SMB3Explorer.Services.NavigationService;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.ViewModels;

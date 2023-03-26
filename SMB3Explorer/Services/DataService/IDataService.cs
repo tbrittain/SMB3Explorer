@@ -5,7 +5,7 @@ using OneOf;
 using OneOf.Types;
 using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Models.Internal;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 
 namespace SMB3Explorer.Services.DataService;
 
