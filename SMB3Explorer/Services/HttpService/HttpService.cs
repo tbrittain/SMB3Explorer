@@ -7,8 +7,9 @@ using OneOf;
 using OneOf.Types;
 using Serilog;
 using SMB3Explorer.Models.Internal;
+using static SMB3Explorer.Constants.Github;
 
-namespace SMB3Explorer.Services.HttpClient;
+namespace SMB3Explorer.Services.HttpService;
 
 public class HttpService : IHttpService
 {
@@ -21,7 +22,6 @@ public class HttpService : IHttpService
 
     public async Task<OneOf<AppUpdateResult, None, Error<string>>> CheckForUpdates()
     {
-        const string url = "https://api.github.com/repos/tbrittain/SMB3Explorer/releases/latest";
         var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version;
         if (currentVersion is null)
         {
@@ -34,7 +34,7 @@ public class HttpService : IHttpService
         httpClient.DefaultRequestHeaders.Add("User-Agent", $"SMB3Explorer/{currentVersion.ToString()}");
         httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
-        var response = await httpClient.GetAsync(url);
+        var response = await httpClient.GetAsync(LatestReleaseUrl);
 
         if (!response.IsSuccessStatusCode)
         {

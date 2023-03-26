@@ -1,8 +1,9 @@
 ﻿using System.Windows;
 using Microsoft.Win32;
 using Moq;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
+using static SMB3Explorer.Constants.FileExports;
 
 namespace SMB3ExplorerTests.UtilsTests;
 
@@ -53,13 +54,13 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(true);
 
-        var steamDirectory = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
+        var steamDirectory = Path.Combine(BaseGameDirectoryPath, "123456");
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryGetDirectories(BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory});
 
         var saveFilePath =
@@ -85,7 +86,7 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(false);
 
         mockSystemIoWrapper.Setup(x =>
@@ -111,7 +112,7 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(false);
 
         mockSystemIoWrapper.Setup(x =>
@@ -134,13 +135,13 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(true);
 
-        var steamDirectory = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
+        var steamDirectory = Path.Combine(BaseGameDirectoryPath, "123456");
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryGetDirectories(BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory});
 
         var saveFilePath =
@@ -173,13 +174,13 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(true);
 
-        var steamDirectory = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
+        var steamDirectory = Path.Combine(BaseGameDirectoryPath, "123456");
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryGetDirectories(BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory});
 
         var saveFilePath =
@@ -209,11 +210,11 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(true);
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryGetDirectories(BaseGameDirectoryPath))
             .Returns(Array.Empty<string>());
 
         mockSystemIoWrapper.Setup(x =>
@@ -239,11 +240,11 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(true);
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryGetDirectories(BaseGameDirectoryPath))
             .Returns(Array.Empty<string>());
 
         mockSystemIoWrapper.Setup(x =>
@@ -266,14 +267,14 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(true);
 
-        var steamDirectory1 = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
-        var steamDirectory2 = Path.Combine(SaveFile.BaseGameDirectoryPath, "654321");
+        var steamDirectory1 = Path.Combine(BaseGameDirectoryPath, "123456");
+        var steamDirectory2 = Path.Combine(BaseGameDirectoryPath, "654321");
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryGetDirectories(BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory1, steamDirectory2});
 
         var saveFilePath1 =
@@ -313,14 +314,14 @@ public class SaveFileTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryExists(BaseGameDirectoryPath))
             .Returns(true);
 
-        var steamDirectory1 = Path.Combine(SaveFile.BaseGameDirectoryPath, "123456");
-        var steamDirectory2 = Path.Combine(SaveFile.BaseGameDirectoryPath, "654321");
+        var steamDirectory1 = Path.Combine(BaseGameDirectoryPath, "123456");
+        var steamDirectory2 = Path.Combine(BaseGameDirectoryPath, "654321");
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryGetDirectories(SaveFile.BaseGameDirectoryPath))
+            .Setup(x => x.DirectoryGetDirectories(BaseGameDirectoryPath))
             .Returns(new[] {steamDirectory1, steamDirectory2});
 
         var saveFilePath1 =

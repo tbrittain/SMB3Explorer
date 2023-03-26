@@ -8,7 +8,7 @@ using OneOf.Types;
 using Serilog;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.NavigationService;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.ViewModels;

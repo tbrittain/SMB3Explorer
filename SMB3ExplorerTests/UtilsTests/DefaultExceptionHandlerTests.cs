@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using Moq;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
+using static SMB3Explorer.Constants.FileExports;
+using static SMB3Explorer.Constants.Github;
 
 namespace SMB3ExplorerTests.UtilsTests;
 
@@ -97,10 +99,10 @@ public class DefaultExceptionHandlerTests
         // Assert
         mockSystemIoWrapper.Verify(
             m => m.StartProcess(It.Is<ProcessStartInfo>(p =>
-                p.FileName.Contains(Logger.LogDirectory))), Times.Once);
+                p.FileName.Contains(LogDirectory))), Times.Once);
 
         mockSystemIoWrapper.Verify(
             m => m.StartProcess(It.Is<ProcessStartInfo>(p =>
-                p.FileName.Contains(DefaultExceptionHandler.GithubNewBugUrl))), Times.Once);
+                p.FileName.Contains(NewBugUrl))), Times.Once);
     }
 }

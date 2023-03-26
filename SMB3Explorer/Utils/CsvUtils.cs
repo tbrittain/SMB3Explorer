@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Serilog;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
+using static SMB3Explorer.Constants.FileExports;
 
 namespace SMB3Explorer.Utils;
 
 public static class CsvUtils
 {
-    public static readonly string DefaultDirectory =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SMB3Explorer");
-
-    private static string GetDefaultFilePath(string fileName) => Path.Combine(DefaultDirectory, fileName);
+    private static string GetDefaultFilePath(string fileName) => Path.Combine(BaseExportsDirectory, fileName);
 
     public static async Task<(string, int)> ExportCsv<T>(ISystemIoWrapper systemIoWrapper,
         IAsyncEnumerable<T> records, string fileName, int limit = int.MaxValue) where T : notnull
     {
-        if (!systemIoWrapper.DirectoryExists(DefaultDirectory))
+        if (!systemIoWrapper.DirectoryExists(BaseExportsDirectory))
         {
-            Log.Debug("Creating directory {DefaultDirectory}", DefaultDirectory);
-            systemIoWrapper.DirectoryCreate(DefaultDirectory);
+            Log.Debug("Creating directory {DefaultDirectory}", BaseExportsDirectory);
+            systemIoWrapper.DirectoryCreate(BaseExportsDirectory);
         }
         
         var filePath = GetDefaultFilePath(fileName);

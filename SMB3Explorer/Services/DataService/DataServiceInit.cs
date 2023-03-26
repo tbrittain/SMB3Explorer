@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 using OneOf;
 using OneOf.Types;
 using Serilog;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Services.DataService;

@@ -9,7 +9,7 @@ using Microsoft.Win32;
 using Serilog;
 using SMB3Explorer.Services.CsvWriterWrapper;
 
-namespace SMB3Explorer.Services.SystemInteropWrapper;
+namespace SMB3Explorer.Services.SystemIoWrapper;
 
 public class SystemIoWrapper : ISystemIoWrapper
 {

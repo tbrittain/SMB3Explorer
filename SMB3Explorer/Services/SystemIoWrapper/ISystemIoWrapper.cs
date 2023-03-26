@@ -6,7 +6,7 @@ using Ionic.Zlib;
 using Microsoft.Win32;
 using SMB3Explorer.Services.CsvWriterWrapper;
 
-namespace SMB3Explorer.Services.SystemInteropWrapper;
+namespace SMB3Explorer.Services.SystemIoWrapper;
 
 public interface ISystemIoWrapper
 {

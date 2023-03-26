@@ -1,20 +1,16 @@
 ﻿using System;
 using System.IO;
 using Serilog;
+using static SMB3Explorer.Constants.FileExports;
 
 namespace SMB3Explorer.Utils;
 
 public static class Logger
 {
-    public static string LogDirectory { get; private set; } = string.Empty;
-    private static string LogPath { get; set; } = string.Empty;
+    private static readonly string LogPath = Path.Combine(LogDirectory, $"log_{DateTime.Now:yyyyMMddHHmmssfff}.txt");
     
     public static void InitializeLogger()
     {
-        LogDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SMB3Explorer", "Logs");
-        LogPath = Path.Combine(LogDirectory, $"log_{DateTime.Now:yyyyMMddHHmmssfff}.txt");
-
 #if RELEASE
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
