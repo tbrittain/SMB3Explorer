@@ -18,7 +18,7 @@ jobs:
     
     env:
       Solution_Path: SMB3Explorer.sln
-      Test_Project_Path: SBM3ExplorerTests\SMB3ExplorerTests.csproj
+      Test_Project_Path: SMB3ExplorerTests\SMB3ExplorerTests.csproj
 
     steps:
     - uses: actions/checkout@v3
