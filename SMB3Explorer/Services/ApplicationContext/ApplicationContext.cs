@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using SMB3Explorer.Models.Internal;
 
@@ -11,10 +10,8 @@ public sealed class ApplicationContext : IApplicationContext, INotifyPropertyCha
 {
     private FranchiseSelection? _selectedFranchise;
     private bool _franchiseSeasonsLoading;
+    private FranchiseSeason? _mostRecentFranchiseSeason;
 
-    /// <summary>
-    /// For right now, the application only supports franchise mode.
-    /// </summary>
     public FranchiseSelection? SelectedFranchise
     {
         get => _selectedFranchise;
@@ -29,9 +26,11 @@ public sealed class ApplicationContext : IApplicationContext, INotifyPropertyCha
 
     public ConcurrentBag<FranchiseSeason> FranchiseSeasons { get; } = new();
 
-    public FranchiseSeason? MostRecentFranchiseSeason => !FranchiseSeasons.IsEmpty 
-        ? FranchiseSeasons.OrderByDescending(_ => _.SeasonNum).Single()
-        : null;
+    public FranchiseSeason? MostRecentFranchiseSeason
+    {
+        get => _mostRecentFranchiseSeason;
+        set => SetField(ref _mostRecentFranchiseSeason, value);
+    }
 
     public bool FranchiseSeasonsLoading
     {

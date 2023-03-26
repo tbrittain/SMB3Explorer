@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -35,6 +36,8 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
                 if (_applicationContext.SelectedFranchise is null)
                 {
                     _applicationContext.FranchiseSeasons.Clear();
+                    _applicationContext.MostRecentFranchiseSeason = null;
+                    break;
                 }
 
                 Mouse.OverrideCursor = Cursors.Wait;
@@ -47,6 +50,7 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
                     {
                         _applicationContext.FranchiseSeasons.Add(season);
                     }
+                    _applicationContext.MostRecentFranchiseSeason = seasons.MaxBy(x => x.SeasonNum);
                     
                     _applicationContext.FranchiseSeasonsLoading = false;
                     Mouse.OverrideCursor = Cursors.Arrow;

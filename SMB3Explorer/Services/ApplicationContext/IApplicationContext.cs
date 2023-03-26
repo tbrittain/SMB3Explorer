@@ -9,7 +9,7 @@ public interface IApplicationContext
     FranchiseSelection? SelectedFranchise { get; set; }
     bool IsFranchiseSelected { get; }
     ConcurrentBag<FranchiseSeason> FranchiseSeasons { get; }
-    FranchiseSeason? MostRecentFranchiseSeason { get; }
+    FranchiseSeason? MostRecentFranchiseSeason { get; set; }
     bool FranchiseSeasonsLoading { get; set; }
     event PropertyChangedEventHandler? PropertyChanged;
 }

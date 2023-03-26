@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:HomeViewModel}"
              VerticalAlignment="Stretch">
     <StackPanel VerticalAlignment="Stretch">
-        <Grid Visibility="{Binding ContentVisible}" VerticalAlignment="Stretch">
+        <Grid VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="200" />
                 <ColumnDefinition Width="2*" MinWidth="200" />
