@@ -62,10 +62,18 @@ public partial class HomeViewModel : ViewModelBase
         get => _interactionEnabled;
         set => SetField(ref _interactionEnabled, value);
     }
-    
-    public Visibility NoFranchiseSeasonsVisibility => AtLeastOneFranchiseSeasonExists 
-        ? Visibility.Collapsed 
-        : Visibility.Visible;
+
+    public Visibility NoFranchiseSeasonsVisibility
+    {
+        get
+        {
+            if (!FranchiseSelected) return Visibility.Collapsed;
+
+            if (AtLeastOneFranchiseSeasonExists) return Visibility.Collapsed;
+
+            return Visibility.Visible;
+        }
+    }
 
     private bool FranchiseSelected => SelectedFranchise is not null;
 
@@ -87,23 +95,26 @@ public partial class HomeViewModel : ViewModelBase
             {
                 AtLeastOneFranchiseSeasonExists = _applicationContext.MostRecentFranchiseSeason is not null;
 
-                ExportFranchiseCareerBattingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseCareerPitchingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseCareerPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseCareerPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ExportFranchiseCareerBattingStatisticsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseCareerPitchingStatisticsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseCareerPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseCareerPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
 
-                ExportFranchiseSeasonBattingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseSeasonPitchingStatisticsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseSeasonPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseSeasonBattingStatisticsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseSeasonPlayoffBattingStatisticsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseSeasonPitchingStatisticsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseSeasonPlayoffPitchingStatisticsCommand.NotifyCanExecuteChanged();
 
-                ExportFranchiseTeamSeasonStandingsCommand.NotifyCanExecuteChanged();
-                ExportFranchiseTeamPlayoffStandingsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseTeamSeasonStandingsCommand.NotifyCanExecuteChanged();
+                    ExportFranchiseTeamPlayoffStandingsCommand.NotifyCanExecuteChanged();
 
-                ExportTopPerformersBattingCommand.NotifyCanExecuteChanged();
-                ExportTopRookiesBattingCommand.NotifyCanExecuteChanged();
-                ExportTopPerformersPitchingCommand.NotifyCanExecuteChanged();
-                ExportTopRookiesPitchingCommand.NotifyCanExecuteChanged();
+                    ExportTopPerformersBattingCommand.NotifyCanExecuteChanged();
+                    ExportTopRookiesBattingCommand.NotifyCanExecuteChanged();
+                    ExportTopPerformersPitchingCommand.NotifyCanExecuteChanged();
+                    ExportTopRookiesPitchingCommand.NotifyCanExecuteChanged();
+                });
 
                 break;
             }

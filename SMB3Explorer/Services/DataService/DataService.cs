@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.Data.Sqlite;
 using SMB3Explorer.Services.ApplicationContext;
@@ -50,10 +51,11 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
                     {
                         _applicationContext.FranchiseSeasons.Add(season);
                     }
-                    _applicationContext.MostRecentFranchiseSeason = seasons.MaxBy(x => x.SeasonNum);
                     
+                    _applicationContext.MostRecentFranchiseSeason = seasons.MaxBy(x => x.SeasonNum);
                     _applicationContext.FranchiseSeasonsLoading = false;
-                    Mouse.OverrideCursor = Cursors.Arrow;
+                    
+                    Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
                 });
 
                 break;

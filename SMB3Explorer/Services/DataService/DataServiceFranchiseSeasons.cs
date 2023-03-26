@@ -30,8 +30,10 @@ public partial class DataService
         {
             var seasonId = int.Parse(reader["seasonId"].ToString()!);
             var seasonNum = int.Parse(reader["seasonNum"].ToString()!);
-            var seasonBytes = reader["seasonGUID"] as byte[] ?? Array.Empty<byte>();
+            
+            var seasonBytes = reader["leagueGUID"] as byte[] ?? Array.Empty<byte>();
             var seasonGuid = seasonBytes.ToGuid();
+            
             var season = new FranchiseSeason(seasonId, seasonNum, seasonGuid);
             seasons.Add(season);
         }
