@@ -13,5 +13,5 @@ public static class FileExports
     
     public static readonly string LogDirectory = Path.Combine(BaseExportsDirectory, "Logs");
 
-    public static readonly string TempDirectory = Path.GetTempFileName();
+    public static readonly string TempDirectory = Path.GetTempPath();
 }
