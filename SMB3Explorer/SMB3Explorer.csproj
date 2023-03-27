@@ -12,6 +12,11 @@
         <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
         <RepositoryUrl>https://github.com/tbrittain/SMB3Explorer.git</RepositoryUrl>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <ApplicationIcon>favicon.ico</ApplicationIcon>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DefineConstants>DEBUG;TRACE</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
