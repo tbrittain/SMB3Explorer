@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
+// ReSharper disable NotAccessedPositionalProperty.Global
+
 namespace SMB3Explorer.Enums;
 
 public static class PlayerTrait

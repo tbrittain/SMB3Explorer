@@ -40,7 +40,7 @@ SELECT vbpi.baseballPlayerGUID,
        salary.salary * 200                            AS salaryDollars,
        CASE
            WHEN COUNT(tbpt.trait) = 0 THEN NULL
-           ELSE json_group_array(json_object('trait', tbpt.trait, 'subType', tbpt.subType))
+           ELSE json_group_array(json_object('traitId', tbpt.trait, 'subtypeId', tbpt.subType))
            END AS traits
 
 FROM [v_baseball_player_info] vbpi
