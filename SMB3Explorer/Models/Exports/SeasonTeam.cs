@@ -56,4 +56,28 @@ public class SeasonTeam
     
     [Name("games_back"), Index(15)]
     public double GamesBack { get; set; }
+    
+    [Name("power"), Index(16)]
+    public int Power { get; set; }
+    
+    [Name("contact"), Index(17)]
+    public int Contact { get; set; }
+    
+    [Name("speed"), Index(18)]
+    public int Speed { get; set; }
+    
+    [Name("fielding"), Index(19)]
+    public int Fielding { get; set; }
+    
+    [Name("arm"), Index(20)]
+    public int Arm { get; set; }
+    
+    [Name("velocity"), Index(21)]
+    public int Velocity { get; set; }
+    
+    [Name("junk"), Index(22)]
+    public int Junk { get; set; }
+    
+    [Name("accuracy"), Index(23)]
+    public int Accuracy { get; set; }
 }

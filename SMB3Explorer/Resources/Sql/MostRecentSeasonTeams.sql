@@ -32,23 +32,32 @@
                                             JOIN mostRecentSeason fs ON vss.seasonGUID = fs.seasonGUID
                                             JOIN t_teams tt ON vss.teamGUID = tt.GUID)
 SELECT teams.*,
-       tsea.ID                                                                                          AS seasonId,
+       tsea.ID                                                      AS seasonId,
        s.seasonNum,
-       payrollMax                                                                                       AS budget,
-       SUM(salary.salary * 200)                                                                         AS payroll,
-       payrollMax - SUM(salary.salary * 200)                                                            AS surplus,
-       (payrollMax - SUM(salary.salary * 200)) / tfscp.seasonLength                                     AS surplusPerGame,
+       payrollMax                                                   AS budget,
+       SUM(salary.salary * 200)                                     AS payroll,
+       payrollMax - SUM(salary.salary * 200)                        AS surplus,
+       (payrollMax - SUM(salary.salary * 200)) / tfscp.seasonLength AS surplusPerGame,
        mostRecentSeasonStandings.wins,
        mostRecentSeasonStandings.losses,
        mostRecentSeasonStandings.gamesBack,
        mostRecentSeasonStandings.winPercentage,
-       mostRecentSeasonStandings.runDifferential
+       mostRecentSeasonStandings.runDifferential,
+       SUM(tbp.power)                                               AS power,
+       SUM(tbp.contact)                                             AS contact,
+       SUM(tbp.speed)                                               AS speed,
+       SUM(tbp.fielding)                                            AS fielding,
+       SUM(tbp.arm)                                                 AS arm,
+       SUM(tbp.velocity)                                            AS velocity,
+       SUM(tbp.junk)                                                AS junk,
+       SUM(tbp.accuracy)                                            AS accuracy
 
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
          LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
          LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
+         JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
 
          JOIN t_seasons tsea ON tss.seasonID = tsea.ID
          JOIN mostRecentSeason s ON tsea.ID = s.seasonID
