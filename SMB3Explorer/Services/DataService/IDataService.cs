@@ -18,15 +18,20 @@ public interface IDataService
     Task<List<FranchiseSeason>> GetFranchiseSeasons();
 
     event EventHandler<EventArgs> ConnectionChanged;
-    
+
     public string CurrentFilePath { get; }
     Task Disconnect();
     IAsyncEnumerable<CareerBattingStatistic> GetFranchiseCareerBattingStatistics(bool isRegularSeason = true);
     IAsyncEnumerable<CareerPitchingStatistic> GetFranchiseCareerPitchingStatistics(bool isRegularSeason = true);
     IAsyncEnumerable<BattingSeasonStatistic> GetFranchiseSeasonBattingStatistics(bool isRegularSeason = true);
     IAsyncEnumerable<PitchingSeasonStatistic> GetFranchiseSeasonPitchingStatistics(bool isRegularSeason = true);
+
     IAsyncEnumerable<FranchiseSeasonStanding> GetFranchiseSeasonStandings();
     IAsyncEnumerable<FranchisePlayoffStanding> GetFranchisePlayoffStandings();
+
     IAsyncEnumerable<BattingSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(bool isRookies = false);
     IAsyncEnumerable<PitchingSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(bool isRookies = false);
+
+    IAsyncEnumerable<SeasonPlayer> GetMostRecentSeasonPlayers();
+    IAsyncEnumerable<SeasonTeam> GetMostRecentSeasonTeams();
 }

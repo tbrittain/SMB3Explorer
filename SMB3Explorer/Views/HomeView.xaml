@@ -87,7 +87,6 @@
             <GroupBox Header="Players By Season"
                       Grid.Row="0"
                       Grid.Column="2"
-                      Grid.RowSpan="2"
                       Margin="5"
                       Padding="5">
                 <WrapPanel Orientation="Vertical"
@@ -124,7 +123,39 @@
                         Height="50"
                         Command="{Binding ExportFranchiseSeasonPlayoffPitchingStatisticsCommand}"
                         Content="Export all playoff pitching statistics" />
-                    
+                </WrapPanel>
+            </GroupBox>
+
+            <GroupBox Header="Team Standings"
+                      Grid.Row="1"
+                      Grid.Column="1"
+                      Margin="5"
+                      Padding="5">
+                <WrapPanel Orientation="Vertical"
+                           HorizontalAlignment="Stretch">
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseTeamSeasonStandingsCommand}"
+                        Content="Export team season standings" />
+
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportFranchiseTeamPlayoffStandingsCommand}"
+                        Content="Export team playoff standings" />
+                </WrapPanel>
+            </GroupBox>
+            
+            <GroupBox Header="Most Recent Season"
+                      Grid.Row="1"
+                      Grid.Column="2">
+                <WrapPanel Orientation="Vertical"
+                           HorizontalAlignment="Stretch">
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -156,31 +187,22 @@
                         Height="50"
                         Command="{Binding ExportTopRookiesPitchingCommand}"
                         Content="Export most recent season top rookie pitchers" />
-                </WrapPanel>
-            </GroupBox>
-
-            <GroupBox Header="Team Standings"
-                      Grid.Row="1"
-                      Grid.Column="1"
-                      Margin="5"
-                      Padding="5">
-                <WrapPanel Orientation="Vertical"
-                           HorizontalAlignment="Stretch">
+                    
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
                         HorizontalAlignment="Stretch"
                         Height="50"
-                        Command="{Binding ExportFranchiseTeamSeasonStandingsCommand}"
-                        Content="Export team season standings" />
-
+                        Command="{Binding ExportMostRecentSeasonPlayersCommand}"
+                        Content="Export most recent season players" />
+                    
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
                         HorizontalAlignment="Stretch"
                         Height="50"
-                        Command="{Binding ExportFranchiseTeamPlayoffStandingsCommand}"
-                        Content="Export team playoff standings" />
+                        Command="{Binding ExportMostRecentSeasonTeamsCommand}"
+                        Content="Export most recent season teams" />
                 </WrapPanel>
             </GroupBox>
 

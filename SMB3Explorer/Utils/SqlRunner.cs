@@ -61,7 +61,13 @@ public enum SqlFile
     TopPerformersRookiesPitching,
     
     [Description("TopPerformersRookiesBatting.sql")]
-    TopPerformersRookiesBatting
+    TopPerformersRookiesBatting,
+    
+    [Description("MostRecentSeasonPlayers.sql")]
+    MostRecentSeasonPlayers,
+    
+    [Description("MostRecentSeasonTeams.sql")]
+    MostRecentSeasonTeams,
 }
 
 public static class SqlRunner
