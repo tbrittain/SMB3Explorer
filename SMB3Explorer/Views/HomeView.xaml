@@ -195,6 +195,14 @@
                         Height="50"
                         Command="{Binding ExportMostRecentSeasonPlayersCommand}"
                         Content="Export most recent season players" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportMostRecentSeasonTeamsCommand}"
+                        Content="Export most recent season teams" />
                 </WrapPanel>
             </GroupBox>
 

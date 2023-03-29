@@ -116,8 +116,50 @@ public partial class DataService
         }
     }
 
-    public IAsyncEnumerable<SeasonTeam> GetMostRecentSeasonTeams()
+    public async IAsyncEnumerable<SeasonTeam> GetMostRecentSeasonTeams()
     {
-        throw new System.NotImplementedException();
+        var command = Connection!.CreateCommand();
+        
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonTeams);
+        command.CommandText = commandText;
+        
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        });
+        
+        var reader = await command.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            var seasonTeam = new SeasonTeam();
+
+            seasonTeam.TeamLocalId = reader.GetInt32(0);
+            seasonTeam.TeamId = reader.GetGuid(1);
+            seasonTeam.TeamName = reader.GetString(2);
+            seasonTeam.DivisionName = reader.GetString(4);
+            seasonTeam.ConferenceName = reader.GetString(6);
+            seasonTeam.SeasonId = reader.GetInt32(7);
+            seasonTeam.SeasonNum = reader.GetInt32(8);
+            seasonTeam.Budget = reader.GetInt32(9);
+            seasonTeam.Payroll = reader.GetInt32(10);
+            seasonTeam.Surplus = reader.GetInt32(11);
+            seasonTeam.SurplusPerGame = reader.GetInt32(12);
+            seasonTeam.Wins = reader.GetInt32(13);
+            seasonTeam.Losses = reader.GetInt32(14);
+            seasonTeam.GamesBack = reader.GetDouble(15);
+            seasonTeam.WinPercentage = reader.GetDouble(16);
+            seasonTeam.RunDifferential = reader.GetInt32(17);
+            seasonTeam.Power = reader.GetInt32(18);
+            seasonTeam.Contact = reader.GetInt32(19);
+            seasonTeam.Speed = reader.GetInt32(20);
+            seasonTeam.Fielding = reader.GetInt32(21);
+            seasonTeam.Arm = reader.GetInt32(22);
+            seasonTeam.Velocity = reader.GetInt32(23);
+            seasonTeam.Junk = reader.GetInt32(24);
+            seasonTeam.Accuracy = reader.GetInt32(25);
+            
+            yield return seasonTeam;
+        }
     }
 }
