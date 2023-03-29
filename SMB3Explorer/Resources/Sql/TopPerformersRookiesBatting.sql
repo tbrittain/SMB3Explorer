@@ -38,12 +38,15 @@ SELECT vbpi.baseballPlayerGUID,
        CAST(secondaryPosition.optionValue AS INTEGER) AS secondaryPosition,
        tsb.*,
        currentTeam.teamName                           AS currentTeam,
-       previousTeam.teamName                          AS previousTeam
+       previousTeam.teamName                          AS previousTeam,
+       tbp.age                                        AS age
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
          LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
          LEFT JOIN t_stats_batting tsb ON ts.aggregatorID = tsb.aggregatorID
+
+         LEFT JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
 
          JOIN rookies ON rookies.baseballPlayerGUID = vbpi.baseballPlayerGUID
 
