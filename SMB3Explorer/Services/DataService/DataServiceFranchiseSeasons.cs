@@ -30,10 +30,10 @@ public partial class DataService
         {
             var seasonId = int.Parse(reader["seasonId"].ToString()!);
             var seasonNum = int.Parse(reader["seasonNum"].ToString()!);
-            
+
             var seasonBytes = reader["leagueGUID"] as byte[] ?? Array.Empty<byte>();
             var seasonGuid = seasonBytes.ToGuid();
-            
+
             var season = new FranchiseSeason(seasonId, seasonNum, seasonGuid);
             seasons.Add(season);
         }
@@ -54,11 +54,6 @@ public partial class DataService
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
-        });
-
-        command.Parameters.Add(new SqliteParameter("@franchiseId", SqliteType.Blob)
-        {
-            Value = _applicationContext.SelectedFranchise!.FranchiseId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -84,11 +79,6 @@ public partial class DataService
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
-        });
-
-        command.Parameters.Add(new SqliteParameter("@franchiseId", SqliteType.Blob)
-        {
-            Value = _applicationContext.SelectedFranchise!.FranchiseId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
