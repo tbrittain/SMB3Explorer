@@ -120,6 +120,8 @@ public partial class HomeViewModel : ViewModelBase
                     ExportTopRookiesBattingCommand.NotifyCanExecuteChanged();
                     ExportTopPerformersPitchingCommand.NotifyCanExecuteChanged();
                     ExportTopRookiesPitchingCommand.NotifyCanExecuteChanged();
+                    
+                    ExportMostRecentSeasonPlayersCommand.NotifyCanExecuteChanged();
                 });
 
                 break;
@@ -325,6 +327,22 @@ public partial class HomeViewModel : ViewModelBase
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
+        HandleExportSuccess(filePath);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportMostRecentSeasonPlayers()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var playersEnumerable = _dataService.GetMostRecentSeasonPlayers();
+        
+        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_players" +
+                       $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
+        
         HandleExportSuccess(filePath);
     }
 

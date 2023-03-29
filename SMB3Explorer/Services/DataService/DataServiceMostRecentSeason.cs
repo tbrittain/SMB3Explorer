@@ -64,51 +64,44 @@ public partial class DataService
     public async IAsyncEnumerable<SeasonPlayer> GetMostRecentSeasonPlayers()
     {
         var command = Connection!.CreateCommand();
-        
+
         var commandText = SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayers);
         command.CommandText = commandText;
-        
+
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
             Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
         });
-        
+
         var reader = await command.ExecuteReaderAsync();
-        
+
         while (reader.Read())
         {
             var seasonPlayer = new SeasonPlayer();
-            
+
             seasonPlayer.PlayerId = reader.GetGuid(0);
             seasonPlayer.SeasonId = reader.GetInt32(1);
             seasonPlayer.SeasonNum = reader.GetInt32(2);
             seasonPlayer.FirstName = reader.GetString(3);
             seasonPlayer.LastName = reader.GetString(4);
             seasonPlayer.PrimaryPositionNumber = reader.GetInt32(5);
-            
-            var pitcherRole = reader.GetInt32(6);
-            seasonPlayer.PitcherRole = pitcherRole == default ? null : pitcherRole;
-            
-            seasonPlayer.SecondaryPositionNumber = reader.GetInt32(7);
-            
-            var currentTeam = reader.GetString(8);
-            seasonPlayer.CurrentTeam = string.IsNullOrEmpty(currentTeam) ? null : currentTeam;
-            
-            var previousTeam = reader.GetString(9);
-            seasonPlayer.PreviousTeam = string.IsNullOrEmpty(previousTeam) ? null : previousTeam;
-            
+            seasonPlayer.PitcherRole = reader.IsDBNull(6) ? null : reader.GetInt32(6);
+            seasonPlayer.SecondaryPositionNumber = reader.IsDBNull(7) ? null : reader.GetInt32(7);
+            seasonPlayer.CurrentTeam = reader.IsDBNull(8) ? null : reader.GetString(8);
+            seasonPlayer.PreviousTeam = reader.IsDBNull(9) ? null : reader.GetString(9);
+
             seasonPlayer.Power = reader.GetInt32(10);
             seasonPlayer.Contact = reader.GetInt32(11);
             seasonPlayer.Speed = reader.GetInt32(12);
             seasonPlayer.Fielding = reader.GetInt32(13);
-            seasonPlayer.Arm = reader.GetInt32(14);
-            seasonPlayer.Velocity = reader.GetInt32(15);
-            seasonPlayer.Junk = reader.GetInt32(16);
-            seasonPlayer.Accuracy = reader.GetInt32(17);
+            seasonPlayer.Arm = reader.IsDBNull(14) ? null : reader.GetInt32(14);
+            seasonPlayer.Velocity = reader.IsDBNull(15) ? null : reader.GetInt32(15);
+            seasonPlayer.Junk = reader.IsDBNull(16) ? null : reader.GetInt32(16);
+            seasonPlayer.Accuracy = reader.IsDBNull(17) ? null : reader.GetInt32(17);
             seasonPlayer.Age = reader.GetInt32(18);
             seasonPlayer.Salary = reader.GetInt32(19);
 
-            var traitsSerialized = reader.GetString(20);
+            var traitsSerialized = reader.IsDBNull(20) ? null : reader.GetString(20);
             if (!string.IsNullOrEmpty(traitsSerialized))
             {
                 var traits = JsonConvert
@@ -118,7 +111,7 @@ public partial class DataService
                     .Select(_ => PlayerTrait.TraitMap[_])
                     .ToArray();
             }
-            
+
             yield return seasonPlayer;
         }
     }
