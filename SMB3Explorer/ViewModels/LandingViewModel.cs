@@ -3,9 +3,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using OneOf;
+using OneOf.Types;
+using Serilog;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.NavigationService;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.ViewModels;
@@ -21,6 +24,8 @@ public partial class LandingViewModel : ViewModelBase
         _navigationService = navigationService;
         _systemIoWrapper = systemIoWrapper;
         _dataService = dataService;
+        
+        Log.Information("Initializing LandingViewModel");
 
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
     }
@@ -50,8 +55,8 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
         
-        var hasError = await EstablishDbConnection(filePath);
-        HandleDatabaseConnection(hasError);
+        var connectionResult = await EstablishDbConnection(filePath);
+        HandleDatabaseConnection(connectionResult);
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
@@ -68,8 +73,8 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        var hasError = await EstablishDbConnection(filePath);
-        HandleDatabaseConnection(hasError);
+        var connectionResult = await EstablishDbConnection(filePath);
+        HandleDatabaseConnection(connectionResult);
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
@@ -87,20 +92,20 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        var hasError = await EstablishDbConnection(filePath, false);
-        HandleDatabaseConnection(hasError);
+        var connectionResult = await EstablishDbConnection(filePath, false);
+        HandleDatabaseConnection(connectionResult);
     }
 
-    private void HandleDatabaseConnection(bool hasError)
+    private void HandleDatabaseConnection(OneOf<Success, Error> connectionResult)
     {
-        if (hasError) return;
+        if (connectionResult.TryPickT1(out _, out _)) return;
 
         MessageBox.Show("Successfully connected to SMB3 database at " +
                         $"{Environment.NewLine}{_dataService.CurrentFilePath}");
         _navigationService.NavigateTo<HomeViewModel>();
     }
 
-    private async Task<bool> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
+    private async Task<OneOf<Success, Error>> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true)
     {
         var hasError = false;
         var connectionResult = await _dataService.EstablishDbConnection(filePath, isCompressedSaveGame);
@@ -114,7 +119,7 @@ public partial class LandingViewModel : ViewModelBase
 
         Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
         
-        return hasError;
+        return !hasError ? new Success() : new Error();
     }
 
     protected override void Dispose(bool disposing)

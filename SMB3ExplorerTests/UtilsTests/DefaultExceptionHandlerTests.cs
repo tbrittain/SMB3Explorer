@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using Moq;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
+using static SMB3Explorer.Constants.FileExports;
+using static SMB3Explorer.Constants.Github;
 
 namespace SMB3ExplorerTests.UtilsTests;
 
@@ -20,9 +22,7 @@ public class DefaultExceptionHandlerTests
         mockSystemIoWrapper.Setup(m => m.ShowMessageBox(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<MessageBoxButton>(), It.IsAny<MessageBoxImage>()))
             .Returns(MessageBoxResult.OK);
- 
-        mockSystemIoWrapper.Setup(m => m.SetClipboardText(It.IsAny<string>()));
-        
+
         mockSystemIoWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
             .Returns(It.IsAny<Process>());
         
@@ -39,7 +39,7 @@ public class DefaultExceptionHandlerTests
     }
 
     [Fact]
-    public void HandleException_DisplaysMessageBoxAndCopiesStackTraceToClipboard_WhenExceptionIsNotNull()
+    public void HandleException_DisplaysMessageBox_WhenExceptionIsNotNull()
     {
         // Arrange
         const string userFriendlyMessage = "An error occurred";
@@ -62,9 +62,7 @@ public class DefaultExceptionHandlerTests
                 It.IsAny<MessageBoxButton>(),
                 It.IsAny<MessageBoxImage>()))
             .Returns(MessageBoxResult.OK);
-        
-        mockSystemIoWrapper.Setup(x => x.SetClipboardText(It.IsAny<string>()));
-        
+
         mockSystemIoWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
             .Returns(It.IsAny<Process>());
 
@@ -77,9 +75,6 @@ public class DefaultExceptionHandlerTests
             It.IsAny<string>(),
             MessageBoxButton.OKCancel,
             MessageBoxImage.Error), Times.Once);
-
-        mockSystemIoWrapper.Verify(
-            x => x.SetClipboardText(It.Is<string>(text => text.Contains($"{exception.Message}{exception.StackTrace}"))), Times.Once);
     }
 
     [Fact]
@@ -94,9 +89,7 @@ public class DefaultExceptionHandlerTests
                 It.IsAny<MessageBoxButton>(),
                 It.IsAny<MessageBoxImage>()))
             .Returns(MessageBoxResult.OK);
-        
-        mockSystemIoWrapper.Setup(x => x.SetClipboardText(It.IsAny<string>()));
-        
+
         mockSystemIoWrapper.Setup(m => m.StartProcess(It.IsAny<ProcessStartInfo>()))
             .Returns(It.IsAny<Process>());
 
@@ -106,6 +99,10 @@ public class DefaultExceptionHandlerTests
         // Assert
         mockSystemIoWrapper.Verify(
             m => m.StartProcess(It.Is<ProcessStartInfo>(p =>
-                p.Arguments.Contains(DefaultExceptionHandler.GithubNewIssueUrl))), Times.Once);
+                p.FileName.Contains(LogDirectory))), Times.Once);
+
+        mockSystemIoWrapper.Verify(
+            m => m.StartProcess(It.Is<ProcessStartInfo>(p =>
+                p.FileName.Contains(NewBugUrl))), Times.Once);
     }
 }

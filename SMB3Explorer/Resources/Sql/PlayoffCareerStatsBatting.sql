@@ -16,7 +16,7 @@ SELECT ts.[aggregatorID]                                           AS [aggregato
            ELSE vbpi.[lastName] END                                AS lastName,
 
        tsp.retirementSeason,
-       tsp.age,
+       COALESCE(tsp.age, tbp.age)                                  AS age,
 
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[primaryPos]
@@ -63,6 +63,7 @@ FROM [t_stats_batting] tsbat
 
          LEFT JOIN [t_baseball_player_local_ids] tbpli
                    ON tsp.[baseballPlayerLocalID] = tbpli.[localID]
+         LEFT JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
          LEFT JOIN [v_baseball_player_info] vbpi ON tbpli.[GUID] =
                                                     vbpi.[baseballPlayerGUID]
 

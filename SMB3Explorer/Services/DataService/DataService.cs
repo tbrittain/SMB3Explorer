@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using Microsoft.Data.Sqlite;
+using Serilog;
 using SMB3Explorer.Services.ApplicationContext;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 
 namespace SMB3Explorer.Services.DataService;
 
@@ -20,6 +26,49 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
     {
         _applicationContext = applicationContext;
         _systemIoWrapper = systemIoWrapper;
+        
+        _applicationContext.PropertyChanged += ApplicationContextOnPropertyChanged;
+    }
+
+    private void ApplicationContextOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(IApplicationContext.SelectedFranchise):
+            {
+                if (_applicationContext.SelectedFranchise is null)
+                {
+                    Log.Information("Clearing cached franchise seasons");
+                    _applicationContext.FranchiseSeasons.Clear();
+                    _applicationContext.MostRecentFranchiseSeason = null;
+                    break;
+                }
+
+                Mouse.OverrideCursor = Cursors.Wait;
+                _applicationContext.FranchiseSeasonsLoading = true;
+                Task.Run(async () =>
+                {
+                    Log.Information("Setting cached franchise seasons");
+                    var seasons = await GetFranchiseSeasons();
+                    _applicationContext.FranchiseSeasons.Clear();
+                    foreach (var season in seasons)
+                    {
+                        _applicationContext.FranchiseSeasons.Add(season);
+                    }
+    
+                    var mostRecentSeason = seasons.MaxBy(x => x.SeasonNum);
+
+                    Debug.Assert(mostRecentSeason != null, nameof(mostRecentSeason) + " != null");
+                    Log.Information("Most recent franchise season: {SeasonNum}", mostRecentSeason.SeasonNum);
+                    _applicationContext.MostRecentFranchiseSeason = mostRecentSeason;
+                    _applicationContext.FranchiseSeasonsLoading = false;
+                    
+                    Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
+                });
+
+                break;
+            }
+        }
     }
 
     private SqliteConnection? Connection
@@ -28,6 +77,9 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
         set
         {
             SetField(ref _connection, value);
+            
+            var isConnectionNull = value is null;
+            Log.Debug("Connection changed, is null: {IsConnectionNull}", isConnectionNull);
             ConnectionChanged?.Invoke(this, EventArgs.Empty);
         }
     }

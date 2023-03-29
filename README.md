@@ -9,7 +9,7 @@ SMB3 Explorer is a native Windows application that exports various game statisti
 
 ## Features
 
-- Exports statistics for players in franchise mode, with additional exports planned for the future (both with regard to players and teams as a whole)
+- Exports statistics for various aspects of franchise mode, specifically regarding teams as a whole and individual players
 - Easy-to-use graphical user interface (GUI)
 - Designed for use on Windows operating systems (Windows 10 and later)
 
@@ -19,7 +19,7 @@ See the [contributing guidelines](https://github.com/tbrittain/SMB3Explorer/blob
 
 ## Installation
 
-See the [releases page](https://github.com/tbrittain/SMB3Explorer/releases) for more information.
+See the [installation section of the wiki](https://github.com/tbrittain/SMB3Explorer/wiki/Installation) for more information.
 
 ## License
 

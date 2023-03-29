@@ -6,9 +6,10 @@ using System.Windows;
 using Ionic.Zlib;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
+using Serilog;
 using SMB3Explorer.Services.CsvWriterWrapper;
 
-namespace SMB3Explorer.Services.SystemInteropWrapper;
+namespace SMB3Explorer.Services.SystemIoWrapper;
 
 public class SystemIoWrapper : ISystemIoWrapper
 {
@@ -58,7 +59,7 @@ public class SystemIoWrapper : ISystemIoWrapper
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Log.Error(e, "Failed to delete file {Path}", path);
             return false;
         }
 

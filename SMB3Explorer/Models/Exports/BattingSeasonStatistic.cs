@@ -142,12 +142,13 @@ public class BattingSeasonStatistic
     
     [Name("season_completion_date"), Index(40)]
     public DateTime? CompletionDate { get; set; }
-    
-    /// <summary>
-    /// This is an auto-incrementing integer cross-leagues. It does not necessarily correspond to the
-    /// season number relative to a given league, which is a computed value (see the
-    /// tr_record_deleted_franchise_player_information trigger).
-    /// </summary>
+
     [Name("season_id"), Index(41)]
     public int SeasonId { get; set; }
+    
+    [Name("season_num"), Index(42)]
+    public int SeasonNum { get; set; }
+    
+    [Name("age"), Index(43)]
+    public int Age { get; set; }
 }

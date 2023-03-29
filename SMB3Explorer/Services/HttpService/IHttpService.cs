@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OneOf;
 using OneOf.Types;
 using SMB3Explorer.Models.Internal;
 
-namespace SMB3Explorer.Services.HttpClient;
+namespace SMB3Explorer.Services.HttpService;
 
 public interface IHttpService
 {

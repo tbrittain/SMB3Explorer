@@ -2,7 +2,7 @@
 using Moq;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.DataService;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 
 namespace SMB3ExplorerTests.DataServiceTests;
 

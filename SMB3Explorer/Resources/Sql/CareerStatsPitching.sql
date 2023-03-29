@@ -2,25 +2,25 @@
          (SELECT ttli.GUID AS teamGUID, tt.teamName
           FROM t_team_local_ids ttli
                    JOIN t_teams tt ON ttli.GUID = tt.GUID)
-SELECT ts.[aggregatorID]                   AS [aggregatorID],
-       ts.[statsPlayerID]                  AS [statsPlayerID],
-       tbpli.[GUID]                        AS [baseballPlayerGUIDIfKnown],
+SELECT ts.[aggregatorID]               AS [aggregatorID],
+       ts.[statsPlayerID]              AS [statsPlayerID],
+       tbpli.[GUID]                    AS [baseballPlayerGUIDIfKnown],
        [currentTeam].teamName          AS [currentTeamName],
-       [mostRecentTeam].teamName         AS [mostRecentTeamName],
-       [secondMostRecentTeam].teamName   AS [secondMostRecentTeamName],
+       [mostRecentTeam].teamName       AS [mostRecentTeamName],
+       [secondMostRecentTeam].teamName AS [secondMostRecentTeamName],
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[firstName]
-           ELSE vbpi.[firstName] END       AS firstName,
+           ELSE vbpi.[firstName] END   AS firstName,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[lastName]
-           ELSE vbpi.[lastName] END        AS lastName,
+           ELSE vbpi.[lastName] END    AS lastName,
 
        tsp.retirementSeason,
-       tsp.age,
+       COALESCE(tsp.age, tbp.age)      AS age,
 
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[pitcherRole]
-           ELSE vbpi.[pitcherRole] END     AS pitcherRole,
+           ELSE vbpi.[pitcherRole] END AS pitcherRole,
        [wins],
        [losses],
        [games],
@@ -54,9 +54,10 @@ FROM [t_stats_pitching] tspitch
          LEFT JOIN [teams] currentTeam ON currentTeam.teamGUID = t1.GUID
          LEFT JOIN [teams] mostRecentTeam ON mostRecentTeam.teamGUID = t2.GUID
          LEFT JOIN [teams] secondMostRecentTeam ON secondMostRecentTeam.teamGUID = t3.GUID
-    
+
          LEFT JOIN [t_baseball_player_local_ids] tbpli
                    ON tsp.[baseballPlayerLocalID] = tbpli.[localID]
+         LEFT JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
          LEFT JOIN [v_baseball_player_info] vbpi
                    ON tbpli.[GUID] = vbpi.[baseballPlayerGUID]
 

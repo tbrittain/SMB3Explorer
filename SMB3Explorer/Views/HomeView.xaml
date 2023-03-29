@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:HomeViewModel}"
              VerticalAlignment="Stretch">
     <StackPanel VerticalAlignment="Stretch">
-        <Grid Visibility="{Binding ContentVisible}" VerticalAlignment="Stretch">
+        <Grid VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="200" />
                 <ColumnDefinition Width="2*" MinWidth="200" />
@@ -32,6 +32,12 @@
                         DisplayMemberPath="DisplayText"
                         ItemsSource="{Binding Franchises}"
                         SelectedItem="{Binding SelectedFranchise}" />
+
+                    <Label
+                        Visibility="{Binding NoFranchiseSeasonsVisibility}"
+                        Content="No seasons exist for this franchise"
+                        Foreground="Red"
+                        FontWeight="Bold" />
                 </StackPanel>
 
             </DockPanel>
@@ -142,6 +148,61 @@
                         Height="50"
                         Command="{Binding ExportFranchiseTeamPlayoffStandingsCommand}"
                         Content="Export team playoff standings" />
+                </WrapPanel>
+            </GroupBox>
+            
+            <GroupBox Header="Most Recent Season"
+                      Grid.Row="1"
+                      Grid.Column="2">
+                <WrapPanel Orientation="Vertical"
+                           HorizontalAlignment="Stretch">
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportTopPerformersBattingCommand}"
+                        Content="Export most recent season top batters" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportTopPerformersPitchingCommand}"
+                        Content="Export most recent season top pitchers" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportTopRookiesBattingCommand}"
+                        Content="Export most recent season top rookie batters" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportTopRookiesPitchingCommand}"
+                        Content="Export most recent season top rookie pitchers" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportMostRecentSeasonPlayersCommand}"
+                        Content="Export most recent season players" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportMostRecentSeasonTeamsCommand}"
+                        Content="Export most recent season teams" />
                 </WrapPanel>
             </GroupBox>
 

@@ -1,7 +1,8 @@
 ﻿using Moq;
 using SMB3Explorer.Services.CsvWriterWrapper;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
+using static SMB3Explorer.Constants.FileExports;
 
 namespace SMB3ExplorerTests.UtilsTests;
 
@@ -17,7 +18,7 @@ public class CsvUtilsTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
         
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
+            .Setup(x => x.DirectoryExists(BaseExportsDirectory))
             .Returns(true);
         
         mockSystemIoWrapper
@@ -75,11 +76,11 @@ public class CsvUtilsTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
+            .Setup(x => x.DirectoryExists(BaseExportsDirectory))
             .Returns(false);
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryCreate(CsvUtils.DefaultDirectory))
+            .Setup(x => x.DirectoryCreate(BaseExportsDirectory))
             .Verifiable();
 
         mockSystemIoWrapper
@@ -142,7 +143,7 @@ public class CsvUtilsTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
+            .Setup(x => x.DirectoryExists(BaseExportsDirectory))
             .Returns(true);
 
         mockSystemIoWrapper
@@ -201,7 +202,7 @@ public class CsvUtilsTests
         var mockSystemIoWrapper = new Mock<ISystemIoWrapper>(MockBehavior.Strict);
 
         mockSystemIoWrapper
-            .Setup(x => x.DirectoryExists(CsvUtils.DefaultDirectory))
+            .Setup(x => x.DirectoryExists(BaseExportsDirectory))
             .Returns(true);
 
         mockSystemIoWrapper

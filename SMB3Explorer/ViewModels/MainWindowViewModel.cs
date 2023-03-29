@@ -5,13 +5,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using OneOf.Types;
+using Serilog;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.DataService;
-using SMB3Explorer.Services.HttpClient;
+using SMB3Explorer.Services.HttpService;
 using SMB3Explorer.Services.NavigationService;
-using SMB3Explorer.Services.SystemInteropWrapper;
+using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
+using static SMB3Explorer.Constants.FileExports;
+using static SMB3Explorer.Constants.Github;
 
 namespace SMB3Explorer.ViewModels;
 
@@ -35,7 +37,9 @@ public partial class MainWindowViewModel : ViewModelBase
         _systemIoWrapper = systemIoWrapper;
         _dataService = dataService;
         _httpService = httpService;
-        
+
+        Log.Information("Initializing MainWindowViewModel");
+
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
     }
 
@@ -58,8 +62,8 @@ public partial class MainWindowViewModel : ViewModelBase
         get
         {
             var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version;
-            return currentVersion is null 
-                ? new Version(0, 0, 0, 0) 
+            return currentVersion is null
+                ? new Version(0, 0, 0, 0)
                 : new Version(currentVersion.Major, currentVersion.Minor, currentVersion.Build);
         }
     }
@@ -106,76 +110,105 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private Task OpenExportsFolder()
     {
-        var defaultDirectory = CsvUtils.DefaultDirectory;
+        Log.Information("Opening exports folder");
+
+        var defaultDirectory = BaseExportsDirectory;
 
         if (!_systemIoWrapper.DirectoryExists(defaultDirectory))
         {
+            Log.Debug("Exports folder does not exist, creating");
             _systemIoWrapper.DirectoryCreate(defaultDirectory);
         }
 
         SafeProcess.Start(defaultDirectory, _systemIoWrapper);
+
+        Log.Information("Opened exports folder");
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private Task OpenWiki()
     {
-        const string wikiUrl = "https://github.com/tbrittain/SMB3Explorer/wiki";
-        SafeProcess.Start(wikiUrl, _systemIoWrapper);
+        Log.Information("Opening wiki");
+
+        SafeProcess.Start(WikiUrl, _systemIoWrapper);
+
+        Log.Information("Opened wiki");
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private Task SubmitFeatureRequest()
     {
-        const string featureRequestUrl = "https://github.com/tbrittain/SMB3Explorer/discussions/new?category=ideas";
-        SafeProcess.Start(featureRequestUrl, _systemIoWrapper);
+        Log.Information("Opening feature request page");
+        
+        SafeProcess.Start(FeatureRequestUrl, _systemIoWrapper);
+
+        Log.Information("Opened feature request page");
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private Task OpenDiscussions()
     {
-        const string discussionsUrl = "https://github.com/tbrittain/SMB3Explorer/discussions";
-        SafeProcess.Start(discussionsUrl, _systemIoWrapper);
+        Log.Information("Opening discussions page");
+
+        
+        SafeProcess.Start(DiscussionsUrl, _systemIoWrapper);
+
+        Log.Information("Opened discussions page");
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private Task OpenIssues()
     {
-        const string issuesUrl = "https://github.com/tbrittain/SMB3Explorer/issues";
-        SafeProcess.Start(issuesUrl, _systemIoWrapper);
+        Log.Information("Opening issues page");
+
+        
+        SafeProcess.Start(IssuesUrl, _systemIoWrapper);
+
+        Log.Information("Opened issues page");
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private Task SubmitBugReport()
     {
-        const string bugUrl = "https://github.com/tbrittain/SMB3Explorer/issues/new?labels=bug&template=bug_report.md";
-        SafeProcess.Start(bugUrl, _systemIoWrapper);
+        Log.Information("Opening bug report page");
+
+        SafeProcess.Start(NewBugUrl, _systemIoWrapper);
+
+        Log.Information("Opened bug report page");
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private Task OpenGithubRepo()
     {
-        const string githubUrl = "https://github.com/tbrittain/SMB3Explorer";
-        SafeProcess.Start(githubUrl, _systemIoWrapper);
+        Log.Information("Opening github repo");
+
+        
+        SafeProcess.Start(RepoUrl, _systemIoWrapper);
+
+        Log.Information("Opened github repo");
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private async Task PurgeApplicationData()
     {
+        Log.Information("Purging application data");
+
         var appDataSummary = AppData.GetApplicationDataSize(_systemIoWrapper, _dataService.CurrentFilePath);
         if (appDataSummary.NumberOfFiles == 0)
         {
+            Log.Debug("No application data to delete");
             _systemIoWrapper.ShowMessageBox("No application data to delete.", "No Application Data",
                 MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
-        
+
         var message = $"Are you sure you want to delete {appDataSummary.NumberOfFiles} .sqlite files " +
                       $"totalling {appDataSummary.TotalSize.ToFileSizeString()}?";
 
@@ -188,17 +221,20 @@ public partial class MainWindowViewModel : ViewModelBase
         var failedPurgeResults = await AppData.PurgeApplicationData(_systemIoWrapper,
             _dataService.CurrentFilePath);
         Mouse.OverrideCursor = Cursors.Arrow;
-        
+
         if (failedPurgeResults.Count == 0)
         {
+            Log.Debug("All files deleted successfully");
             _systemIoWrapper.ShowMessageBox("All files deleted successfully.", "Success",
                 MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
+        Log.Warning("Failed to delete {Count} files", failedPurgeResults.Count);
         var failedMessage = new StringBuilder($"Failed to delete {failedPurgeResults.Count} files:");
         foreach (var _ in failedPurgeResults)
         {
+            Log.Warning("Failed to delete {FileName} ({Size})", _.FileName, _.Size.ToFileSizeString());
             failedMessage.AppendLine(
                 $"{Environment.NewLine}{_.FileName} ({_.Size.ToFileSizeString()})");
         }
@@ -206,16 +242,21 @@ public partial class MainWindowViewModel : ViewModelBase
         _systemIoWrapper.ShowMessageBox(failedMessage.ToString(), "Failed to delete", MessageBoxButton.OK,
             MessageBoxImage.Warning);
     }
-    
+
     [RelayCommand]
     private Task OpenUpdateVersionReleasePage()
     {
+        Log.Information("Opening update version release page");
+
         SafeProcess.Start(AppUpdateResult!.Value.ReleasePageUrl, _systemIoWrapper);
+
+        Log.Information("Opened update version release page");
         return Task.CompletedTask;
     }
 
     private async Task CheckForUpdates()
     {
+        Log.Information("Checking for updates...");
         var updateResult = await _httpService.CheckForUpdates();
 
         if (updateResult.TryPickT2(out var error, out var rest))
@@ -227,20 +268,22 @@ public partial class MainWindowViewModel : ViewModelBase
 
         if (rest.TryPickT1(out var _, out var appUpdateResult))
         {
+            Log.Debug("No update available");
             // No update available
             return;
         }
-        
+
         AppUpdateResult = appUpdateResult;
-        
+
+        Log.Debug("Displaying update available message box");
         var message = $"An update is available ({CurrentVersion} --> {appUpdateResult.Version}, released " +
                       $"{appUpdateResult.DaysSinceRelease} days ago). Would you like open the release page?";
 
-        var messageBoxResult = _systemIoWrapper.ShowMessageBox(message, "Update Available", 
+        var messageBoxResult = _systemIoWrapper.ShowMessageBox(message, "Update Available",
             MessageBoxButton.YesNo, MessageBoxImage.Information);
-        
+
         if (messageBoxResult != MessageBoxResult.Yes) return;
-        
+
         SafeProcess.Start(appUpdateResult.ReleasePageUrl, _systemIoWrapper);
     }
 
