@@ -137,6 +137,7 @@ public partial class DataService
             : DateTime.Parse(reader["completionDate"].ToString()!);
         pitcherStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
         pitcherStatistic.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
+        pitcherStatistic.Age = int.Parse(reader["age"].ToString()!);
 
         if (isRegularSeason)
         {
@@ -188,6 +189,7 @@ public partial class DataService
             : DateTime.Parse(reader["completionDate"].ToString()!);
         positionPlayerStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
         positionPlayerStatistic.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
+        positionPlayerStatistic.Age = int.Parse(reader["age"].ToString()!);
         positionPlayerStatistic.PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid();
 
         if (isRegularSeason)
