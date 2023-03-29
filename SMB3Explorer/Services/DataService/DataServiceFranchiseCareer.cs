@@ -41,9 +41,7 @@ public partial class DataService
                 ? null
                 : int.Parse(reader["retirementSeason"].ToString()!);
 
-            positionPlayer.RetirementAge = string.IsNullOrEmpty(reader["age"].ToString())
-                ? null
-                : int.Parse(reader["age"].ToString()!);
+            positionPlayer.Age = int.Parse(reader["age"].ToString()!);
 
             positionPlayer.PrimaryPositionNumber = int.Parse(reader["primaryPosition"].ToString()!);
             positionPlayer.SecondaryPositionNumber = string.IsNullOrEmpty(reader["secondaryPosition"].ToString())
@@ -111,9 +109,7 @@ public partial class DataService
                 ? null
                 : int.Parse(reader["retirementSeason"].ToString()!);
 
-            pitcher.RetirementAge = string.IsNullOrEmpty(reader["age"].ToString())
-                ? null
-                : int.Parse(reader["age"].ToString()!);
+            pitcher.Age = int.Parse(reader["age"].ToString()!);
 
             pitcher.PitcherRole = int.Parse(reader["pitcherRole"].ToString()!);
             pitcher.Wins = int.Parse(reader["wins"].ToString()!);

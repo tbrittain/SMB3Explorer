@@ -23,7 +23,9 @@ public partial class App
 
     public App()
     {
+#if RELEASE
         DispatcherUnhandledException += App_DispatcherUnhandledException;
+#endif
     }
 
     protected override async void OnStartup(StartupEventArgs e)
@@ -33,7 +35,7 @@ public partial class App
         Services = new ServiceCollection();
         await ConfigureServices(Services);
         ServiceProvider = Services.BuildServiceProvider();
-        
+
         var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
         await ((MainWindowViewModel) mainWindow.DataContext).Initialize();
@@ -62,11 +64,16 @@ public partial class App
         // NavigationService calls this Func to get the ViewModel instance
         services.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider =>
             viewModelType => (ViewModelBase) serviceProvider.GetRequiredService(viewModelType));
-        
+
         Log.Information("Finished configuring services");
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Global exception handler. In debug mode, this will not be called and exceptions will be thrown.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         Log.Fatal(e.Exception, "Unhandled exception");

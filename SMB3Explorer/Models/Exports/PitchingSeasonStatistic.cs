@@ -144,4 +144,7 @@ public class PitchingSeasonStatistic
     
     [Name("season_num"), Index(45)]
     public int SeasonNum { get; set; }
+    
+    [Name("age"), Index(46)]
+    public int Age { get; set; }
 }

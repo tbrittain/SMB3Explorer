@@ -29,12 +29,15 @@ SELECT baseballPlayerGUID,
            ELSE vbpi.[pitcherRole] END     AS pitcherRole,
        tspitch.*,
        currentTeam.teamName                AS currentTeam,
-       previousTeam.teamName               AS previousTeam
+       previousTeam.teamName               AS previousTeam,
+       tbp.age                             AS age
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
          LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
          JOIN t_stats_pitching tspitch ON ts.aggregatorID = tspitch.aggregatorID
+
+         LEFT JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
 
          LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
 
@@ -49,18 +52,16 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN teams currentTeam ON tt1.GUID = currentTeam.teamGUID
          LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
-  AND outsPitched > (
-    SELECT AVG(tspitch.outsPitched)
-    FROM [v_baseball_player_info] vbpi
-             LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
-             LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
-             LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
-             JOIN t_stats_pitching tspitch ON ts.aggregatorID = tspitch.aggregatorID
+  AND outsPitched > (SELECT AVG(tspitch.outsPitched)
+                     FROM [v_baseball_player_info] vbpi
+                              LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
+                              LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
+                              LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
+                              JOIN t_stats_pitching tspitch ON ts.aggregatorID = tspitch.aggregatorID
 
-             LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
+                              LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
 
-             JOIN t_seasons tsea ON tss.seasonID = tsea.ID
-             JOIN mostRecentSeason s ON tsea.ID = s.seasonID
-)
+                              JOIN t_seasons tsea ON tss.seasonID = tsea.ID
+                              JOIN mostRecentSeason s ON tsea.ID = s.seasonID)
 ORDER BY strikeOuts DESC
 LIMIT 25

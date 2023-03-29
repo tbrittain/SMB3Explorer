@@ -35,6 +35,6 @@ public class CareerStatistic
     [Name("retirement_season"), Index(8)]
     public int? RetirementSeason { get; set; }
     
-    [Name("retirement_age"), Index(9)]
-    public int? RetirementAge { get; set; }
+    [Name("age"), Index(9)]
+    public int Age { get; set; }
 }
