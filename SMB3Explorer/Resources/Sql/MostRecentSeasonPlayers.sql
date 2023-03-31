@@ -68,6 +68,5 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
 
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
-  AND currentTeam IS NOT NULL
 GROUP BY vbpi.baseballPlayerGUID, currentTeam, salaryDollars
-ORDER BY currentTeam, salaryDollars DESC
+ORDER BY currentTeam IS NULL, currentTeam, salaryDollars DESC
