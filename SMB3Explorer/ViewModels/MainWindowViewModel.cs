@@ -266,7 +266,7 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        if (rest.TryPickT1(out var _, out var appUpdateResult))
+        if (rest.TryPickT1(out _, out var appUpdateResult))
         {
             Log.Debug("No update available");
             // No update available
@@ -274,6 +274,9 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         AppUpdateResult = appUpdateResult;
+
+        if (appUpdateResult.Version.Major <= CurrentVersion.Major &&
+            appUpdateResult.Version.Minor <= CurrentVersion.Minor) return;
 
         Log.Debug("Displaying update available message box");
         var message = $"An update is available ({CurrentVersion} --> {appUpdateResult.Version}, released " +
