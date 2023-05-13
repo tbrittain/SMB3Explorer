@@ -8,7 +8,7 @@
                           FROM t_seasons
                                    JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
                                    JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
-                          WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
+                          WHERE t_leagues.name = 'Baseball United v2'
                           ORDER BY ID DESC
                           LIMIT 1)
 SELECT baseballPlayerGUID,
@@ -28,6 +28,18 @@ SELECT baseballPlayerGUID,
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[pitcherRole]
            ELSE vbpi.[pitcherRole] END     AS pitcherRole,
        tspitch.*,
+       CASE
+           WHEN tspitch.outsPitched = 0 THEN NULL
+           ELSE 100 * (
+               @leagueEra /
+               ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
+               )
+           END AS eraMinus,
+       -- sortOrder is a weighted eraMinus based on innings pitched
+       tspitch.outsPitched * 100 * (
+               @leagueEra /
+               ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
+           ) AS sortOrder,
        currentTeam.teamName                AS currentTeam,
        previousTeam.teamName               AS previousTeam,
        tbp.age                             AS age
@@ -51,7 +63,7 @@ FROM [v_baseball_player_info] vbpi
                    ON ts.[previousRecentlyPlayedTeamLocalID] = tt2.[localID]
          LEFT JOIN teams currentTeam ON tt1.GUID = currentTeam.teamGUID
          LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
-WHERE tl.GUID = CAST(@leagueId AS BLOB)
+WHERE tl.name = 'Baseball United v2'
   AND outsPitched > (SELECT AVG(tspitch.outsPitched)
                      FROM [v_baseball_player_info] vbpi
                               LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
@@ -63,5 +75,4 @@ WHERE tl.GUID = CAST(@leagueId AS BLOB)
 
                               JOIN t_seasons tsea ON tss.seasonID = tsea.ID
                               JOIN mostRecentSeason s ON tsea.ID = s.seasonID)
-ORDER BY strikeOuts DESC
-LIMIT 25
+ORDER BY sortOrder DESC

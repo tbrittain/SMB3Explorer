@@ -37,6 +37,18 @@ SELECT vbpi.baseballPlayerGUID,
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[pitcherRole]
            ELSE vbpi.[pitcherRole] END     AS pitcherRole,
        tspitch.*,
+       CASE
+           WHEN tspitch.outsPitched = 0 THEN NULL
+           ELSE 100 * (
+                   @leagueEra /
+                   ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
+               )
+           END AS eraMinus,
+       -- sortOrder is a weighted eraMinus based on innings pitched
+       tspitch.outsPitched * 100 * (
+               @leagueEra /
+               ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
+           ) AS sortOrder,
        currentTeam.teamName                AS currentTeam,
        previousTeam.teamName               AS previousTeam,
        tbp.age                             AS age
@@ -74,5 +86,4 @@ WHERE tl.GUID = CAST(@leagueId AS BLOB)
 
                               JOIN t_seasons tsea ON tss.seasonID = tsea.ID
                               JOIN mostRecentSeason s ON tsea.ID = s.seasonID)
-ORDER BY strikeOuts DESC
-LIMIT 25
+ORDER BY sortOrder DESC
