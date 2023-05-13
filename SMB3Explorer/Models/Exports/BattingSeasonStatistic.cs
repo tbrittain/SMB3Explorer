@@ -78,7 +78,7 @@ public class BattingSeasonStatistic
     public int ExtraBaseHits => Doubles + Triples + HomeRuns;
 
     [Name("total_bases"), Index(20)]
-    public int TotalBases => Hits + 2 * Doubles + 3 * Triples + 4 * HomeRuns;
+    public int TotalBases => Singles + (2 * Doubles) + (3 * Triples) + (4 * HomeRuns);
 
     [Name("stolen_bases"), Index(21)]
     public int StolenBases { get; set; }
