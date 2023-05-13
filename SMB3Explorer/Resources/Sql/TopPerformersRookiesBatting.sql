@@ -37,6 +37,12 @@ SELECT vbpi.baseballPlayerGUID,
            ELSE vbpi.[pitcherRole] END                AS pitcherRole,
        CAST(secondaryPosition.optionValue AS INTEGER) AS secondaryPosition,
        tsb.*,
+       100 * ((
+                          ([hits] + [baseOnBalls] + [hitByPitch]) /
+                          CAST(NULLIF([atBats] + [baseOnBalls] + [hitByPitch] + [sacrificeFlies], 0) AS [REAL]) +
+                          (([hits] - [doubles] - [triples] - [homeruns]) + 2 * [doubles] + 3 * [triples] +
+                           4 * [homeruns]) / CAST(NULLIF([atBats], 0) AS [REAL])
+                  ) / @leagueOps)                     AS opsPlus,
        currentTeam.teamName                           AS currentTeam,
        previousTeam.teamName                          AS previousTeam,
        tbp.age                                        AS age
@@ -68,4 +74,3 @@ FROM [v_baseball_player_info] vbpi
 
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
 ORDER BY homeruns DESC
-LIMIT 25
