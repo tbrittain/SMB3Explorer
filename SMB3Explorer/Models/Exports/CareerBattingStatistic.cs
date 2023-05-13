@@ -53,83 +53,84 @@ public class CareerBattingStatistic : CareerStatistic
     [Name("hits"), Index(21)]
     public int Hits { get; set; }
     
-    private int Singles => Hits - Doubles - Triples - HomeRuns;
+    [Name("singles"), Index(22)]
+    public int Singles => Hits - Doubles - Triples - HomeRuns;
     
-    [Name("doubles"), Index(22)]
+    [Name("doubles"), Index(23)]
     public int Doubles { get; set; }
     
-    [Name("triples"), Index(23)]
+    [Name("triples"), Index(24)]
     public int Triples { get; set; }
     
-    [Name("home_runs"), Index(24)]
+    [Name("home_runs"), Index(25)]
     public int HomeRuns { get; set; }
     
-    [Name("rbi"), Index(25)]
+    [Name("rbi"), Index(26)]
     public int RunsBattedIn { get; set; }
     
-    [Name("extra_base_hits"), Index(26)]
+    [Name("extra_base_hits"), Index(27)]
     public int ExtraBaseHits => Doubles + Triples + HomeRuns;
     
-    [Name("total_bases"), Index(27)]
+    [Name("total_bases"), Index(28)]
     public int TotalBases => Singles + (2 * Doubles) + (3 * Triples) + (4 * HomeRuns);
     
-    [Name("stolen_bases"), Index(28)]
+    [Name("stolen_bases"), Index(29)]
     public int StolenBases { get; set; }
     
-    [Name("caught_stealing"), Index(29)]
+    [Name("caught_stealing"), Index(30)]
     public int CaughtStealing { get; set; }
     
-    [Name("walks"), Index(30)]
+    [Name("walks"), Index(31)]
     public int Walks { get; set; }
     
-    [Name("strikeouts"), Index(31)]
+    [Name("strikeouts"), Index(32)]
     public int Strikeouts { get; set; }
     
-    [Name("hit_by_pitch"), Index(32)]
+    [Name("hit_by_pitch"), Index(33)]
     public int HitByPitch { get; set; }
     
-    [Name("sacrifice_hits"), Index(33)]
+    [Name("sacrifice_hits"), Index(34)]
     public int SacrificeHits { get; set; }
     
-    [Name("sacrifice_flies"), Index(34)]
+    [Name("sacrifice_flies"), Index(35)]
     public int SacrificeFlies { get; set; }
     
-    [Name("errors"), Index(35)]
+    [Name("errors"), Index(36)]
     public int Errors { get; set; }
     
-    [Name("passed_balls"), Index(36)]
+    [Name("passed_balls"), Index(37)]
     public int PassedBalls { get; set; }
     
-    [Name("plate_appearances_per_game"), Index(37)]
+    [Name("plate_appearances_per_game"), Index(38)]
     public double PlateAppearancesPerGame => PlateAppearances / (double) GamesPlayed;
 
-    [Name("on_base_percentage"), Index(38)]
+    [Name("on_base_percentage"), Index(39)]
     public double OnBasePercentage => (Hits + Walks + HitByPitch) /
                                       (double) (AtBats + Walks + HitByPitch + SacrificeFlies);
 
-    [Name("slugging_percentage"), Index(39)]
+    [Name("slugging_percentage"), Index(40)]
     public double SluggingPercentage => (Singles + (2 * Doubles) + (3 * Triples) +
                                          (4 * HomeRuns)) / (double) AtBats;
 
-    [Name("on_base_plus_slugging"), Index(40)]
+    [Name("on_base_plus_slugging"), Index(41)]
     public double OnBasePlusSlugging => OnBasePercentage + SluggingPercentage;
 
-    [Name("batting_average"), Index(41)]
+    [Name("batting_average"), Index(42)]
     public double BattingAverage => Hits / (double) AtBats;
 
-    [Name("babip"), Index(42)]
+    [Name("babip"), Index(43)]
     public double BattingAverageOnBallsInPlay =>
         (Hits - HomeRuns) / (double) (AtBats - Strikeouts - HomeRuns + SacrificeFlies);
 
-    [Name("at_bats_per_home_run"), Index(43)]
+    [Name("at_bats_per_home_run"), Index(44)]
     public double AtBatsPerHomeRun => AtBats / (double) HomeRuns;
 
-    [Name("strikeout_percentage"), Index(44)]
+    [Name("strikeout_percentage"), Index(45)]
     public double StrikeoutPercentage => Strikeouts / (double) AtBats;
 
-    [Name("walk_percentage"), Index(45)]
+    [Name("walk_percentage"), Index(46)]
     public double WalkPercentage => Walks / (double) PlateAppearances;
 
-    [Name("extra_base_hit_percentage"), Index(46)]
+    [Name("extra_base_hit_percentage"), Index(47)]
     public double ExtraBaseHitPercentage => ExtraBaseHits / (double) Hits;
 }
