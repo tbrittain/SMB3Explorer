@@ -38,7 +38,7 @@ SELECT vbpi.baseballPlayerGUID,
            ELSE vbpi.[pitcherRole] END     AS pitcherRole,
        tspitch.*,
        CASE
-           WHEN tspitch.outsPitched = 0 THEN NULL
+           WHEN tspitch.outsPitched = 0 THEN 0
            ELSE 100 * (
                    @leagueEra /
                    ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))

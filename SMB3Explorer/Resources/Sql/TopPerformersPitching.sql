@@ -8,7 +8,7 @@
                           FROM t_seasons
                                    JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
                                    JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
-                          WHERE t_leagues.name = 'Baseball United v2'
+                          WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
                           ORDER BY ID DESC
                           LIMIT 1)
 SELECT baseballPlayerGUID,
@@ -29,7 +29,7 @@ SELECT baseballPlayerGUID,
            ELSE vbpi.[pitcherRole] END     AS pitcherRole,
        tspitch.*,
        CASE
-           WHEN tspitch.outsPitched = 0 THEN NULL
+           WHEN tspitch.outsPitched = 0 THEN 0
            ELSE 100 * (
                @leagueEra /
                ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
@@ -63,7 +63,7 @@ FROM [v_baseball_player_info] vbpi
                    ON ts.[previousRecentlyPlayedTeamLocalID] = tt2.[localID]
          LEFT JOIN teams currentTeam ON tt1.GUID = currentTeam.teamGUID
          LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
-WHERE tl.name = 'Baseball United v2'
+WHERE tl.GUID = CAST(@leagueId AS BLOB)
   AND outsPitched > (SELECT AVG(tspitch.outsPitched)
                      FROM [v_baseball_player_info] vbpi
                               LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
