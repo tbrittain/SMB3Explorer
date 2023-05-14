@@ -188,6 +188,11 @@ public partial class DataService
         }
     }
 
+    public IAsyncEnumerable<SeasonSchedule> GetMostRecentSeasonSchedule()
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task<double> GetAverageSeasonOps()
     {
         var command = Connection!.CreateCommand();

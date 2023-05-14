@@ -74,6 +74,9 @@ public enum SqlFile
     
     [Description("SeasonAveragePitcherStats.sql")]
     SeasonAveragePitcherStats,
+    
+    [Description("MostRecentSeasonSchedule.sql")]
+    MostRecentSeasonSchedule,
 }
 
 public static class SqlRunner

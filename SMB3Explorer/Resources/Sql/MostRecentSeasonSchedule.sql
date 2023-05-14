@@ -1,3 +1,5 @@
+-- The t_season_schedule table apparently only tracks the current season for the given league,
+-- so the usage of this will be restricted to the current season
 WITH teams AS
          (SELECT ttli.GUID AS teamGUID, ttli.localID, tt.teamName
           FROM t_team_local_ids ttli
