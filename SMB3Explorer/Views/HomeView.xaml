@@ -151,7 +151,7 @@
                 </WrapPanel>
             </GroupBox>
             
-            <GroupBox Header="Most Recent Season"
+            <GroupBox Header="Current Season"
                       Grid.Row="1"
                       Grid.Column="2">
                 <WrapPanel Orientation="Vertical"
@@ -162,7 +162,7 @@
                         HorizontalAlignment="Stretch"
                         Height="50"
                         Command="{Binding ExportTopPerformersBattingCommand}"
-                        Content="Export most recent season top batters" />
+                        Content="Export current season top batters" />
                     
                     <Button
                         Margin="0, 5, 0, 0"
@@ -170,7 +170,7 @@
                         HorizontalAlignment="Stretch"
                         Height="50"
                         Command="{Binding ExportTopPerformersPitchingCommand}"
-                        Content="Export most recent season top pitchers" />
+                        Content="Export current season top pitchers" />
                     
                     <Button
                         Margin="0, 5, 0, 0"
@@ -178,7 +178,7 @@
                         HorizontalAlignment="Stretch"
                         Height="50"
                         Command="{Binding ExportTopRookiesBattingCommand}"
-                        Content="Export most recent season top rookie batters" />
+                        Content="Export current season top rookie batters" />
                     
                     <Button
                         Margin="0, 5, 0, 0"
@@ -186,7 +186,7 @@
                         HorizontalAlignment="Stretch"
                         Height="50"
                         Command="{Binding ExportTopRookiesPitchingCommand}"
-                        Content="Export most recent season top rookie pitchers" />
+                        Content="Export current season top rookie pitchers" />
                     
                     <Button
                         Margin="0, 5, 0, 0"
@@ -194,7 +194,7 @@
                         HorizontalAlignment="Stretch"
                         Height="50"
                         Command="{Binding ExportMostRecentSeasonPlayersCommand}"
-                        Content="Export most recent season players" />
+                        Content="Export current season players" />
                     
                     <Button
                         Margin="0, 5, 0, 0"
@@ -202,7 +202,15 @@
                         HorizontalAlignment="Stretch"
                         Height="50"
                         Command="{Binding ExportMostRecentSeasonTeamsCommand}"
-                        Content="Export most recent season teams" />
+                        Content="Export current season teams" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportMostRecentSeasonScheduleCommand}"
+                        Content="Export current season schedule" />
                 </WrapPanel>
             </GroupBox>
 
