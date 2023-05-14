@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <IsPackable>false</IsPackable>
-        <Version>1.2.3</Version>
+        <Version>1.3.0</Version>
         <Title>SMB3 Explorer</Title>
         <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
         <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
@@ -91,6 +91,12 @@
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayers.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonTeams.sql" />
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonTeams.sql" />
+      <None Remove="Resources\Sql\SeasonAverageBatterStats.sql" />
+      <EmbeddedResource Include="Resources\Sql\SeasonAverageBatterStats.sql" />
+      <None Remove="Resources\Sql\SeasonAveragePitcherStats.sql" />
+      <EmbeddedResource Include="Resources\Sql\SeasonAveragePitcherStats.sql" />
+      <None Remove="Resources\Sql\MostRecentSeasonSchedule.sql" />
+      <EmbeddedResource Include="Resources\Sql\MostRecentSeasonSchedule.sql" />
     </ItemGroup>
 
 </Project>
