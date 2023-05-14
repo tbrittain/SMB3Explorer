@@ -141,15 +141,23 @@ public class BattingSeasonStatistic
     [Name("extra_base_hit_percentage"), Index(40)]
     public double ExtraBaseHitPercentage => ExtraBaseHits / (double) Hits;
     
-    [Name("season_completion_date"), Index(41)]
+    // Caveat with this, the denominator should be subtracting intentional walks, but that data is not available
+    [Name("wOBA"), Index(41)]
+    public double WeightedOnBaseAverage => ((0.69 * Walks) + (0.72 * HitByPitch) + (0.89 * Singles) + (1.27 * Doubles) +
+                                            (1.62 * Triples) + (2.10 * HomeRuns)) / (AtBats + Walks + SacrificeFlies + HitByPitch);
+    
+    [Name("ISO"), Index(42)]
+    public double IsolatedPower => SluggingPercentage - BattingAverage;
+    
+    [Name("season_completion_date"), Index(43)]
     public DateTime? CompletionDate { get; set; }
 
-    [Name("season_id"), Index(42)]
+    [Name("season_id"), Index(44)]
     public int SeasonId { get; set; }
     
-    [Name("season_num"), Index(43)]
+    [Name("season_num"), Index(45)]
     public int SeasonNum { get; set; }
     
-    [Name("age"), Index(44)]
+    [Name("age"), Index(46)]
     public int Age { get; set; }
 }

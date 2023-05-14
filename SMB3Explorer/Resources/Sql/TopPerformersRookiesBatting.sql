@@ -37,6 +37,19 @@ SELECT vbpi.baseballPlayerGUID,
            ELSE vbpi.[pitcherRole] END                AS pitcherRole,
        CAST(secondaryPosition.optionValue AS INTEGER) AS secondaryPosition,
        tsb.*,
+       100 * ((
+                          ([hits] + [baseOnBalls] + [hitByPitch]) /
+                          CAST(NULLIF([atBats] + [baseOnBalls] + [hitByPitch] + [sacrificeFlies], 0) AS [REAL]) +
+                          (([hits] - [doubles] - [triples] - [homeruns]) + 2 * [doubles] + 3 * [triples] +
+                           4 * [homeruns]) / CAST(NULLIF([atBats], 0) AS [REAL])
+                  ) / @leagueOps)                     AS opsPlus,
+       -- sortOrder is a weighted OPS+ based on number of at bats
+       atBats * 100 * ((
+                                   ([hits] + [baseOnBalls] + [hitByPitch]) /
+                                   CAST(NULLIF([atBats] + [baseOnBalls] + [hitByPitch] + [sacrificeFlies], 0) AS [REAL]) +
+                                   (([hits] - [doubles] - [triples] - [homeruns]) + 2 * [doubles] + 3 * [triples] +
+                                    4 * [homeruns]) / CAST(NULLIF([atBats], 0) AS [REAL])
+                           ) / @leagueOps)            AS sortOrder,
        currentTeam.teamName                           AS currentTeam,
        previousTeam.teamName                          AS previousTeam,
        tbp.age                                        AS age
@@ -67,5 +80,4 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
 
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
-ORDER BY homeruns DESC
-LIMIT 25
+ORDER BY sortOrder DESC
