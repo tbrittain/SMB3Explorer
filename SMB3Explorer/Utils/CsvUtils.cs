@@ -39,11 +39,7 @@ public static class CsvUtils
         {
             await csv.WriteRecordAsync(enumerator.Current);
 
-            if (rowCount >= limit)
-            {
-                break;
-            }
-
+            if (rowCount >= limit) break;
             rowCount++;
         }
         

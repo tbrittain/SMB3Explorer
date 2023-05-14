@@ -188,6 +188,35 @@ public partial class DataService
         }
     }
 
+    public async IAsyncEnumerable<SeasonSchedule> GetMostRecentSeasonSchedule()
+    {
+        var command = Connection!.CreateCommand();
+        
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonSchedule);
+        command.CommandText = commandText;
+        
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        });
+        
+        var reader = await command.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            var seasonSchedule = new SeasonSchedule();
+            
+            seasonSchedule.SeasonId = reader.GetInt32(0);
+            seasonSchedule.SeasonNum = reader.GetInt32(1);
+            seasonSchedule.GameNum = reader.GetInt32(2);
+            seasonSchedule.Day = reader.GetInt32(3);
+            seasonSchedule.HomeTeam = reader.GetString(4);
+            seasonSchedule.AwayTeam = reader.GetString(5);
+            
+            yield return seasonSchedule;
+        }
+    }
+
     private async Task<double> GetAverageSeasonOps()
     {
         var command = Connection!.CreateCommand();
