@@ -36,6 +36,6 @@ public class BattingMostRecentSeasonStatistic : BattingSeasonStatistic
         Age = battingSeasonStatistic.Age;
     }
     
-    [Name("OPS+"), Index(46)]
+    [Name("OPS+"), Index(47)]
     public double OnBasePercentagePlus { get; set; }
 }

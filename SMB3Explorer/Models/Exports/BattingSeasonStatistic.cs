@@ -146,15 +146,18 @@ public class BattingSeasonStatistic
     public double WeightedOnBaseAverage => ((0.69 * Walks) + (0.72 * HitByPitch) + (0.89 * Singles) + (1.27 * Doubles) +
                                             (1.62 * Triples) + (2.10 * HomeRuns)) / (AtBats + Walks + SacrificeFlies + HitByPitch);
     
-    [Name("season_completion_date"), Index(42)]
+    [Name("ISO"), Index(42)]
+    public double IsolatedPower => SluggingPercentage - BattingAverage;
+    
+    [Name("season_completion_date"), Index(43)]
     public DateTime? CompletionDate { get; set; }
 
-    [Name("season_id"), Index(43)]
+    [Name("season_id"), Index(44)]
     public int SeasonId { get; set; }
     
-    [Name("season_num"), Index(44)]
+    [Name("season_num"), Index(45)]
     public int SeasonNum { get; set; }
     
-    [Name("age"), Index(45)]
+    [Name("age"), Index(46)]
     public int Age { get; set; }
 }
