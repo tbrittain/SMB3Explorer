@@ -106,45 +106,50 @@ public class PitchingSeasonStatistic
     [Name("batting_average_against"), Index(32)]
     public double BattingAverageAgainst => HitsAllowed / (double) BattersFaced;
 
-    [Name("whip"), Index(33)]
+    [Name("fip"), Index(33)]
+    public double FieldingIndependentPitching =>
+        (((13 * HomeRunsAllowed) + (3 * (WalksAllowed + HitByPitch)) - 
+          (2 * Strikeouts)) / (double) OutsPitched) + 3.10;
+
+    [Name("whip"), Index(34)]
     public double WalksAndHitsPerInning => (WalksAllowed + HitsAllowed) / InningsPitched;
     
-    [Name("win_percentage"), Index(34)]
+    [Name("win_percentage"), Index(35)]
     public double WinPercentage => Wins / (double) (Wins + Losses);
     
-    [Name("opponent_on_base_percentage"), Index(35)]
+    [Name("opponent_on_base_percentage"), Index(36)]
     public double OpponentOnBasePercentage => (HitsAllowed + WalksAllowed + HitByPitch) / (double) BattersFaced;
     
-    [Name("strikeout_to_walk_ratio"), Index(36)]
+    [Name("strikeout_to_walk_ratio"), Index(37)]
     public double StrikeoutToWalkRatio => Strikeouts / (double) WalksAllowed;
     
-    [Name("strikeouts_per_nine_innings"), Index(37)]
+    [Name("strikeouts_per_nine_innings"), Index(38)]
     public double StrikeoutsPerNineInnings => Strikeouts / (InningsPitched / 9.0);
     
-    [Name("walks_per_nine_innings"), Index(38)]
+    [Name("walks_per_nine_innings"), Index(39)]
     public double WalksPerNineInnings => WalksAllowed / (InningsPitched / 9.0);
     
-    [Name("hits_per_nine_innings"), Index(39)]
+    [Name("hits_per_nine_innings"), Index(40)]
     public double HitsPerNineInnings => HitsAllowed / (InningsPitched / 9.0);
     
-    [Name("home_runs_per_nine_innings"), Index(40)]
+    [Name("home_runs_per_nine_innings"), Index(41)]
     public double HomeRunsPerNineInnings => HomeRunsAllowed / (InningsPitched / 9.0);
     
-    [Name("pitches_per_inning"), Index(41)]
+    [Name("pitches_per_inning"), Index(42)]
     public double PitchesPerInning => TotalPitches / InningsPitched;
     
-    [Name("pitches_per_game"), Index(42)]
+    [Name("pitches_per_game"), Index(43)]
     public double PitchesPerGame => TotalPitches / (double) GamesPlayed;
     
-    [Name("season_completion_date"), Index(43)]
+    [Name("season_completion_date"), Index(44)]
     public DateTime? CompletionDate { get; set; }
 
-    [Name("season_id"), Index(44)]
+    [Name("season_id"), Index(45)]
     public int SeasonId { get; set; }
     
-    [Name("season_num"), Index(45)]
+    [Name("season_num"), Index(46)]
     public int SeasonNum { get; set; }
     
-    [Name("age"), Index(46)]
+    [Name("age"), Index(47)]
     public int Age { get; set; }
 }

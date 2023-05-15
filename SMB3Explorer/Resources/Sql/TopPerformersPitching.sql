@@ -29,17 +29,30 @@ SELECT baseballPlayerGUID,
            ELSE vbpi.[pitcherRole] END     AS pitcherRole,
        tspitch.*,
        CASE
+           WHEN tspitch.outsPitched = 0 OR tspitch.earnedRuns = 0 THEN 0
+           ELSE 100 * (
+                   @leagueEra /
+                   ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
+               )
+           END                             AS eraMinus,
+       CASE
            WHEN tspitch.outsPitched = 0 THEN 0
            ELSE 100 * (
-               @leagueEra /
-               ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
+                   @leagueFip /
+                   (((13 * IFNULL(tspitch.homeRuns, 0)) +
+                     (3 * (IFNULL(tspitch.baseOnBalls, 0) + IFNULL(tspitch.battersHitByPitch, 0))) -
+                     (2 * IFNULL(tspitch.strikeOuts, 0))) / (tspitch.outsPitched / 3.0) + 3.10)
                )
-           END AS eraMinus,
+           END                             AS fipMinus,
        -- sortOrder is a weighted eraMinus based on innings pitched
-       tspitch.outsPitched * 100 * (
-               @leagueEra /
-               ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
-           ) AS sortOrder,
+       CASE
+           WHEN tspitch.earnedRuns = 0
+               THEN 99999999
+           ELSE
+                   tspitch.outsPitched * 100 * (
+                       @leagueEra /
+                       ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
+                   ) END                   AS sortOrder,
        currentTeam.teamName                AS currentTeam,
        previousTeam.teamName               AS previousTeam,
        tbp.age                             AS age

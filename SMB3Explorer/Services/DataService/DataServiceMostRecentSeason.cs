@@ -52,7 +52,7 @@ public partial class DataService
     public async IAsyncEnumerable<PitchingMostRecentSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(
         bool isRookies = false)
     {
-        var seasonAverageEra = await GetAverageSeasonEra();
+        var seasonAveragePitcherStats = await GetAverageSeasonPitcherStats();
         
         var command = Connection!.CreateCommand();
 
@@ -68,7 +68,12 @@ public partial class DataService
         
         command.Parameters.Add(new SqliteParameter("@leagueEra", SqliteType.Real)
         {
-            Value = seasonAverageEra
+            Value = seasonAveragePitcherStats.Era
+        });
+        
+        command.Parameters.Add(new SqliteParameter("@leagueFip", SqliteType.Real)
+        {
+            Value = seasonAveragePitcherStats.Fip
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -78,9 +83,14 @@ public partial class DataService
             var pitcherStatistic = GetPitchingSeasonStatistic(true, reader);
 
             var mostRecentSeasonStatistic = new PitchingMostRecentSeasonStatistic(pitcherStatistic);
-            
+
             var eraMinus = reader["eraMinus"].ToString()!;
-            mostRecentSeasonStatistic.EarnedRunsAllowedMinus = string.IsNullOrEmpty(eraMinus) ? 0 : double.Parse(eraMinus);
+            mostRecentSeasonStatistic.EarnedRunsAllowedMinus =
+                string.IsNullOrEmpty(eraMinus) ? 0 : double.Parse(eraMinus);
+
+            var fipMinus = reader["fipMinus"].ToString()!;
+            mostRecentSeasonStatistic.FieldingIndependentPitchingMinus =
+                string.IsNullOrEmpty(fipMinus) ? 0 : double.Parse(fipMinus);
             
             yield return mostRecentSeasonStatistic;
         }
@@ -236,7 +246,7 @@ public partial class DataService
         return opsOrdinal;
     }
 
-    private async Task<double> GetAverageSeasonEra()
+    private async Task<AverageSeasonPitcherStats> GetAverageSeasonPitcherStats()
     {
         var command = Connection!.CreateCommand();
 
@@ -252,6 +262,9 @@ public partial class DataService
         reader.Read();
         
         var eraOrdinal = reader.GetDouble(0);
-        return eraOrdinal;
+        var fipOrdinal = reader.GetDouble(1);
+        return new AverageSeasonPitcherStats(eraOrdinal, fipOrdinal);
     }
+
+    private record AverageSeasonPitcherStats(double Era, double Fip);
 }
