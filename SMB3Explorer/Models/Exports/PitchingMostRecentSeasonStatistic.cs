@@ -37,8 +37,10 @@ public class PitchingMostRecentSeasonStatistic : PitchingSeasonStatistic
         SeasonNum = pitchingSeasonStatistic.SeasonNum;
         Age = pitchingSeasonStatistic.Age;
     }
-    
-        
-    [Name("ERA-"), Index(47)]
+
+    [Name("ERA-"), Index(48)]
     public double EarnedRunsAllowedMinus { get; set; }
+
+    [Name("FIP-"), Index(49)]
+    public double FieldingIndependentPitchingMinus { get; set; }
 }
