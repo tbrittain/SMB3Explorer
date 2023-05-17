@@ -8,26 +8,26 @@
                           JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
                           JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
                  WHERE t_leagues.GUID = CAST(@leagueId AS BLOB))
-SELECT ts.aggregatorID                   AS aggregatorID,
-       ts.statsPlayerID                  AS statsPlayerID,
-       tbpli.GUID                        AS baseballPlayerGUIDIfKnown,
+SELECT ts.aggregatorID                      AS aggregatorID,
+       ts.statsPlayerID                     AS statsPlayerID,
+       tbpli.GUID                           AS baseballPlayerGUIDIfKnown,
        s.seasonID,
        s.seasonNum,
-       currentTeamLocal.GUID             AS teamGUID,
-       mostRecentTeamLocal.GUID          AS mostRecentlyPlayedTeamGUID,
-       previouslyRecentTeam.GUID         AS previousRecentlyPlayedTeamGUID,
+       currentTeam.teamName                AS teamName,
+       mostRecentTeam.teamName             AS mostRecentlyPlayedTeamName,
+       previouslyRecentPlayedTeam.teamName AS previousRecentlyPlayedTeamName,
        CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.firstName
-           ELSE vbpi.firstName END       AS firstName,
+           ELSE vbpi.firstName END          AS firstName,
        CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.lastName
-           ELSE vbpi.lastName END        AS lastName,
+           ELSE vbpi.lastName END           AS lastName,
        CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.primaryPos
-           ELSE vbpi.primaryPosition END AS primaryPosition,
+           ELSE vbpi.primaryPosition END    AS primaryPosition,
        CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.pitcherRole
-           ELSE vbpi.pitcherRole END     AS pitcherRole,
+           ELSE vbpi.pitcherRole END        AS pitcherRole,
        gamesBatting,
        atBats,
        runs,
@@ -54,8 +54,13 @@ FROM t_stats_batting tsb
          LEFT JOIN t_team_local_ids currentTeamLocal ON ts.currentTeamLocalID = currentTeamLocal.localID
          LEFT JOIN t_team_local_ids mostRecentTeamLocal
                    ON ts.mostRecentlyPlayedTeamLocalID = mostRecentTeamLocal.localID
-         LEFT JOIN t_team_local_ids previouslyRecentTeam
-                   ON ts.previousRecentlyPlayedTeamLocalID = previouslyRecentTeam.localID
+         LEFT JOIN t_team_local_ids previouslyRecentPlayedTeamLocal
+                   ON ts.previousRecentlyPlayedTeamLocalID = previouslyRecentPlayedTeamLocal.localID
+
+         LEFT JOIN teams currentTeam ON currentTeamLocal.GUID = currentTeam.teamGUID
+         LEFT JOIN teams mostRecentTeam ON mostRecentTeamLocal.GUID = mostRecentTeam.teamGUID
+         LEFT JOIN teams previouslyRecentPlayedTeam
+                   ON previouslyRecentPlayedTeamLocal.GUID = previouslyRecentPlayedTeam.teamGUID
 
          LEFT JOIN t_baseball_player_local_ids tbpli
                    ON tsp.baseballPlayerLocalID = tbpli.localID
