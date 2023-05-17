@@ -79,4 +79,4 @@ WHERE 1 = CASE
                                                   WHEN s.seasonID = :seasonId THEN 1
                                                   ELSE 0 END
               ELSE 1 END
-ORDER BY s.seasonNum, ts.aggregatorID;
+ORDER BY s.seasonNum, ts.statsPlayerID;
