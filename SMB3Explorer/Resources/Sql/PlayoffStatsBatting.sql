@@ -26,6 +26,9 @@ SELECT ts.aggregatorID                     AS aggregatorID,
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.primaryPos
            ELSE vbpi.primaryPosition END   AS primaryPosition,
        CASE
+           WHEN tsp.baseballPlayerLocalID IS NOT NULL THEN CAST(secondaryPosition.optionValue AS INTEGER)
+           ELSE tsp.secondaryPos END       AS secondaryPosition,
+       CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.pitcherRole
            ELSE vbpi.pitcherRole END       AS pitcherRole,
        gamesBatting,
@@ -64,6 +67,8 @@ FROM t_stats_batting tsb
 
          LEFT JOIN t_baseball_player_local_ids tbpli
                    ON tsp.baseballPlayerLocalID = tbpli.localID
+         LEFT JOIN t_baseball_player_options secondaryPosition
+                   ON tbpli.localID = secondaryPosition.baseballPlayerLocalID AND secondaryPosition.optionKey = 55
          LEFT JOIN v_baseball_player_info vbpi ON tbpli.GUID =
                                                   vbpi.baseballPlayerGUID
 WHERE 1 = CASE

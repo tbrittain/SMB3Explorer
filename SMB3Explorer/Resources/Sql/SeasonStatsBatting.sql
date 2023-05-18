@@ -8,9 +8,9 @@
                           JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
                           JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
                  WHERE t_leagues.GUID = CAST(@leagueId AS BLOB))
-SELECT ts.aggregatorID                      AS aggregatorID,
-       ts.statsPlayerID                     AS statsPlayerID,
-       tbpli.GUID                           AS baseballPlayerGUIDIfKnown,
+SELECT ts.aggregatorID                     AS aggregatorID,
+       ts.statsPlayerID                    AS statsPlayerID,
+       tbpli.GUID                          AS baseballPlayerGUIDIfKnown,
        s.seasonID,
        s.seasonNum,
        currentTeam.teamName                AS teamName,
@@ -18,16 +18,19 @@ SELECT ts.aggregatorID                      AS aggregatorID,
        previouslyRecentPlayedTeam.teamName AS previousRecentlyPlayedTeamName,
        CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.firstName
-           ELSE vbpi.firstName END          AS firstName,
+           ELSE vbpi.firstName END         AS firstName,
        CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.lastName
-           ELSE vbpi.lastName END           AS lastName,
+           ELSE vbpi.lastName END          AS lastName,
        CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.primaryPos
-           ELSE vbpi.primaryPosition END    AS primaryPosition,
+           ELSE vbpi.primaryPosition END   AS primaryPosition,
+       CASE
+           WHEN tsp.baseballPlayerLocalID IS NOT NULL THEN CAST(secondaryPosition.optionValue AS INTEGER)
+           ELSE tsp.secondaryPos END       AS secondaryPosition,
        CASE
            WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.pitcherRole
-           ELSE vbpi.pitcherRole END        AS pitcherRole,
+           ELSE vbpi.pitcherRole END       AS pitcherRole,
        gamesBatting,
        atBats,
        runs,
@@ -64,6 +67,8 @@ FROM t_stats_batting tsb
 
          LEFT JOIN t_baseball_player_local_ids tbpli
                    ON tsp.baseballPlayerLocalID = tbpli.localID
+         LEFT JOIN t_baseball_player_options secondaryPosition
+                   ON tbpli.localID = secondaryPosition.baseballPlayerLocalID AND secondaryPosition.optionKey = 55
          LEFT JOIN v_baseball_player_info vbpi ON tbpli.GUID =
                                                   vbpi.baseballPlayerGUID
 WHERE 1 = CASE
