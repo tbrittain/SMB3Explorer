@@ -2,7 +2,7 @@
 
 namespace SMB3Explorer.Models.Exports;
 
-public class BattingMostRecentSeasonStatistic : BattingSeasonStatistic
+public class BattingMostRecentSeasonStatistic
 {
     public BattingMostRecentSeasonStatistic(BattingSeasonStatistic battingSeasonStatistic)
     {
