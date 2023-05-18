@@ -17,21 +17,27 @@ SELECT ts.aggregatorID                     AS aggregatorID,
        mostRecentTeam.teamName             AS mostRecentlyPlayedTeamName,
        previouslyRecentPlayedTeam.teamName AS previousRecentlyPlayedTeamName,
        CASE
-           WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.firstName
+           WHEN tsplayers.baseballPlayerLocalID IS NULL THEN tsplayers.firstName
            ELSE vbpi.firstName END         AS firstName,
        CASE
-           WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.lastName
+           WHEN tsplayers.baseballPlayerLocalID IS NULL THEN tsplayers.lastName
            ELSE vbpi.lastName END          AS lastName,
        CASE
-           WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.primaryPos
+           WHEN tsplayers.baseballPlayerLocalID IS NULL THEN tsplayers.primaryPos
            ELSE vbpi.primaryPosition END   AS primaryPosition,
        CASE
-           WHEN tsp.baseballPlayerLocalID IS NOT NULL THEN CAST(secondaryPosition.optionValue AS INTEGER)
-           ELSE tsp.secondaryPos END       AS secondaryPosition,
+           WHEN tsplayers.baseballPlayerLocalID IS NOT NULL THEN CAST(secondaryPosition.optionValue AS INTEGER)
+           ELSE tsplayers.secondaryPos END       AS secondaryPosition,
        CASE
-           WHEN tsp.baseballPlayerLocalID IS NULL THEN tsp.pitcherRole
+           WHEN tsplayers.baseballPlayerLocalID IS NULL THEN tsplayers.pitcherRole
            ELSE vbpi.pitcherRole END       AS pitcherRole,
+       CASE
+           WHEN tbp.GUID IS NOT NULL THEN
+                   tbp.age - (MAX(seasonNum) OVER (PARTITION BY baseballPlayerGUID) - seasonNum)
+           ELSE tsplayers.age - (tsplayers.retirementSeason - s.seasonNum)
+           END                             AS age,
        gamesBatting,
+       gamesPlayed,
        atBats,
        runs,
        hits,
@@ -50,7 +56,7 @@ SELECT ts.aggregatorID                     AS aggregatorID,
        passedBalls
 FROM t_stats_batting tsb
          JOIN t_stats ts ON tsb.aggregatorID = ts.aggregatorID
-         JOIN t_stats_players tsp USING (statsPlayerID)
+         JOIN t_stats_players tsplayers USING (statsPlayerID)
          JOIN t_season_stats tss USING (aggregatorID)
          JOIN seasons s USING (seasonID)
 
@@ -66,9 +72,10 @@ FROM t_stats_batting tsb
                    ON previouslyRecentPlayedTeamLocal.GUID = previouslyRecentPlayedTeam.teamGUID
 
          LEFT JOIN t_baseball_player_local_ids tbpli
-                   ON tsp.baseballPlayerLocalID = tbpli.localID
+                   ON tsplayers.baseballPlayerLocalID = tbpli.localID
          LEFT JOIN t_baseball_player_options secondaryPosition
                    ON tbpli.localID = secondaryPosition.baseballPlayerLocalID AND secondaryPosition.optionKey = 55
+         LEFT JOIN t_baseball_players tbp on tbpli.GUID = tbp.GUID
          LEFT JOIN v_baseball_player_info vbpi ON tbpli.GUID =
                                                   vbpi.baseballPlayerGUID
 WHERE 1 = CASE
