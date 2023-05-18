@@ -31,10 +31,10 @@ public class BattingSeasonStatistic
     [Name("Team"), Index(3)]
     public string? TeamName { get; set; }
     
-    [Name("Most Recent Team"), Index(4)]
+    [Name("Prev Team"), Index(4)]
     public string? MostRecentTeamName { get; set; }
     
-    [Name("Second Most Recent Team"), Index(5)]
+    [Name("2nd Prev Team"), Index(5)]
     public string? PreviousTeam { get; set; }
 
     public int PositionNumber { get; set; }
