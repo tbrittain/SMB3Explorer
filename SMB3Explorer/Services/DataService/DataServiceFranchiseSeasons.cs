@@ -95,14 +95,30 @@ public partial class DataService
     {
         var pitcherStatistic = new PitchingSeasonStatistic();
 
-        pitcherStatistic.PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid();
+        pitcherStatistic.AggregatorId = int.Parse(reader["aggregatorID"].ToString()!);
+        pitcherStatistic.StatsPlayerId = int.Parse(reader["statsPlayerID"].ToString()!);
+        pitcherStatistic.PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid();
+        
+        pitcherStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
+        pitcherStatistic.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
+        pitcherStatistic.Age = int.Parse(reader["age"].ToString()!);
+        
         pitcherStatistic.FirstName = reader["firstName"].ToString()!;
         pitcherStatistic.LastName = reader["lastName"].ToString()!;
         pitcherStatistic.PositionNumber = int.Parse(reader["primaryPosition"].ToString()!);
-        pitcherStatistic.CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
+        
+        pitcherStatistic.TeamName = string.IsNullOrEmpty(reader["teamName"].ToString()!)
             ? null
-            : reader["currentTeam"].ToString()!;
-        pitcherStatistic.PitcherRole = int.Parse(reader["pitcherRole"].ToString()!);
+            : reader["teamName"].ToString()!;
+        pitcherStatistic.MostRecentTeamName = string.IsNullOrEmpty(reader["mostRecentlyPlayedTeamName"].ToString()!)
+            ? null
+            : reader["mostRecentlyPlayedTeamName"].ToString()!;
+        pitcherStatistic.PreviousTeamName = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
+            ? null
+            : reader["previousRecentlyPlayedTeamName"].ToString()!;
+        
+        pitcherStatistic.PitcherRole = 
+            int.Parse(reader["pitcherRole"].ToString()!);
         pitcherStatistic.GamesPlayed = int.Parse(reader["games"].ToString()!);
         pitcherStatistic.GamesStarted = int.Parse(reader["gamesStarted"].ToString()!);
         pitcherStatistic.Wins = int.Parse(reader["wins"].ToString()!);
@@ -122,19 +138,6 @@ public partial class DataService
         pitcherStatistic.GamesFinished = int.Parse(reader["gamesFinished"].ToString()!);
         pitcherStatistic.RunsAllowed = int.Parse(reader["runsAllowed"].ToString()!);
         pitcherStatistic.WildPitches = int.Parse(reader["wildPitches"].ToString()!);
-        pitcherStatistic.CompletionDate = string.IsNullOrEmpty(reader["completionDate"].ToString()!)
-            ? null
-            : DateTime.Parse(reader["completionDate"].ToString()!);
-        pitcherStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
-        pitcherStatistic.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
-        pitcherStatistic.Age = int.Parse(reader["age"].ToString()!);
-
-        if (isRegularSeason)
-        {
-            pitcherStatistic.PreviousTeam = string.IsNullOrEmpty(reader["previousTeam"].ToString()!)
-                ? null
-                : reader["previousTeam"].ToString()!;
-        }
 
         return pitcherStatistic;
     }
@@ -142,6 +145,14 @@ public partial class DataService
     private static BattingSeasonStatistic GetPositionPlayerSeasonStatistic(bool isRegularSeason, IDataRecord reader)
     {
         var positionPlayerStatistic = new BattingSeasonStatistic();
+        
+        positionPlayerStatistic.AggregatorId = int.Parse(reader["aggregatorID"].ToString()!);
+        positionPlayerStatistic.StatsPlayerId = int.Parse(reader["statsPlayerID"].ToString()!);
+        positionPlayerStatistic.PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid();
+        
+        positionPlayerStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
+        positionPlayerStatistic.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
+        positionPlayerStatistic.Age = int.Parse(reader["age"].ToString()!);
 
         positionPlayerStatistic.FirstName = reader["firstName"].ToString()!;
         positionPlayerStatistic.LastName = reader["lastName"].ToString()!;
@@ -153,9 +164,19 @@ public partial class DataService
             string.IsNullOrEmpty(reader["secondaryPosition"].ToString()!)
                 ? null
                 : int.Parse(reader["secondaryPosition"].ToString()!);
-        positionPlayerStatistic.CurrentTeam = string.IsNullOrEmpty(reader["currentTeam"].ToString()!)
+        positionPlayerStatistic.PitcherRole = 
+            string.IsNullOrEmpty(reader["pitcherRole"].ToString()!)
+                ? null
+                : int.Parse(reader["pitcherRole"].ToString()!);
+        positionPlayerStatistic.TeamName = string.IsNullOrEmpty(reader["teamName"].ToString()!)
             ? null
-            : reader["currentTeam"].ToString()!;
+            : reader["teamName"].ToString()!;
+        positionPlayerStatistic.MostRecentTeamName = string.IsNullOrEmpty(reader["mostRecentlyPlayedTeamName"].ToString()!)
+            ? null
+            : reader["mostRecentlyPlayedTeamName"].ToString()!;
+        positionPlayerStatistic.PreviousTeamName = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
+            ? null
+            : reader["previousRecentlyPlayedTeamName"].ToString()!;
         positionPlayerStatistic.GamesPlayed = int.Parse(reader["gamesPlayed"].ToString()!);
         positionPlayerStatistic.GamesBatting = int.Parse(reader["gamesBatting"].ToString()!);
         positionPlayerStatistic.AtBats = int.Parse(reader["atBats"].ToString()!);
@@ -174,20 +195,6 @@ public partial class DataService
         positionPlayerStatistic.SacrificeFlies = int.Parse(reader["sacrificeFlies"].ToString()!);
         positionPlayerStatistic.Errors = int.Parse(reader["errors"].ToString()!);
         positionPlayerStatistic.PassedBalls = int.Parse(reader["passedBalls"].ToString()!);
-        positionPlayerStatistic.CompletionDate = string.IsNullOrEmpty(reader["completionDate"].ToString()!)
-            ? null
-            : DateTime.Parse(reader["completionDate"].ToString()!);
-        positionPlayerStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
-        positionPlayerStatistic.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
-        positionPlayerStatistic.Age = int.Parse(reader["age"].ToString()!);
-        positionPlayerStatistic.PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid();
-
-        if (isRegularSeason)
-        {
-            positionPlayerStatistic.PreviousTeam = string.IsNullOrEmpty(reader["previousTeam"].ToString()!)
-                ? null
-                : reader["previousTeam"].ToString()!;
-        }
 
         return positionPlayerStatistic;
     }
