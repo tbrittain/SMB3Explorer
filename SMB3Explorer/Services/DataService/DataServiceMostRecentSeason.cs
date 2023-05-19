@@ -46,7 +46,7 @@ public partial class DataService
             positionPlayerStatistic.FirstName = reader.GetString(3);
             positionPlayerStatistic.LastName = reader.GetString(4);
             positionPlayerStatistic.PositionNumber = reader.GetInt32(5);
-            positionPlayerStatistic.PitcherRole = reader.GetInt32(6);
+            positionPlayerStatistic.PitcherRole = reader.IsDBNull(6) ? null : reader.GetInt32(6);
             positionPlayerStatistic.SecondaryPositionNumber = reader.IsDBNull(7) ? null : reader.GetInt32(7);
             positionPlayerStatistic.GamesBatting = reader.GetInt32(9);
             positionPlayerStatistic.GamesPlayed = reader.GetInt32(10);
@@ -139,6 +139,7 @@ public partial class DataService
             mostRecentSeasonStatistic.TeamName = reader.GetString(30);
             mostRecentSeasonStatistic.MostRecentTeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
             mostRecentSeasonStatistic.PreviousTeamName = reader.IsDBNull(32) ? null : reader.GetString(32);
+            // TODO:
             mostRecentSeasonStatistic.Age = reader.GetInt32(33);
             
             yield return mostRecentSeasonStatistic;

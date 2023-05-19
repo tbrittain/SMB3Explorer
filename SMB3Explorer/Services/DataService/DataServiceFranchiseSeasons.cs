@@ -97,7 +97,7 @@ public partial class DataService
 
         pitcherStatistic.AggregatorId = int.Parse(reader["aggregatorID"].ToString()!);
         pitcherStatistic.StatsPlayerId = int.Parse(reader["statsPlayerID"].ToString()!);
-        pitcherStatistic.PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid();
+        pitcherStatistic.PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid();
         
         pitcherStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
         pitcherStatistic.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
@@ -117,7 +117,8 @@ public partial class DataService
             ? null
             : reader["previousRecentlyPlayedTeamName"].ToString()!;
         
-        pitcherStatistic.PitcherRole = int.Parse(reader["pitcherRole"].ToString()!);
+        pitcherStatistic.PitcherRole = 
+            int.Parse(reader["pitcherRole"].ToString()!);
         pitcherStatistic.GamesPlayed = int.Parse(reader["games"].ToString()!);
         pitcherStatistic.GamesStarted = int.Parse(reader["gamesStarted"].ToString()!);
         pitcherStatistic.Wins = int.Parse(reader["wins"].ToString()!);
@@ -147,7 +148,7 @@ public partial class DataService
         
         positionPlayerStatistic.AggregatorId = int.Parse(reader["aggregatorID"].ToString()!);
         positionPlayerStatistic.StatsPlayerId = int.Parse(reader["statsPlayerID"].ToString()!);
-        positionPlayerStatistic.PlayerId = reader["baseballPlayerGUID"] is not byte[] bytes ? null : bytes.ToGuid();
+        positionPlayerStatistic.PlayerId = reader["baseballPlayerGUIDIfKnown"] is not byte[] bytes ? null : bytes.ToGuid();
         
         positionPlayerStatistic.SeasonId = int.Parse(reader["seasonId"].ToString()!);
         positionPlayerStatistic.SeasonNum = int.Parse(reader["seasonNum"].ToString()!);
@@ -163,6 +164,10 @@ public partial class DataService
             string.IsNullOrEmpty(reader["secondaryPosition"].ToString()!)
                 ? null
                 : int.Parse(reader["secondaryPosition"].ToString()!);
+        positionPlayerStatistic.PitcherRole = 
+            string.IsNullOrEmpty(reader["pitcherRole"].ToString()!)
+                ? null
+                : int.Parse(reader["pitcherRole"].ToString()!);
         positionPlayerStatistic.TeamName = string.IsNullOrEmpty(reader["teamName"].ToString()!)
             ? null
             : reader["teamName"].ToString()!;

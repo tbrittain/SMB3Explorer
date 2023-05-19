@@ -7,8 +7,10 @@ namespace SMB3Explorer.Models.Exports;
 
 public abstract class PitchingStatistic
 {
+    [Ignore]
     public Guid? PlayerId { get; set; }
     
+    [Ignore]
     public int SeasonId { get; set; }
 
     [Name("Season"), Index(0)]
@@ -29,8 +31,10 @@ public abstract class PitchingStatistic
     [Name("2nd Prev Team"), Index(5)]
     public string? PreviousTeamName { get; set; }
 
+    [Ignore]
     public int PositionNumber { get; set; }
     
+    [Ignore]
     public int PitcherRole { get; set; }
 
     [Name("Pitcher Role"), Index(6)]
@@ -52,6 +56,7 @@ public abstract class PitchingStatistic
     [Name("CGSO"), Index(11)]
     public int Shutouts { get; set; }
 
+    [Ignore]
     public int OutsPitched { get; set; }
 
     [Name("H"), Index(12)]
@@ -73,7 +78,7 @@ public abstract class PitchingStatistic
     public double InningsPitched => OutsPitched / 3.0;
 
     [Name("ERA"), Index(18)]
-    public double EarnedRunAverage => EarnedRuns / InningsPitched;
+    public double EarnedRunAverage => EarnedRuns / (InningsPitched / 9.0);
     
     [Name("TP"), Index(19)]
     public int TotalPitches { get; set; }

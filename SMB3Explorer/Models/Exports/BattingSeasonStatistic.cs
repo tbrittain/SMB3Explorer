@@ -11,7 +11,9 @@ namespace SMB3Explorer.Models.Exports;
 
 public class BattingSeasonStatistic : BattingStatistic
 {
+    [Ignore]
     public int AggregatorId { get; set; }
 
+    [Ignore]
     public int StatsPlayerId { get; set; }
 }

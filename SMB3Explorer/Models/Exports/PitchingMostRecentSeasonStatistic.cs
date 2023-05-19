@@ -7,6 +7,7 @@ namespace SMB3Explorer.Models.Exports;
 
 public class PitchingMostRecentSeasonStatistic : PitchingStatistic
 {
+    [Ignore]
     public new Guid PlayerId { get; set; }
 
     [Name("ERA-"), Index(40)]

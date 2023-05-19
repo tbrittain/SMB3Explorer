@@ -7,9 +7,9 @@ namespace SMB3Explorer.Models.Exports;
 
 public abstract class BattingStatistic
 {
-    public Guid? PlayerId { get; set; }
+    public Guid? PlayerId { private get; set; }
 
-    public int SeasonId { get; set; }
+    public int SeasonId { private get; set; }
 
     [Name("Season"), Index(0)]
     public int SeasonNum { get; set; }
@@ -29,12 +29,14 @@ public abstract class BattingStatistic
     [Name("2nd Prev Team"), Index(5)]
     public string? PreviousTeamName { get; set; }
 
+    [Ignore]
     public int PositionNumber { get; set; }
 
     [Name("Position"), Index(6)]
     // ReSharper disable once UnusedMember.Global
     public string Position => ((BaseballPlayerPosition) PositionNumber).GetEnumDescription();
 
+    [Ignore]
     public int? SecondaryPositionNumber { get; set; }
 
     [Name("Secondary Position"), Index(7)]
@@ -43,12 +45,14 @@ public abstract class BattingStatistic
         ? ((BaseballPlayerPosition) SecondaryPositionNumber).GetEnumDescription()
         : null;
 
-    public int PitcherRole { get; set; }
+    [Ignore]
+    public int? PitcherRole { get; set; }
 
     [Name("Pitcher Role"), Index(8)]
     // ReSharper disable once UnusedMember.Global
-    public string PitcherRoleDescription => ((PitcherRole) PitcherRole).GetEnumDescription();
-    
+    public string? PitcherRoleDescription =>
+        !PitcherRole.HasValue ? null : ((PitcherRole) PitcherRole).GetEnumDescription();
+
     [Name("Age"), Index(9)]
     public int Age { get; set; }
 

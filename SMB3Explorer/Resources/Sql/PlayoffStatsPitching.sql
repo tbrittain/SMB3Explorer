@@ -74,9 +74,4 @@ FROM t_stats_pitching tsp
          LEFT JOIN t_baseball_players tbp on tbpli.GUID = tbp.GUID
          LEFT JOIN v_baseball_player_info vbpi
                    ON tbpli.GUID = vbpi.baseballPlayerGUID
-WHERE 1 = CASE
-              WHEN :seasonId IS NOT NULL THEN CASE
-                                                  WHEN s.seasonID = :seasonId THEN 1
-                                                  ELSE 0 END
-              ELSE 1 END
 ORDER BY s.seasonNum, ts.statsPlayerID;

@@ -7,7 +7,7 @@
                  FROM t_seasons
                           JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
                           JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
-                 WHERE t_leagues.GUID = CAST(@leagueId AS BLOB))
+                 WHERE t_leagues.name = 'Baseball United v2')
 SELECT ts.aggregatorID                     AS aggregatorID,
        ts.statsPlayerID                    AS statsPlayerID,
        tbpli.GUID                          AS baseballPlayerGUIDIfKnown,
@@ -78,9 +78,4 @@ FROM t_stats_batting tsb
          LEFT JOIN t_baseball_players tbp on tbpli.GUID = tbp.GUID
          LEFT JOIN v_baseball_player_info vbpi ON tbpli.GUID =
                                                   vbpi.baseballPlayerGUID
-WHERE 1 = CASE
-              WHEN :seasonId IS NOT NULL THEN CASE
-                                                  WHEN s.seasonID = :seasonId THEN 1
-                                                  ELSE 0 END
-              ELSE 1 END
 ORDER BY s.seasonNum, ts.statsPlayerID;
