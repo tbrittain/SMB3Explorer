@@ -12,7 +12,6 @@
                           ORDER BY ID DESC
                           LIMIT 1)
 SELECT baseballPlayerGUID,
-       tsea.completionDate,
        tsea.ID                             AS seasonId,
        s.seasonNum,
        CASE
@@ -53,8 +52,9 @@ SELECT baseballPlayerGUID,
                        @leagueEra /
                        ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
                    ) END                   AS sortOrder,
-       currentTeam.teamName                AS currentTeam,
-       previousTeam.teamName               AS previousTeam,
+       currentTeam.teamName                AS teamName,
+       mostRecentTeam.teamName             AS mostRecentlyPlayedTeamName,
+       previouslyRecentPlayedTeam.teamName AS previousRecentlyPlayedTeamName,
        tbp.age                             AS age
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
@@ -71,21 +71,11 @@ FROM [v_baseball_player_info] vbpi
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
 
-         LEFT JOIN [t_team_local_ids] tt1 ON ts.[currentTeamLocalID] = tt1.[localID]
-         LEFT JOIN [t_team_local_ids] tt2
-                   ON ts.[previousRecentlyPlayedTeamLocalID] = tt2.[localID]
+         LEFT JOIN t_team_local_ids tt1 ON ts.currentTeamLocalID = tt1.localID
+         LEFT JOIN t_team_local_ids tt2 ON ts.mostRecentlyPlayedTeamLocalID = tt2.localID
+         LEFT JOIN t_team_local_ids tt3 ON ts.previousRecentlyPlayedTeamLocalID = tt3.localID
          LEFT JOIN teams currentTeam ON tt1.GUID = currentTeam.teamGUID
-         LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
+         LEFT JOIN teams mostRecentTeam ON tt2.GUID = mostRecentTeam.teamGUID
+         LEFT JOIN teams previouslyRecentPlayedTeam ON tt3.GUID = previouslyRecentPlayedTeam.teamGUID
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
-  AND outsPitched > (SELECT AVG(tspitch.outsPitched)
-                     FROM [v_baseball_player_info] vbpi
-                              LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
-                              LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
-                              LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
-                              JOIN t_stats_pitching tspitch ON ts.aggregatorID = tspitch.aggregatorID
-
-                              LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
-
-                              JOIN t_seasons tsea ON tss.seasonID = tsea.ID
-                              JOIN mostRecentSeason s ON tsea.ID = s.seasonID)
 ORDER BY sortOrder DESC

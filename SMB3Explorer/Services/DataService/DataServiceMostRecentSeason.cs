@@ -38,14 +38,41 @@ public partial class DataService
 
         while (reader.Read())
         {
-            var positionPlayerStatistic = GetPositionPlayerSeasonStatistic(true, reader);
+            var positionPlayerStatistic = new BattingMostRecentSeasonStatistic();
 
-            var mostRecentSeasonStatistic = new BattingMostRecentSeasonStatistic(positionPlayerStatistic);
+            positionPlayerStatistic.PlayerId = reader.GetGuid(0);
+            positionPlayerStatistic.SeasonId = reader.GetInt32(1);
+            positionPlayerStatistic.SeasonNum = reader.GetInt32(2);
+            positionPlayerStatistic.FirstName = reader.GetString(3);
+            positionPlayerStatistic.LastName = reader.GetString(4);
+            positionPlayerStatistic.PositionNumber = reader.GetInt32(5);
+            positionPlayerStatistic.PitcherRole = reader.GetInt32(6);
+            positionPlayerStatistic.SecondaryPositionNumber = reader.IsDBNull(7) ? null : reader.GetInt32(7);
+            positionPlayerStatistic.GamesBatting = reader.GetInt32(9);
+            positionPlayerStatistic.GamesPlayed = reader.GetInt32(10);
+            positionPlayerStatistic.AtBats = reader.GetInt32(11);
+            positionPlayerStatistic.Runs = reader.GetInt32(12);
+            positionPlayerStatistic.Hits = reader.GetInt32(13);
+            positionPlayerStatistic.Doubles = reader.GetInt32(14);
+            positionPlayerStatistic.Triples = reader.GetInt32(15);
+            positionPlayerStatistic.HomeRuns = reader.GetInt32(16);
+            positionPlayerStatistic.RunsBattedIn = reader.GetInt32(17);
+            positionPlayerStatistic.StolenBases = reader.GetInt32(18);
+            positionPlayerStatistic.CaughtStealing = reader.GetInt32(19);
+            positionPlayerStatistic.Walks = reader.GetInt32(20);
+            positionPlayerStatistic.Strikeouts = reader.GetInt32(21);
+            positionPlayerStatistic.HitByPitch = reader.GetInt32(22);
+            positionPlayerStatistic.SacrificeHits = reader.GetInt32(23);
+            positionPlayerStatistic.SacrificeFlies = reader.GetInt32(24);
+            positionPlayerStatistic.Errors = reader.GetInt32(25);
+            positionPlayerStatistic.PassedBalls = reader.GetInt32(26);
+            positionPlayerStatistic.OnBasePercentagePlus = reader.GetDouble(27);
+            positionPlayerStatistic.TeamName = reader.GetString(28);
+            positionPlayerStatistic.MostRecentTeamName = reader.IsDBNull(29) ? null : reader.GetString(29);
+            positionPlayerStatistic.PreviousTeamName = reader.IsDBNull(30) ? null : reader.GetString(30);
+            positionPlayerStatistic.Age = reader.GetInt32(31);
 
-            var opsPlus = reader["opsPlus"].ToString()!;
-            mostRecentSeasonStatistic.OnBasePercentagePlus = string.IsNullOrEmpty(opsPlus) ? 0 : double.Parse(opsPlus);
-            
-            yield return mostRecentSeasonStatistic;
+            yield return positionPlayerStatistic;
         }
     }
 
@@ -80,17 +107,39 @@ public partial class DataService
 
         while (reader.Read())
         {
-            var pitcherStatistic = GetPitchingSeasonStatistic(true, reader);
+            var mostRecentSeasonStatistic = new PitchingMostRecentSeasonStatistic();
 
-            var mostRecentSeasonStatistic = new PitchingMostRecentSeasonStatistic(pitcherStatistic);
-
-            var eraMinus = reader["eraMinus"].ToString()!;
-            mostRecentSeasonStatistic.EarnedRunsAllowedMinus =
-                string.IsNullOrEmpty(eraMinus) ? 0 : double.Parse(eraMinus);
-
-            var fipMinus = reader["fipMinus"].ToString()!;
-            mostRecentSeasonStatistic.FieldingIndependentPitchingMinus =
-                string.IsNullOrEmpty(fipMinus) ? 0 : double.Parse(fipMinus);
+            mostRecentSeasonStatistic.PlayerId = reader.GetGuid(0);
+            mostRecentSeasonStatistic.SeasonId = reader.GetInt32(1);
+            mostRecentSeasonStatistic.SeasonNum = reader.GetInt32(2);
+            mostRecentSeasonStatistic.FirstName = reader.GetString(3);
+            mostRecentSeasonStatistic.LastName = reader.GetString(4);
+            mostRecentSeasonStatistic.PositionNumber = reader.GetInt32(5);
+            mostRecentSeasonStatistic.PitcherRole = reader.GetInt32(6);
+            mostRecentSeasonStatistic.Wins = reader.GetInt32(8);
+            mostRecentSeasonStatistic.Losses = reader.GetInt32(9);
+            mostRecentSeasonStatistic.GamesStarted = reader.GetInt32(11);
+            mostRecentSeasonStatistic.CompleteGames = reader.GetInt32(12);
+            mostRecentSeasonStatistic.TotalPitches = reader.GetInt32(13);
+            mostRecentSeasonStatistic.GamesPlayed = reader.GetInt32(14);
+            mostRecentSeasonStatistic.Shutouts = reader.GetInt32(15);
+            mostRecentSeasonStatistic.Saves = reader.GetInt32(16);
+            mostRecentSeasonStatistic.OutsPitched = reader.GetInt32(17);
+            mostRecentSeasonStatistic.HitsAllowed = reader.GetInt32(18);
+            mostRecentSeasonStatistic.EarnedRuns = reader.GetInt32(19);
+            mostRecentSeasonStatistic.HomeRunsAllowed = reader.GetInt32(20);
+            mostRecentSeasonStatistic.WalksAllowed = reader.GetInt32(21);
+            mostRecentSeasonStatistic.Strikeouts = reader.GetInt32(22);
+            mostRecentSeasonStatistic.HitByPitch = reader.GetInt32(23);
+            mostRecentSeasonStatistic.BattersFaced = reader.GetInt32(24);
+            mostRecentSeasonStatistic.RunsAllowed = reader.GetInt32(25);
+            mostRecentSeasonStatistic.WildPitches = reader.GetInt32(26);
+            mostRecentSeasonStatistic.EarnedRunsAllowedMinus = reader.GetDouble(27);
+            mostRecentSeasonStatistic.FieldingIndependentPitchingMinus = reader.GetDouble(28);
+            mostRecentSeasonStatistic.TeamName = reader.GetString(30);
+            mostRecentSeasonStatistic.MostRecentTeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
+            mostRecentSeasonStatistic.PreviousTeamName = reader.IsDBNull(32) ? null : reader.GetString(32);
+            mostRecentSeasonStatistic.Age = reader.GetInt32(33);
             
             yield return mostRecentSeasonStatistic;
         }

@@ -1,46 +1,17 @@
-﻿using CsvHelper.Configuration.Attributes;
+﻿using System;
+using CsvHelper.Configuration.Attributes;
+using SMB3Explorer.Enums;
+using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Models.Exports;
 
-public class PitchingMostRecentSeasonStatistic : PitchingSeasonStatistic
+public class PitchingMostRecentSeasonStatistic : PitchingStatistic
 {
-    public PitchingMostRecentSeasonStatistic(PitchingSeasonStatistic pitchingSeasonStatistic)
-    {
-        PlayerId = pitchingSeasonStatistic.PlayerId;
-        FirstName = pitchingSeasonStatistic.FirstName;
-        LastName = pitchingSeasonStatistic.LastName;
-        CurrentTeam = pitchingSeasonStatistic.CurrentTeam;
-        PreviousTeam = pitchingSeasonStatistic.PreviousTeam;
-        PositionNumber = pitchingSeasonStatistic.PositionNumber;
-        PitcherRole = pitchingSeasonStatistic.PitcherRole;
-        GamesPlayed = pitchingSeasonStatistic.GamesPlayed;
-        GamesStarted = pitchingSeasonStatistic.GamesStarted;
-        Wins = pitchingSeasonStatistic.Wins;
-        Losses = pitchingSeasonStatistic.Losses;
-        CompleteGames = pitchingSeasonStatistic.CompleteGames;
-        Shutouts = pitchingSeasonStatistic.Shutouts;
-        TotalPitches = pitchingSeasonStatistic.TotalPitches;
-        Saves = pitchingSeasonStatistic.Saves;
-        OutsPitched = pitchingSeasonStatistic.OutsPitched;
-        HitsAllowed = pitchingSeasonStatistic.HitsAllowed;
-        EarnedRuns = pitchingSeasonStatistic.EarnedRuns;
-        HomeRunsAllowed = pitchingSeasonStatistic.HomeRunsAllowed;
-        WalksAllowed = pitchingSeasonStatistic.WalksAllowed;
-        Strikeouts = pitchingSeasonStatistic.Strikeouts;
-        HitByPitch = pitchingSeasonStatistic.HitByPitch;
-        BattersFaced = pitchingSeasonStatistic.BattersFaced;
-        GamesFinished = pitchingSeasonStatistic.GamesFinished;
-        RunsAllowed = pitchingSeasonStatistic.RunsAllowed;
-        WildPitches = pitchingSeasonStatistic.WildPitches;
-        CompletionDate = pitchingSeasonStatistic.CompletionDate;
-        SeasonId = pitchingSeasonStatistic.SeasonId;
-        SeasonNum = pitchingSeasonStatistic.SeasonNum;
-        Age = pitchingSeasonStatistic.Age;
-    }
+    public new Guid PlayerId { get; set; }
 
-    [Name("ERA-"), Index(48)]
+    [Name("ERA-"), Index(40)]
     public double EarnedRunsAllowedMinus { get; set; }
 
-    [Name("FIP-"), Index(49)]
+    [Name("FIP-"), Index(41)]
     public double FieldingIndependentPitchingMinus { get; set; }
 }

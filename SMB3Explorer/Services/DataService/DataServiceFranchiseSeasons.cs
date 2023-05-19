@@ -113,7 +113,7 @@ public partial class DataService
         pitcherStatistic.MostRecentTeamName = string.IsNullOrEmpty(reader["mostRecentlyPlayedTeamName"].ToString()!)
             ? null
             : reader["mostRecentlyPlayedTeamName"].ToString()!;
-        pitcherStatistic.PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
+        pitcherStatistic.PreviousTeamName = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
             ? null
             : reader["previousRecentlyPlayedTeamName"].ToString()!;
         
@@ -169,7 +169,7 @@ public partial class DataService
         positionPlayerStatistic.MostRecentTeamName = string.IsNullOrEmpty(reader["mostRecentlyPlayedTeamName"].ToString()!)
             ? null
             : reader["mostRecentlyPlayedTeamName"].ToString()!;
-        positionPlayerStatistic.PreviousTeam = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
+        positionPlayerStatistic.PreviousTeamName = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
             ? null
             : reader["previousRecentlyPlayedTeamName"].ToString()!;
         positionPlayerStatistic.GamesPlayed = int.Parse(reader["gamesPlayed"].ToString()!);
