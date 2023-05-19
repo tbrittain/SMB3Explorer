@@ -78,4 +78,5 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN teams mostRecentTeam ON tt2.GUID = mostRecentTeam.teamGUID
          LEFT JOIN teams previouslyRecentPlayedTeam ON tt3.GUID = previouslyRecentPlayedTeam.teamGUID
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
+  AND outsPitched > 0
 ORDER BY sortOrder DESC
