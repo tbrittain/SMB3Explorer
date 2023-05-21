@@ -12,7 +12,21 @@ SELECT AVG(
                        (([hits] - [doubles] - [triples] - [homeruns]) + 2 * [doubles] + 3 * [triples] +
                         4 * [homeruns]) / CAST(NULLIF([atBats], 0) AS [REAL])
            )
-           AS ops
+             AS ops,
+       AVG(
+                   ((0.69 * baseOnBalls) + (0.72 * hitByPitch) + (0.89 * (hits - doubles - triples - homeruns)) +
+                    (1.27 * doubles) + (1.62 * triples) + (2.10 * homeruns)) /
+                   (atBats + baseOnBalls + hitByPitch + sacrificeFlies)
+           ) AS wOBA,
+       (
+               -- static value for runCS, although in fWAR this changes from season to season
+               ((SUM(stolenBases) * 0.2) + (SUM(caughtStealing) * -0.384)) /
+               -- no IBB to subtract from the denominator
+               (SUM(hits - doubles - triples - homeruns) + SUM(baseOnBalls) + SUM(hitByPitch))
+           ) AS leagueStolenBaseRuns,
+    -- this does not account for conferences unfortunately, so in WAR calculation
+    -- we will need to divide this by 2
+    SUM(atBats + baseOnBalls + hitByPitch + sacrificeFlies) AS leaguePlateAppearances
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
