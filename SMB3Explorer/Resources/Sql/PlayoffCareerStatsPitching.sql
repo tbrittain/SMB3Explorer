@@ -66,5 +66,5 @@ FROM [t_stats_pitching] tspitch
          LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
 
          JOIN t_career_playoff_stats tcss ON ts.aggregatorID = tcss.aggregatorID
-WHERE tl.name = 'Baseball United v2'
+WHERE tl.GUID = CAST(@leagueId AS BLOB)
 ORDER BY totalPitches DESC
