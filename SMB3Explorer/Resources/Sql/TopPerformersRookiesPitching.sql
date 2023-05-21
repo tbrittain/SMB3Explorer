@@ -69,7 +69,7 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
          LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
-         JOIN t_stats_pitching tspitch ON ts.aggregatorID = tspitch.aggregatorID
+         LEFT JOIN t_stats_pitching tspitch ON ts.aggregatorID = tspitch.aggregatorID
 
          LEFT JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
 
