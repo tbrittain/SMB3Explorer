@@ -83,7 +83,7 @@ public abstract class PitchingStatistic
     [Name("TP"), Index(19)]
     public int TotalPitches { get; set; }
 
-    [Name("S"), Index(20)]
+    [Name("SV"), Index(20)]
     public int Saves { get; set; }
 
     [Name("HBP"), Index(21)]
