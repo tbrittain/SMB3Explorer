@@ -14,82 +14,83 @@ public class SeasonPlayer
 {
     private Trait[] _traits = Array.Empty<Trait>();
 
-    [Name("player_id"), Index(0)]
+    [Ignore]
     public Guid PlayerId { get; set; }
     
-    [Name("season_id"), Index(1)]
+    [Ignore]
     public int SeasonId { get; set; }
     
-    [Name("season_num"), Index(2)]
+    [Name("Season"), Index(0)]
     public int SeasonNum { get; set; }
     
-    [Name("first_name"), Index(3)]
+    [Name("First Name"), Index(1)]
     public string FirstName { get; set; } = string.Empty;
     
-    [Name("last_name"), Index(4)]
+    [Name("Last Name"), Index(2)]
     public string LastName { get; set; } = string.Empty;
     
-    [Name("primary_position"), Index(5)]
+    [Ignore]
     public int PrimaryPositionNumber { get; set; }
     
-    [Name("primary_position_name"), Index(6)]
+    [Name("Position"), Index(3)]
     // ReSharper disable once UnusedMember.Global
     public string PrimaryPositionDescription => ((BaseballPlayerPosition) PrimaryPositionNumber).GetEnumDescription();
     
-    [Name("secondary_position"), Index(7)]
+    [Ignore]
     public int? SecondaryPositionNumber { get; set; }
     
-    [Name("secondary_position_name"), Index(8)]
+    [Name("Secondary Position"), Index(4)]
     // ReSharper disable once UnusedMember.Global
     public string? SecondaryPositionDescription => SecondaryPositionNumber is null 
         ? null 
         : ((BaseballPlayerPosition) SecondaryPositionNumber).GetEnumDescription();
     
-    [Name("pitcher_role"), Index(9)]
+    [Ignore]
     public int? PitcherRole { get; set; }
     
-    [Name("pitcher_role_name"), Index(10)]
+    [Name("Pitcher Role"), Index(5)]
     // ReSharper disable once UnusedMember.Global
     public string? PitcherRoleDescription => PitcherRole is null 
         ? null 
         : ((PitcherRole) PitcherRole).GetEnumDescription();
     
-    [Name("current_team"), Index(11)]
+    [Name("Team"), Index(6)]
     public string? CurrentTeam { get; set; }
     
-    [Name("previous_team"), Index(12)]
+    [Name("Prev Team"), Index(7)]
     public string? PreviousTeam { get; set; }
     
-    [Name("power"), Index(13)]
+    [Name("Power"), Index(8)]
     public int Power { get; set; }
     
-    [Name("contact"), Index(14)]
+    [Name("Contact"), Index(9)]
     public int Contact { get; set; }
     
-    [Name("speed"), Index(15)]
+    [Name("Speed"), Index(10)]
     public int Speed { get; set; }
     
-    [Name("fielding"), Index(16)]
+    [Name("Fielding"), Index(11)]
     public int Fielding { get; set; }
     
-    [Name("arm"), Index(17)]
+    [Name("Arm"), Index(12)]
     public int? Arm { get; set; }
     
-    [Name("velocity"), Index(18)]
+    [Name("Velocity"), Index(13)]
     public int? Velocity { get; set; }
     
-    [Name("junk"), Index(19)]
+    [Name("Junk"), Index(14)]
     public int? Junk { get; set; }
     
-    [Name("accuracy"), Index(20)]
+    [Name("Accuracy"), Index(15)]
     public int? Accuracy { get; set; }
     
-    [Name("age"), Index(21)]
+    [Name("Age"), Index(16)]
     public int Age { get; set; }
     
-    [Name("salary"), Index(22)]
+    [Name("Salary"), Index(17)]
     public int Salary { get; set; }
 
+    [Ignore]
     public Trait[] Traits
     {
         set
@@ -104,9 +105,9 @@ public class SeasonPlayer
         }
     }
     
-    [Name("trait_1"), Index(23)]
+    [Name("Trait 1"), Index(18)]
     public string? Trait1 { get; set; }
     
-    [Name("trait_2"), Index(24)]
+    [Name("Trait 2"), Index(19)]
     public string? Trait2 { get; set; }
 }

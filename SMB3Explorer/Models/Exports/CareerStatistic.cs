@@ -8,33 +8,33 @@ namespace SMB3Explorer.Models.Exports;
 
 public class CareerStatistic
 {
-    [Name("aggregator_id"), Index(0)]
+    [Ignore]
     public int AggregatorId { get; set; }
     
-    [Name("stats_player_id"), Index(1)]
+    [Ignore]
     public int StatsPlayerId { get; set; }
     
-    [Name("player_id"), Index(2)]
+    [Ignore]
     public Guid? PlayerId { get; set; }
     
-    [Name("current_team"), Index(3)]
-    public string? CurrentTeam { get; set; }
-    
-    [Name("most_recent_team"), Index(4)]
-    public string? MostRecentTeam { get; set; }
-    
-    [Name("second_most_recent_team"), Index(5)]
-    public string? SecondMostRecentTeam { get; set; }
-    
-    [Name("first_name"), Index(6)]
+    [Name("First Name"), Index(0)]
     public string FirstName { get; set; } = string.Empty;
     
-    [Name("last_name"), Index(7)]
+    [Name("Last Name"), Index(1)]
     public string LastName { get; set; } = string.Empty;
     
-    [Name("retirement_season"), Index(8)]
+    [Name("Team"), Index(2)]
+    public string? CurrentTeam { get; set; }
+    
+    [Name("Prev Team"), Index(3)]
+    public string? MostRecentTeam { get; set; }
+    
+    [Name("2nd Prev Team"), Index(4)]
+    public string? SecondMostRecentTeam { get; set; }
+
+    [Name("Retirement Season"), Index(5)]
     public int? RetirementSeason { get; set; }
     
-    [Name("age"), Index(9)]
+    [Name("Age"), Index(6)]
     public int Age { get; set; }
 }

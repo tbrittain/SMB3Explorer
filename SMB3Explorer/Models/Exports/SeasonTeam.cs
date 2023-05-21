@@ -9,75 +9,75 @@ namespace SMB3Explorer.Models.Exports;
 
 public class SeasonTeam
 {
-    [Name("team_local_id"), Index(0)]
+    [Ignore]
     public int TeamLocalId { get; set; }
     
-    [Name("team_id"), Index(1)]
+    [Ignore]
     public Guid TeamId { get; set; }
     
-    [Name("team_name"), Index(2)]
+    [Name("Team"), Index(0)]
     public string TeamName { get; set; } = string.Empty;
     
-    [Name("division_name"), Index(3)]
+    [Name("Division"), Index(1)]
     public string DivisionName { get; set; } = string.Empty;
     
-    [Name("conference_name"), Index(4)]
+    [Name("Conference"), Index(2)]
     public string ConferenceName { get; set; } = string.Empty;
     
-    [Name("season_id"), Index(5)]
+    [Ignore]
     public int SeasonId { get; set; }
     
-    [Name("season_num"), Index(6)]
+    [Name("Season"), Index(3)]
     public int SeasonNum { get; set; }
     
-    [Name("budget"), Index(7)]
+    [Name("Budget"), Index(4)]
     public int Budget { get; set; }
     
-    [Name("payroll"), Index(8)]
+    [Name("Payroll"), Index(5)]
     public int Payroll { get; set; }
     
-    [Name("surplus"), Index(9)]
+    [Name("Surplus"), Index(6)]
     public int Surplus { get; set; }
     
-    [Name("surplus_per_game"), Index(10)]
+    [Name("Surplus/Game"), Index(7)]
     public int SurplusPerGame { get; set; }
     
-    [Name("wins"), Index(11)]
+    [Name("W"), Index(8)]
     public int Wins { get; set; }
     
-    [Name("losses"), Index(12)]
+    [Name("L"), Index(9)]
     public int Losses { get; set; }
     
-    [Name("run_differential"), Index(13)]
+    [Name("Run Differential"), Index(10)]
     public int RunDifferential { get; set; }
     
-    [Name("win_percentage"), Index(14)]
+    [Name("WPCT"), Index(11)]
     public double WinPercentage { get; set; }
     
-    [Name("games_back"), Index(15)]
+    [Name("GB"), Index(12)]
     public double GamesBack { get; set; }
     
-    [Name("power"), Index(16)]
+    [Name("Power"), Index(13)]
     public int Power { get; set; }
     
-    [Name("contact"), Index(17)]
+    [Name("Contact"), Index(14)]
     public int Contact { get; set; }
     
-    [Name("speed"), Index(18)]
+    [Name("Speed"), Index(15)]
     public int Speed { get; set; }
     
-    [Name("fielding"), Index(19)]
+    [Name("Fielding"), Index(16)]
     public int Fielding { get; set; }
     
-    [Name("arm"), Index(20)]
+    [Name("Arm"), Index(17)]
     public int Arm { get; set; }
     
-    [Name("velocity"), Index(21)]
+    [Name("Velocity"), Index(18)]
     public int Velocity { get; set; }
     
-    [Name("junk"), Index(22)]
+    [Name("Junk"), Index(19)]
     public int Junk { get; set; }
     
-    [Name("accuracy"), Index(23)]
+    [Name("Accuracy"), Index(20)]
     public int Accuracy { get; set; }
 }

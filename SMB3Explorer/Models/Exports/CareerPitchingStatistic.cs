@@ -9,106 +9,111 @@ namespace SMB3Explorer.Models.Exports;
 
 public class CareerPitchingStatistic : CareerStatistic
 {
-    [Name("pitcher_role"), Index(10)]
+    [Ignore]
     public int PitcherRole { get; set; }
     
-    [Name("pitcher_role_name"), Index(11)]
+    [Name("Pitcher Role"), Index(7)]
     // ReSharper disable once UnusedMember.Global
     public string PitcherRoleDescription => ((PitcherRole) PitcherRole).GetEnumDescription();
     
-    [Name("wins"), Index(12)]
+    [Name("W"), Index(8)]
     public int Wins { get; set; }
     
-    [Name("losses"), Index(13)]
+    [Name("L"), Index(9)]
     public int Losses { get; set; }
-    
-    [Name("games_played"), Index(14)]
-    public int GamesPlayed { get; set; }
-    
-    [Name("games_started"), Index(15)]
-    public int GamesStarted { get; set; }
-    
-    [Name("total_pitches"), Index(16)]
-    public int TotalPitches { get; set; }
-    
-    [Name("complete_games"), Index(17)]
+
+    [Name("CG"), Index(10)]
     public int CompleteGames { get; set; }
     
-    [Name("shutouts"), Index(18)]
+    [Name("CGSO"), Index(11)]
     public int Shutouts { get; set; }
-    
-    [Name("saves"), Index(19)]
-    public int Saves { get; set; }
-    
-    [Name("outs_pitched"), Index(20)]
+
+    [Ignore]
     public int OutsPitched { get; set; }
     
-    [Name("hits_allowed"), Index(21)]
+    [Name("H"), Index(12)]
     public int HitsAllowed { get; set; }
     
-    [Name("earned_runs"), Index(22)]
+    [Name("ER"), Index(13)]
     public int EarnedRuns { get; set; }
     
-    [Name("home_runs_allowed"), Index(23)]
+    [Name("HR"), Index(14)]
     public int HomeRunsAllowed { get; set; }
     
-    [Name("walks_allowed"), Index(24)]
+    [Name("BB"), Index(15)]
     public int WalksAllowed { get; set; }
     
-    [Name("strikeouts"), Index(25)]
+    [Name("K"), Index(16)]
     public int Strikeouts { get; set; }
     
-    [Name("hit_by_pitch"), Index(26)]
+    [Name("IP"), Index(17)]
+    public double InningsPitched => OutsPitched / 3.0;
+    
+    [Name("ERA"), Index(18)]
+    public double EarnedRunAverage => EarnedRuns / InningsPitched;
+    
+    [Name("TP"), Index(19)]
+    public int TotalPitches { get; set; }
+    
+    [Name("SV"), Index(20)]
+    public int Saves { get; set; }
+    
+    [Name("HBP"), Index(21)]
     public int HitByPitch { get; set; }
     
-    [Name("batters_faced"), Index(27)]
+    [Name("Batters Faced"), Index(22)]
     public int BattersFaced { get; set; }
     
-    [Name("games_finished"), Index(28)]
+    [Name("Games Played"), Index(23)]
+    public int GamesPlayed { get; set; }
+    
+    [Name("Games Started"), Index(24)]
+    public int GamesStarted { get; set; }
+    
+    [Name("Games Finished"), Index(25)]
     public int GamesFinished { get; set; }
 
-    [Name("runs_allowed"), Index(29)]
+    [Name("Runs Allowed"), Index(26)]
     public int RunsAllowed { get; set; }
     
-    [Name("wild_pitches"), Index(30)]
+    [Name("WP"), Index(27)]
     public int WildPitches { get; set; }
-    
-    [Name("innings_pitched"), Index(31)]
-    public double InningsPitched => OutsPitched / 3.0;
 
-    [Name("era"), Index(32)]
-    public double EarnedRunAverage => EarnedRuns / InningsPitched;
-
-    [Name("batting_average_against"), Index(33)]
+    [Name("BAA"), Index(28)]
     public double BattingAverageAgainst => HitsAllowed / (double) BattersFaced;
+    
+    [Name("FIP"), Index(29)]
+    public double FieldingIndependentPitching =>
+        (((13 * HomeRunsAllowed) + (3 * (WalksAllowed + HitByPitch)) - 
+          (2 * Strikeouts)) / (double) OutsPitched) + 3.10;
 
-    [Name("whip"), Index(34)]
+    [Name("WHIP"), Index(30)]
     public double WalksAndHitsPerInning => (WalksAllowed + HitsAllowed) / InningsPitched;
     
-    [Name("win_percentage"), Index(35)]
+    [Name("WPCT"), Index(31)]
     public double WinPercentage => Wins / (double) (Wins + Losses);
     
-    [Name("opponent_on_base_percentage"), Index(36)]
+    [Name("Opp OBP"), Index(32)]
     public double OpponentOnBasePercentage => (HitsAllowed + WalksAllowed + HitByPitch) / (double) BattersFaced;
     
-    [Name("strikeout_to_walk_ratio"), Index(37)]
+    [Name("K/BB"), Index(33)]
     public double StrikeoutToWalkRatio => Strikeouts / (double) WalksAllowed;
     
-    [Name("strikeouts_per_nine_innings"), Index(38)]
+    [Name("K/9"), Index(34)]
     public double StrikeoutsPerNineInnings => Strikeouts / (InningsPitched / 9.0);
     
-    [Name("walks_per_nine_innings"), Index(39)]
+    [Name("BB/9"), Index(35)]
     public double WalksPerNineInnings => WalksAllowed / (InningsPitched / 9.0);
     
-    [Name("hits_per_nine_innings"), Index(40)]
+    [Name("H/9"), Index(36)]
     public double HitsPerNineInnings => HitsAllowed / (InningsPitched / 9.0);
     
-    [Name("home_runs_per_nine_innings"), Index(41)]
+    [Name("HR/9"), Index(37)]
     public double HomeRunsPerNineInnings => HomeRunsAllowed / (InningsPitched / 9.0);
     
-    [Name("pitches_per_inning"), Index(42)]
+    [Name("Pitches Per Inning"), Index(38)]
     public double PitchesPerInning => TotalPitches / InningsPitched;
     
-    [Name("pitches_per_game"), Index(43)]
+    [Name("Pitches Per Game"), Index(39)]
     public double PitchesPerGame => TotalPitches / (double) GamesPlayed;
 }
