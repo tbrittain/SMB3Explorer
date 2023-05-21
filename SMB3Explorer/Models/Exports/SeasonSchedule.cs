@@ -21,4 +21,16 @@ public class SeasonSchedule
     
     [Name("Away Team"), Index(4)]
     public string AwayTeam { get; set; } = string.Empty;
+    
+    [Name("Home Score"), Index(5)]
+    public int? HomeRunsScored { get; set; }
+    
+    [Name("Away Score"), Index(6)]
+    public int? AwayRunsScored { get; set; }
+    
+    [Name("Home Pitcher"), Index(7)]
+    public string? HomePitcherName { get; set; } = string.Empty;
+    
+    [Name("Away Pitcher"), Index(8)]
+    public string? AwayPitcherName { get; set; } = string.Empty;
 }
