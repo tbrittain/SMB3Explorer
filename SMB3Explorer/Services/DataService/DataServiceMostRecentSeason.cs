@@ -115,7 +115,7 @@ public partial class DataService
             mostRecentSeasonStatistic.FirstName = reader.GetString(3);
             mostRecentSeasonStatistic.LastName = reader.GetString(4);
             mostRecentSeasonStatistic.PositionNumber = reader.GetInt32(5);
-            mostRecentSeasonStatistic.PitcherRole = reader.GetInt32(6);
+            mostRecentSeasonStatistic.PitcherRole = reader.IsDBNull(6) ? null : reader.GetInt32(6);
             mostRecentSeasonStatistic.Wins = reader.GetInt32(8);
             mostRecentSeasonStatistic.Losses = reader.GetInt32(9);
             mostRecentSeasonStatistic.GamesStarted = reader.GetInt32(11);
