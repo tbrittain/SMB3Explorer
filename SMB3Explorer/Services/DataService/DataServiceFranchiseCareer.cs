@@ -111,7 +111,10 @@ public partial class DataService
 
             pitcher.Age = int.Parse(reader["age"].ToString()!);
 
-            pitcher.PitcherRole = int.Parse(reader["pitcherRole"].ToString()!);
+            pitcher.PitcherRole = string.IsNullOrEmpty(reader["pitcherRole"].ToString())
+                ? null
+                : int.Parse(reader["pitcherRole"].ToString()!);
+
             pitcher.Wins = int.Parse(reader["wins"].ToString()!);
             pitcher.Losses = int.Parse(reader["losses"].ToString()!);
             pitcher.GamesPlayed = int.Parse(reader["games"].ToString()!);
