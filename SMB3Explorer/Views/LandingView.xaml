@@ -11,33 +11,49 @@
         <Label FontSize="25"
                FontWeight="Bold"
                HorizontalAlignment="Center"
-               Content="Welcome to SMB3 Explorer! Please select a save file to begin." />
+               Content="Welcome to SMB Explorer! Please select a save file to begin." />
         <Label
             HorizontalAlignment="Center"
             FontSize="18"
             Foreground="Red"
             Content="Note: To ensure your game is not corrupted, do NOT use this tool if the game is running." />
 
+        <ComboBox SelectedItem="{Binding SelectedGame}">
+            <ComboBoxItem Content="{x:Static viewModels:LandingViewModel.Smb3}" />
+            <ComboBoxItem Content="{x:Static viewModels:LandingViewModel.Smb4}" />
+        </ComboBox>
+
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     Height="50"
                     Margin="0,10,0,0">
+
+            <!-- TODO Command for handling this -->
             <Button
+                Visibility="{Binding Smb4ButtonVisibility}"
+                Width="250"
+                Content="Use most recent SMB4 league save file" />
+
+            <Button
+                Visibility="{Binding Smb3ButtonVisibility}"
                 Command="{Binding AutomaticallySelectSaveFileCommand}"
                 Width="200"
                 Content="Automatically detect save file" />
 
-            <Label VerticalAlignment="Center" Margin="5">
+            <Label
+                Visibility="{Binding Smb3ButtonVisibility}"
+                VerticalAlignment="Center"
+                Margin="5">
                 -or-
             </Label>
 
             <Button Width="200"
-                Content="Manually select save file"
-                Command="{Binding ManuallySelectSaveFileCommand}">
+                    Content="Manually select save file"
+                    Command="{Binding ManuallySelectSaveFileCommand}">
                 <Button.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Use an existing save file database"
-                                  Command="{Binding UseExistingDatabaseCommand}"/>
+                                  Command="{Binding UseExistingDatabaseCommand}" />
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>
