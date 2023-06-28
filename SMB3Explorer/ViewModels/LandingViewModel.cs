@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -6,28 +9,86 @@ using CommunityToolkit.Mvvm.Input;
 using OneOf;
 using OneOf.Types;
 using Serilog;
+using SMB3Explorer.AppConfig;
+using SMB3Explorer.AppConfig.Models;
+using SMB3Explorer.Enums;
+using SMB3Explorer.Models.Internal;
+using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
+using static SMB3Explorer.Constants.FileExports;
 
 namespace SMB3Explorer.ViewModels;
 
 public partial class LandingViewModel : ViewModelBase
 {
+    private readonly IApplicationContext _applicationContext;
+    private readonly IApplicationConfig _applicationConfig;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
     private readonly ISystemIoWrapper _systemIoWrapper;
+    private SelectedGame _selectedGame;
+    private Smb4LeagueSelection? _selectedExistingLeague;
 
-    public LandingViewModel(IDataService dataService, INavigationService navigationService, ISystemIoWrapper systemIoWrapper)
+    public LandingViewModel(IDataService dataService, INavigationService navigationService,
+        ISystemIoWrapper systemIoWrapper, IApplicationContext applicationContext, IApplicationConfig applicationConfig)
     {
         _navigationService = navigationService;
         _systemIoWrapper = systemIoWrapper;
+        _applicationContext = applicationContext;
+        _applicationConfig = applicationConfig;
         _dataService = dataService;
-        
+
         Log.Information("Initializing LandingViewModel");
 
+        var configResult = applicationConfig.GetConfigOptions();
+        if (configResult.TryPickT1(out var error, out var configOptions))
+        {
+            Log.Error("Could not retrieve config options for previously selected leagues: {Error}", error);
+            MessageBox.Show($"Could not retrieve config options for previously selected leagues: {error.Value}");
+            Smb4LeagueSelections = new List<Smb4LeagueSelection>();
+        }
+
+        Smb4LeagueSelections = configOptions.Leagues
+            .Select(league => new Smb4LeagueSelection(league.Name, league.Id))
+            .ToList();
+
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
+    }
+
+    public List<Smb4LeagueSelection> Smb4LeagueSelections { get; set; }
+
+    public bool AtLeastOneExistingLeague => Smb4LeagueSelections.Any();
+
+    public SelectedGame SelectedGame
+    {
+        get => _selectedGame;
+        set
+        {
+            SetField(ref _selectedGame, value);
+
+            _applicationContext.SelectedGame = value;
+            OnPropertyChanged(nameof(Smb3ButtonVisibility));
+            OnPropertyChanged(nameof(Smb4ButtonVisibility));
+        }
+    }
+
+    public Visibility Smb3ButtonVisibility =>
+        SelectedGame is SelectedGame.Smb3 ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility Smb4ButtonVisibility =>
+        SelectedGame is SelectedGame.Smb4 ? Visibility.Visible : Visibility.Collapsed;
+
+    public Smb4LeagueSelection? SelectedExistingLeague
+    {
+        get => _selectedExistingLeague;
+        set
+        {
+            SetField(ref _selectedExistingLeague, value);
+            ConnectToPreviouslyConnectedSaveGameCommand.NotifyCanExecuteChanged();
+        }
     }
 
     private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
@@ -35,11 +96,56 @@ public partial class LandingViewModel : ViewModelBase
         AutomaticallySelectSaveFileCommand.NotifyCanExecuteChanged();
         ManuallySelectSaveFileCommand.NotifyCanExecuteChanged();
         UseExistingDatabaseCommand.NotifyCanExecuteChanged();
+
+        var configResult = _applicationConfig.GetConfigOptions();
+        if (configResult.TryPickT1(out var error, out var configOptions))
+        {
+            Log.Error("Could not retrieve config options for previously selected leagues: {Error}", error);
+            MessageBox.Show($"Could not retrieve config options for previously selected leagues: {error.Value}");
+            Smb4LeagueSelections = new List<Smb4LeagueSelection>();
+        }
+
+        Smb4LeagueSelections = configOptions.Leagues
+            .Select(league => new Smb4LeagueSelection(league.Name, league.Id))
+            .ToList();
+
+        OnPropertyChanged(nameof(AtLeastOneExistingLeague));
     }
 
     private bool CanSelectSaveFile()
     {
         return !_dataService.IsConnected;
+    }
+    
+    private bool CanConnectToExistingLeague()
+    {
+        return SelectedExistingLeague is not null;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanConnectToExistingLeague))]
+    private async Task ConnectToPreviouslyConnectedSaveGame()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        if (SelectedExistingLeague is null)
+        {
+            DefaultExceptionHandler.HandleException(_systemIoWrapper, "No existing league was selected",
+                new Exception("No league selected"));
+            Mouse.OverrideCursor = Cursors.Arrow;
+            return;
+        }
+
+        var filePathResult = SaveFile.GetSmb4ExistingSaveFilePath(_systemIoWrapper, SelectedExistingLeague.LeagueId);
+        if (filePathResult.TryPickT1(out var error, out var filePath) || string.IsNullOrEmpty(filePath))
+        {
+            DefaultExceptionHandler.HandleException(_systemIoWrapper, $"Could not get save file path",
+                new Exception(error.Value));
+            Mouse.OverrideCursor = Cursors.Arrow;
+            return;
+        }
+        
+        var connectionResult = await EstablishDbConnection(filePath);
+        HandleDatabaseConnection(connectionResult);
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
@@ -47,14 +153,14 @@ public partial class LandingViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
-        var filePathResult =  SaveFile.GetSaveFilePath(_systemIoWrapper);
+        var filePathResult = SaveFile.GetSaveFilePath(_systemIoWrapper, _applicationContext.SelectedGame);
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
             // TODO: Handle error
             Mouse.OverrideCursor = Cursors.Arrow;
             return;
         }
-        
+
         var connectionResult = await EstablishDbConnection(filePath);
         HandleDatabaseConnection(connectionResult);
     }
@@ -64,8 +170,16 @@ public partial class LandingViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
+        var directoryPath = _applicationContext.SelectedGame switch
+        {
+            SelectedGame.Smb3 => BaseGameSmb3DirectoryPath,
+            SelectedGame.Smb4 => BaseGameSmb4DirectoryPath,
+            _ => throw new ArgumentOutOfRangeException(nameof(_applicationContext.SelectedGame),
+                _applicationContext.SelectedGame, null)
+        };
+
         var filePathResult =
-            SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(), _systemIoWrapper);
+            SaveFile.GetUserProvidedFile(directoryPath, _systemIoWrapper);
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
         {
             // TODO: Handle error
@@ -73,6 +187,7 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
+        _applicationContext.MostRecentSelectedSaveFilePath = filePath;
         var connectionResult = await EstablishDbConnection(filePath);
         HandleDatabaseConnection(connectionResult);
     }
@@ -82,7 +197,8 @@ public partial class LandingViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
-        var filePathResult = SaveFile.GetUserProvidedFile(Environment.SpecialFolder.MyDocuments.ToString(),
+        var filePathResult = SaveFile.GetUserProvidedFile(
+            Environment.SpecialFolder.MyDocuments.ToString(),
             _systemIoWrapper,
             "SQLite databases (*.db, *.sqlite)|*.db;*.sqlite");
         if (filePathResult.TryPickT1(out _, out var filePath) || string.IsNullOrEmpty(filePath))
@@ -109,16 +225,53 @@ public partial class LandingViewModel : ViewModelBase
     {
         var hasError = false;
         var connectionResult = await _dataService.EstablishDbConnection(filePath, isCompressedSaveGame);
-        
-        if (connectionResult.TryPickT1(out var error, out _))
+
+        if (connectionResult.TryPickT1(out var error, out var leaguesInConnection))
         {
             hasError = true;
             DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to connect to SMB3 database.",
                 new Exception(error.Value));
         }
 
+        if (_applicationContext.SelectedGame is SelectedGame.Smb4)
+        {
+            var leaguesInConfig = _applicationConfig.GetConfigOptions();
+            if (leaguesInConfig.TryPickT1(out var error2, out var configOptions))
+            {
+                hasError = true;
+                DefaultExceptionHandler.HandleException(_systemIoWrapper,
+                    "Failed to retrieve leagues from config file", new Exception(error2.Value));
+            }
+
+            var existingLeagues = configOptions.Leagues
+                .Select(x => new Smb4LeagueSelection(x.Name, x.Id))
+                .ToList();
+
+            var newLeagues = leaguesInConnection
+                .Where(x => !existingLeagues.Contains(x))
+                .ToList();
+
+            if (newLeagues.Any())
+            {
+                configOptions.Leagues.AddRange(newLeagues
+                    .Select(x => new League
+                    {
+                        Id = x.LeagueId,
+                        Name = x.LeagueName
+                    }));
+
+                var configResult = _applicationConfig.SaveConfigOptions(configOptions);
+                if (configResult.TryPickT1(out var error3, out _))
+                {
+                    hasError = true;
+                    DefaultExceptionHandler.HandleException(_systemIoWrapper,
+                        "Failed to save new league(s) to config file", new Exception(error3.Value));
+                }
+            }
+        }
+
         Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
-        
+
         return !hasError ? new Success() : new Error();
     }
 

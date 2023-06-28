@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Internal;
 
 namespace SMB3Explorer.Services.ApplicationContext;
@@ -37,6 +38,10 @@ public sealed class ApplicationContext : IApplicationContext, INotifyPropertyCha
         get => _franchiseSeasonsLoading;
         set => SetField(ref _franchiseSeasonsLoading, value);
     }
+
+    public SelectedGame SelectedGame { get; set; }
+
+    public string? MostRecentSelectedSaveFilePath { get; set; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

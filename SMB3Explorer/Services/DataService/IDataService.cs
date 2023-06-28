@@ -13,7 +13,7 @@ public interface IDataService
 {
     bool IsConnected { get; }
     Task<OneOf<string, Error<string>>> DecompressSaveGame(string filePath, ISystemIoWrapper systemIoWrapper);
-    Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true);
+    Task<OneOf<List<Smb4LeagueSelection>, Error<string>>> EstablishDbConnection(string filePath, bool isCompressedSaveGame = true);
     Task<List<FranchiseSelection>> GetFranchises();
     Task<List<FranchiseSeason>> GetFranchiseSeasons();
 
