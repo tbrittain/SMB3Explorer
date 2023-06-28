@@ -104,15 +104,33 @@ public partial class DataService
         }
 
         List<Smb4LeagueSelection> leagues = new();
+        var command2 = Connection.CreateCommand();
         commandText = SqlRunner.GetSqlCommand(SqlFile.GetLeagues);
-        command.CommandText = commandText;
-        reader = await command.ExecuteReaderAsync();
+        command2.CommandText = commandText;
+        var reader2 = await command2.ExecuteReaderAsync();
 
-        while (reader.Read())
+        var smb4LeagueId = Guid.Empty;
+        var smb4LeagueFilePath = _applicationContext.MostRecentSelectedSaveFilePath;
+
+        if (smb4LeagueFilePath is not null)
         {
-            var leagueName = reader.GetString(0);
-            var leagueId = reader.GetGuid(1);
-            var league = new Smb4LeagueSelection(leagueName, leagueId);
+            var smb4LeagueFileName = Path.GetFileName(smb4LeagueFilePath);
+            var smb4LeagueName = Path.GetFileNameWithoutExtension(smb4LeagueFileName);
+            smb4LeagueName = smb4LeagueName[7..];
+            var ok = Guid.TryParse(smb4LeagueName, out smb4LeagueId);
+            if (!ok)
+            {
+                Log.Error("Failed to parse GUID from file name {FileName}. " +
+                          "This occurs when we are attempting to cache the SMB4 league in the " +
+                          "config for later on", smb4LeagueFileName);
+                return new Error<string>("Failed to parse GUID from file name.");
+            }
+        }
+
+        while (reader2.Read())
+        {
+            var leagueName = reader2.GetString(0);
+            var league = new Smb4LeagueSelection(leagueName, smb4LeagueId);
             leagues.Add(league);
         }
 

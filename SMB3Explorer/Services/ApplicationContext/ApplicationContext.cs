@@ -41,6 +41,8 @@ public sealed class ApplicationContext : IApplicationContext, INotifyPropertyCha
 
     public SelectedGame SelectedGame { get; set; }
 
+    public string? MostRecentSelectedSaveFilePath { get; set; }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)

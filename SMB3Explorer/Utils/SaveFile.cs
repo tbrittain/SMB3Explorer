@@ -16,6 +16,46 @@ public static class SaveFile
     public const string DefaultSaveFileName = "savedata.sav";
     private const string SaveGameFileFilter = "Save files (*.sav)|*.sav";
 
+    public static OneOf<string, Error<string>> GetSmb4ExistingSaveFilePath(ISystemIoWrapper systemIoWrapper, Guid leagueId)
+    {
+        if (!systemIoWrapper.DirectoryExists(BaseGameSmb4DirectoryPath))
+        {
+            return new Error<string>("Default save file directory does not exist");
+        }
+        
+        var subdirectories = systemIoWrapper.DirectoryGetDirectories(BaseGameSmb4DirectoryPath);
+
+        var steamUserDirectories = subdirectories
+            .Where(x =>
+            {
+                var lastBackslashIndex = x.LastIndexOf('\\');
+                var lastPart = x[(lastBackslashIndex + 1)..];
+                return long.TryParse(lastPart, out _);
+            })
+            .ToList();
+
+        if (steamUserDirectories.Count != 1)
+        {
+            return new Error<string>("Steam user directory may have changed. " +
+                                     "Please select a save file directly");
+        }
+        
+        var steamUserDirectory = steamUserDirectories[0];
+
+        var files = systemIoWrapper.DirectoryGetFiles(steamUserDirectory, "*.sav");
+        var expectedFileName = $"league-{leagueId.ToString().ToUpperInvariant()}.sav";
+        
+        var leagueSaveFile = files
+            .FirstOrDefault(x => x.Contains(expectedFileName, StringComparison.OrdinalIgnoreCase));
+
+        if (leagueSaveFile is null)
+        {
+            return new Error<string>("Could not find save file for selected league");
+        }
+
+        return leagueSaveFile;
+    }
+
     public static OneOf<string, None> GetSaveFilePath(ISystemIoWrapper systemIoWrapper, SelectedGame selectedGame)
     {
         var directoryPath = selectedGame switch

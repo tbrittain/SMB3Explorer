@@ -34,6 +34,20 @@ public class ApplicationConfig : IApplicationConfig
     public OneOf<Success, Error<string>> SaveConfigOptions(ConfigOptions configOptions)
     {
         var configFilePath = Path.Combine(FileExports.ConfigDirectory, ConfigFileName);
+
+        if (!Directory.Exists(FileExports.ConfigDirectory))
+        {
+            try
+            {
+                Directory.CreateDirectory(FileExports.ConfigDirectory);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to create config directory");
+                return new Error<string>("Failed to create config directory.");
+            }
+        }
+
         var configJson = JsonConvert.SerializeObject(configOptions, Formatting.Indented);
         try
         {

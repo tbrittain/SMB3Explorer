@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,6 +30,7 @@ public partial class LandingViewModel : ViewModelBase
     private readonly INavigationService _navigationService;
     private readonly ISystemIoWrapper _systemIoWrapper;
     private SelectedGame _selectedGame;
+    private Smb4LeagueSelection? _selectedExistingLeague;
 
     public LandingViewModel(IDataService dataService, INavigationService navigationService,
         ISystemIoWrapper systemIoWrapper, IApplicationContext applicationContext, IApplicationConfig applicationConfig)
@@ -58,6 +60,8 @@ public partial class LandingViewModel : ViewModelBase
 
     public List<Smb4LeagueSelection> Smb4LeagueSelections { get; set; }
 
+    public bool AtLeastOneExistingLeague => Smb4LeagueSelections.Any();
+
     public SelectedGame SelectedGame
     {
         get => _selectedGame;
@@ -77,6 +81,16 @@ public partial class LandingViewModel : ViewModelBase
     public Visibility Smb4ButtonVisibility =>
         SelectedGame is SelectedGame.Smb4 ? Visibility.Visible : Visibility.Collapsed;
 
+    public Smb4LeagueSelection? SelectedExistingLeague
+    {
+        get => _selectedExistingLeague;
+        set
+        {
+            SetField(ref _selectedExistingLeague, value);
+            ConnectToPreviouslyConnectedSaveGameCommand.NotifyCanExecuteChanged();
+        }
+    }
+
     private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
     {
         AutomaticallySelectSaveFileCommand.NotifyCanExecuteChanged();
@@ -94,11 +108,44 @@ public partial class LandingViewModel : ViewModelBase
         Smb4LeagueSelections = configOptions.Leagues
             .Select(league => new Smb4LeagueSelection(league.Name, league.Id))
             .ToList();
+
+        OnPropertyChanged(nameof(AtLeastOneExistingLeague));
     }
 
     private bool CanSelectSaveFile()
     {
         return !_dataService.IsConnected;
+    }
+    
+    private bool CanConnectToExistingLeague()
+    {
+        return SelectedExistingLeague is not null;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanConnectToExistingLeague))]
+    private async Task ConnectToPreviouslyConnectedSaveGame()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        if (SelectedExistingLeague is null)
+        {
+            DefaultExceptionHandler.HandleException(_systemIoWrapper, "No existing league was selected",
+                new Exception("No league selected"));
+            Mouse.OverrideCursor = Cursors.Arrow;
+            return;
+        }
+
+        var filePathResult = SaveFile.GetSmb4ExistingSaveFilePath(_systemIoWrapper, SelectedExistingLeague.LeagueId);
+        if (filePathResult.TryPickT1(out var error, out var filePath) || string.IsNullOrEmpty(filePath))
+        {
+            DefaultExceptionHandler.HandleException(_systemIoWrapper, $"Could not get save file path",
+                new Exception(error.Value));
+            Mouse.OverrideCursor = Cursors.Arrow;
+            return;
+        }
+        
+        var connectionResult = await EstablishDbConnection(filePath);
+        HandleDatabaseConnection(connectionResult);
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectSaveFile))]
@@ -140,6 +187,7 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
+        _applicationContext.MostRecentSelectedSaveFilePath = filePath;
         var connectionResult = await EstablishDbConnection(filePath);
         HandleDatabaseConnection(connectionResult);
     }
@@ -178,7 +226,7 @@ public partial class LandingViewModel : ViewModelBase
         var hasError = false;
         var connectionResult = await _dataService.EstablishDbConnection(filePath, isCompressedSaveGame);
 
-        if (connectionResult.TryPickT1(out var error, out _))
+        if (connectionResult.TryPickT1(out var error, out var leaguesInConnection))
         {
             hasError = true;
             DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to connect to SMB3 database.",
@@ -199,7 +247,7 @@ public partial class LandingViewModel : ViewModelBase
                 .Select(x => new Smb4LeagueSelection(x.Name, x.Id))
                 .ToList();
 
-            var newLeagues = Smb4LeagueSelections
+            var newLeagues = leaguesInConnection
                 .Where(x => !existingLeagues.Contains(x))
                 .ToList();
 

@@ -13,5 +13,6 @@ public interface IApplicationContext
     FranchiseSeason? MostRecentFranchiseSeason { get; set; }
     bool FranchiseSeasonsLoading { get; set; }
     SelectedGame SelectedGame { get; set; }
+    string? MostRecentSelectedSaveFilePath { get; set; }
     event PropertyChangedEventHandler? PropertyChanged;
 }
