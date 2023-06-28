@@ -6,6 +6,7 @@ using Microsoft.Data.Sqlite;
 using OneOf;
 using OneOf.Types;
 using Serilog;
+using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
 
@@ -51,7 +52,7 @@ public partial class DataService
         return decompressedFilePath;
     }
 
-    public async Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath,
+    public async Task<OneOf<List<Smb4LeagueSelection>, Error<string>>> EstablishDbConnection(string filePath,
         bool isCompressedSaveGame = true)
     {
         Log.Information(
@@ -96,15 +97,27 @@ public partial class DataService
             tableNames.Add(tableName);
         }
 
-        // Using t_stats as a test table since it is an important one for this application
-        if (!tableNames.Contains("t_stats"))
+        if (!tableNames.Contains("t_stats") || !tableNames.Contains("t_leagues"))
         {
             Log.Error("Invalid save file, missing expected tables");
             return new Error<string>("Invalid save file, missing expected tables");
         }
 
+        List<Smb4LeagueSelection> leagues = new();
+        commandText = SqlRunner.GetSqlCommand(SqlFile.GetLeagues);
+        command.CommandText = commandText;
+        reader = await command.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            var leagueName = reader.GetString(0);
+            var leagueId = reader.GetGuid(1);
+            var league = new Smb4LeagueSelection(leagueName, leagueId);
+            leagues.Add(league);
+        }
+
         Log.Information("Successfully established database connection");
-        return new Success();
+        return leagues;
     }
 
     public async Task Disconnect()

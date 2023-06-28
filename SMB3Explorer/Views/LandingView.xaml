@@ -4,8 +4,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
+             xmlns:enums="clr-namespace:SMB3Explorer.Enums"
+             xmlns:converters="clr-namespace:SMB3Explorer.Converters"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance viewModels:LandingViewModel}">
+    <UserControl.Resources>
+        <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+    </UserControl.Resources>
     <StackPanel HorizontalAlignment="Center"
                 VerticalAlignment="Center">
         <Label FontSize="25"
@@ -18,10 +23,31 @@
             Foreground="Red"
             Content="Note: To ensure your game is not corrupted, do NOT use this tool if the game is running." />
 
-        <ComboBox SelectedItem="{Binding SelectedGame}">
-            <ComboBoxItem Content="{x:Static viewModels:LandingViewModel.Smb3}" />
-            <ComboBoxItem Content="{x:Static viewModels:LandingViewModel.Smb4}" />
-        </ComboBox>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+            <Label Content="Select game version:" />
+            <StackPanel Orientation="Horizontal">
+                <RadioButton
+                    GroupName="Options"
+                    Content="SMB3">
+                    <RadioButton.IsChecked>
+                        <Binding 
+                            Path="SelectedGame" 
+                            Converter="{StaticResource EnumToBooleanConverter}"
+                            ConverterParameter="{x:Static enums:SelectedGame.Smb3}" />
+                    </RadioButton.IsChecked>
+                </RadioButton>
+                <RadioButton 
+                    GroupName="Options"
+                    Content="SMB4">
+                    <RadioButton.IsChecked>
+                        <Binding 
+                            Path="SelectedGame" 
+                            Converter="{StaticResource EnumToBooleanConverter}"
+                            ConverterParameter="{x:Static enums:SelectedGame.Smb4}" />
+                    </RadioButton.IsChecked>
+                </RadioButton>
+            </StackPanel>
+        </StackPanel>
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
@@ -29,10 +55,20 @@
                     Margin="0,10,0,0">
 
             <!-- TODO Command for handling this -->
+
+            <StackPanel Orientation="Vertical" Visibility="{Binding Smb4ButtonVisibility}">
+                <Label Content="Select an existing SMB4 save:" />
+                <ComboBox
+                    Width="200"
+                    ItemsSource="{Binding Smb4LeagueSelections}"
+                    DisplayMemberPath="Name" />
+            </StackPanel>
+
             <Button
+                Margin="10,0,0,0"
                 Visibility="{Binding Smb4ButtonVisibility}"
-                Width="250"
-                Content="Use most recent SMB4 league save file" />
+                Width="100"
+                Content="Load Save Game" />
 
             <Button
                 Visibility="{Binding Smb3ButtonVisibility}"

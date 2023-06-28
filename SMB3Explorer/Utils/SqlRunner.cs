@@ -77,6 +77,9 @@ public enum SqlFile
     
     [Description("MostRecentSeasonSchedule.sql")]
     MostRecentSeasonSchedule,
+    
+    [Description("GetLeagues.sql")]
+    GetLeagues,
 }
 
 public static class SqlRunner

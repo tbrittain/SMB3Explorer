@@ -5,7 +5,10 @@ namespace SMB3Explorer.Constants;
 
 public static class FileExports
 {
-    public static readonly string BaseGameDirectoryPath = Path.Combine(Environment.GetFolderPath(
+    public static readonly string BaseGameSmb4DirectoryPath = Path.Combine(Environment.GetFolderPath(
+        Environment.SpecialFolder.LocalApplicationData), "Metalhead", "Super Mega Baseball 4");
+
+    public static readonly string BaseGameSmb3DirectoryPath = Path.Combine(Environment.GetFolderPath(
         Environment.SpecialFolder.LocalApplicationData), "Metalhead", "Super Mega Baseball 3");
 
     public static readonly string BaseExportsDirectory =

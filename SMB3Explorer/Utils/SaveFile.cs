@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using Microsoft.Win32;
 using OneOf;
 using OneOf.Types;
+using SMB3Explorer.Enums;
 using SMB3Explorer.Services.SystemIoWrapper;
 using static SMB3Explorer.Constants.FileExports;
 
@@ -14,20 +16,27 @@ public static class SaveFile
     public const string DefaultSaveFileName = "savedata.sav";
     private const string SaveGameFileFilter = "Save files (*.sav)|*.sav";
 
-    public static OneOf<string, None> GetSaveFilePath(ISystemIoWrapper systemIoWrapper)
+    public static OneOf<string, None> GetSaveFilePath(ISystemIoWrapper systemIoWrapper, SelectedGame selectedGame)
     {
-        if (!systemIoWrapper.DirectoryExists(BaseGameDirectoryPath))
+        var directoryPath = selectedGame switch
+        {
+            SelectedGame.Smb3 => BaseGameSmb3DirectoryPath,
+            SelectedGame.Smb4 => BaseGameSmb4DirectoryPath,
+            _ => throw new ArgumentOutOfRangeException(nameof(selectedGame), selectedGame, null)
+        };
+
+        if (!systemIoWrapper.DirectoryExists(directoryPath))
         {
             var result =
                 systemIoWrapper.ShowMessageBox("Default save file directory does not exist. " +
-                                          "Would you like to select a save file directly?",
+                                               "Would you like to select a save file directly?",
                     "Default location not found", MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.No) return new None();
-            return GetUserProvidedFile(BaseGameDirectoryPath, systemIoWrapper);
+            return GetUserProvidedFile(directoryPath, systemIoWrapper);
         }
 
-        var subdirectories = systemIoWrapper.DirectoryGetDirectories(BaseGameDirectoryPath);
+        var subdirectories = systemIoWrapper.DirectoryGetDirectories(directoryPath);
 
         var steamUserDirectories = subdirectories
             .Where(x =>
@@ -38,7 +47,7 @@ public static class SaveFile
             })
             .ToList();
 
-        string message = string.Empty, caption = string.Empty;
+        string message = "Select a save file", caption = "Please select a save file";
         switch (steamUserDirectories.Count)
         {
             case 0:
@@ -51,10 +60,17 @@ public static class SaveFile
             case 1:
             {
                 var steamUserDirectory = steamUserDirectories[0];
+
+                if (selectedGame is SelectedGame.Smb4)
+                {
+                    directoryPath = steamUserDirectory;
+                    break;
+                }
+
                 var defaultFilePath = Path.Combine(steamUserDirectory, DefaultSaveFileName);
 
                 if (systemIoWrapper.FileExists(defaultFilePath)) return defaultFilePath;
-                
+
                 message = "Default file does not exist. " +
                           "Would you like to select a save file directly?";
                 caption = "Default file not found";
@@ -69,9 +85,14 @@ public static class SaveFile
             }
         }
 
+        if (selectedGame is SelectedGame.Smb4 && steamUserDirectories.Count == 1)
+        {
+            return GetUserProvidedFile(directoryPath, systemIoWrapper);
+        }
+
         var result2 = systemIoWrapper.ShowMessageBox(message, caption, MessageBoxButton.YesNo);
         if (result2 == MessageBoxResult.No) return new None();
-        return GetUserProvidedFile(BaseGameDirectoryPath, systemIoWrapper);
+        return GetUserProvidedFile(directoryPath, systemIoWrapper);
     }
 
     public static OneOf<string, None> GetUserProvidedFile(string directoryPath,

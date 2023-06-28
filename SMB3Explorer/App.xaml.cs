@@ -51,7 +51,7 @@ public partial class App
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IApplicationContext, ApplicationContext>();
         services.AddSingleton<ISystemIoWrapper, SystemIoWrapper>();
-        services.AddSingleton<IAppConfig, AppConfig.AppConfig>();
+        services.AddSingleton<IApplicationConfig, ApplicationConfig>();
 
         services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
         {

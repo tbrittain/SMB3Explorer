@@ -9,7 +9,7 @@ using SMB3Explorer.Constants;
 
 namespace SMB3Explorer.AppConfig;
 
-public class AppConfig : IAppConfig
+public class ApplicationConfig : IApplicationConfig
 {
     private const string ConfigFileName = "config.json";
 
