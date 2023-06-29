@@ -9,7 +9,7 @@ public static class PlayerTrait
 {
     public record struct DatabaseTraitSubtypePair(int TraitId, int? SubtypeId);
 
-    public static Dictionary<DatabaseTraitSubtypePair, Trait> TraitMap { get; } = new()
+    public static Dictionary<DatabaseTraitSubtypePair, Trait> Smb3TraitMap { get; } = new()
     {
         {new DatabaseTraitSubtypePair(0, 0), Trait.BatterPowerVsRight},
         {new DatabaseTraitSubtypePair(0, 1), Trait.BatterPowerVsLeft},

@@ -110,4 +110,8 @@ public class SeasonPlayer
     
     [Name("Trait 2"), Index(19)]
     public string? Trait2 { get; set; }
+    
+    // TODO: Get chemistry for SMB4 players
+    [Name("Chemistry"), Index(20)]
+    public string? Chemistry { get; set; }
 }

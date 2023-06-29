@@ -49,10 +49,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controls" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="Resources\Sql\CareerStatsBatting.sql" />
       <EmbeddedResource Include="Resources\Sql\CareerStatsBatting.sql" />
       <None Remove="Resources\Sql\PlayoffCareerStatsBatting.sql" />

@@ -149,7 +149,13 @@ public partial class DataService
     {
         var command = Connection!.CreateCommand();
 
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayers);
+        var commandText = _applicationContext.SelectedGame switch
+        {
+            SelectedGame.Smb3 => SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayers),
+            SelectedGame.Smb4 => throw new NotImplementedException(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
         command.CommandText = commandText;
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
@@ -188,11 +194,16 @@ public partial class DataService
             var traitsSerialized = reader.IsDBNull(20) ? null : reader.GetString(20);
             if (!string.IsNullOrEmpty(traitsSerialized))
             {
-                var traits = JsonConvert
-                    .DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized);
+                var traits = _applicationContext.SelectedGame switch
+                {
+                    SelectedGame.Smb3 => JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(
+                        traitsSerialized),
+                    SelectedGame.Smb4 => throw new NotImplementedException(),
+                    _ => null
+                };
 
                 seasonPlayer.Traits = (traits ?? Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>())
-                    .Select(_ => PlayerTrait.TraitMap[_])
+                    .Select(_ => PlayerTrait.Smb3TraitMap[_])
                     .ToArray();
             }
 
