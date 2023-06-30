@@ -58,6 +58,7 @@ public static class PlayerTrait
         {new DatabaseTraitSubtypePair(7, 6), Trait.PitcherKCollector},
         {new DatabaseTraitSubtypePair(7, 7), Trait.PitcherKNeglector},
         {new DatabaseTraitSubtypePair(8, 6), Trait.BatterStealer},
+        {new DatabaseTraitSubtypePair(8, 7), Trait.BatterBadJumps},
         {new DatabaseTraitSubtypePair(9, 6), Trait.BatterUtility},
         {new DatabaseTraitSubtypePair(10, 8), Trait.BatterFastballHitter},
         {new DatabaseTraitSubtypePair(10, 9), Trait.BatterOffSpeedHitter},
@@ -83,10 +84,16 @@ public static class PlayerTrait
         {new DatabaseTraitSubtypePair(22, 17), Trait.PitcherEliteCurveball},
         {new DatabaseTraitSubtypePair(22, 18), Trait.PitcherEliteSlider},
         {new DatabaseTraitSubtypePair(22, 19), Trait.PitcherEliteChangeUp},
+        {new DatabaseTraitSubtypePair(22, 20), Trait.PitcherEliteScrewball},
+        {new DatabaseTraitSubtypePair(22, 21), Trait.PitcherEliteForkball},
         {new DatabaseTraitSubtypePair(23, 6), Trait.PitcherWorkhorse},
+        {new DatabaseTraitSubtypePair(24, 22), Trait.PitcherTwoWayOutfielder},
+        {new DatabaseTraitSubtypePair(24, 23), Trait.PitcherTwoWayInfielder},
+        {new DatabaseTraitSubtypePair(24, 24), Trait.PitcherTwoWayCatcher},
         {new DatabaseTraitSubtypePair(25, 6), Trait.PitcherMetalHead},
         {new DatabaseTraitSubtypePair(26, 6), Trait.BatterSprinter},
         {new DatabaseTraitSubtypePair(26, 7), Trait.BatterSlowPoke},
+        {new DatabaseTraitSubtypePair(27, 6), Trait.BatterBaseRounder},
         {new DatabaseTraitSubtypePair(27, 7), Trait.BatterBaseJogger},
         {new DatabaseTraitSubtypePair(28, 6), Trait.BatterDistractor},
         {new DatabaseTraitSubtypePair(29, 6), Trait.MagicHands},
@@ -105,6 +112,7 @@ public static class PlayerTrait
         {new DatabaseTraitSubtypePair(37, 6), Trait.BatterDiveWizard},
         {new DatabaseTraitSubtypePair(38, 6), Trait.BatterSignStealer},
         {new DatabaseTraitSubtypePair(39, 7), Trait.PitcherMeltdown},
+        {new DatabaseTraitSubtypePair(40, 6), Trait.BatterBunter},
     };
 
     public static ImmutableDictionary<DatabaseTraitSubtypePair, Trait> Smb4TraitMap { get; } =
@@ -182,5 +190,12 @@ public enum Trait
     [Description("Dive Wizard")] BatterDiveWizard,
     [Description("Injury Prone")] InjuryProne,
     [Description("Distractor")] BatterDistractor,
-    [Description("Durable")] Durable
+    [Description("Durable")] Durable,
+    [Description("Bunter")] BatterBunter,
+    [Description("Base Rounder")] BatterBaseRounder,
+    [Description("Elite FK")] PitcherEliteForkball,
+    [Description("Elite SB")] PitcherEliteScrewball,
+    [Description("Two Way (IF)")] PitcherTwoWayInfielder,
+    [Description("Two Way (OF)")] PitcherTwoWayOutfielder,
+    [Description("Two Way (C)")] PitcherTwoWayCatcher
 }
