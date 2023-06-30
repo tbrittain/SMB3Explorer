@@ -194,17 +194,19 @@ public partial class DataService
             var traitsSerialized = reader.IsDBNull(20) ? null : reader.GetString(20);
             if (!string.IsNullOrEmpty(traitsSerialized))
             {
-                var traits = _applicationContext.SelectedGame switch
-                {
-                    SelectedGame.Smb3 => JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(
-                        traitsSerialized),
-                    SelectedGame.Smb4 => throw new NotImplementedException(),
-                    _ => null
-                };
+                var traits = 
+                    JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ?? Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>();
 
-                seasonPlayer.Traits = (traits ?? Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>())
-                    .Select(_ => PlayerTrait.Smb3TraitMap[_])
-                    .ToArray();
+                seasonPlayer.Traits = _applicationContext.SelectedGame switch
+                {
+                    SelectedGame.Smb3 => traits
+                        .Select(x => PlayerTrait.Smb3TraitMap[x])
+                        .ToArray(),
+                    SelectedGame.Smb4 => traits
+                        .Select(x => PlayerTrait.Smb4TraitMap[x])
+                        .ToArray(),
+                    _ => throw new ArgumentException()
+                };
             }
 
             yield return seasonPlayer;
