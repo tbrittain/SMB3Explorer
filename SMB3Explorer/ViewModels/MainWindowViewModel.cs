@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
-using SMB3Explorer.AppConfig;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.HttpService;
@@ -20,7 +19,6 @@ namespace SMB3Explorer.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly IApplicationConfig _applicationConfig;
     private readonly IDataService _dataService;
     private readonly IHttpService _httpService;
 
@@ -29,22 +27,14 @@ public partial class MainWindowViewModel : ViewModelBase
     private Visibility _deselectSaveGameVisibility = Visibility.Collapsed;
     private bool _isUpdateAvailable;
     private Visibility _updateAvailableVisibility = Visibility.Collapsed;
-    private bool _isPlayerIdInExportsEnabled;
 
     public MainWindowViewModel(INavigationService navigationService, ISystemIoWrapper systemIoWrapper,
-        IDataService dataService, IHttpService httpService, IApplicationConfig applicationConfig)
+        IDataService dataService, IHttpService httpService)
     {
         NavigationService = navigationService;
         _systemIoWrapper = systemIoWrapper;
         _dataService = dataService;
         _httpService = httpService;
-        _applicationConfig = applicationConfig;
-        
-        var configResult = _applicationConfig.GetConfigOptions();
-        if (configResult.TryPickT0(out var configOptions, out _))
-        {
-            IsPlayerIdInExportsEnabled = configOptions.IncludePlayerIdsInExports;
-        }
 
         Log.Information("Initializing MainWindowViewModel");
 
@@ -102,21 +92,6 @@ public partial class MainWindowViewModel : ViewModelBase
     public string UpdateAvailableDisplayText => IsUpdateAvailable
         ? $"Update Available: {AppUpdateResult?.Version.ToString()}"
         : "No Updates Available";
-
-    public bool IsPlayerIdInExportsEnabled
-    {
-        get => _isPlayerIdInExportsEnabled;
-        set
-        {
-            SetField(ref _isPlayerIdInExportsEnabled, value);
-            var configResult = _applicationConfig.GetConfigOptions();
-            if (!configResult.TryPickT0(out var configOptions, out _)) return;
-
-            if (configOptions.IncludePlayerIdsInExports == value) return;
-            configOptions.IncludePlayerIdsInExports = value;
-            _applicationConfig.SaveConfigOptions(configOptions);
-        }
-    }
 
     private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
     {
