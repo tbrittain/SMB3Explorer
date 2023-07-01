@@ -51,7 +51,13 @@ public partial class LandingViewModel : ViewModelBase
         }
 
         Smb4LeagueSelections = configOptions.Leagues
-            .Select(league => new Smb4LeagueSelection(league.Name, league.Id))
+            .Select(x => new Smb4LeagueSelection(x.Name, x.Id, x.PlayerTeam, x.NumSeasons)
+            {
+                NumTimesAccessed = x.NumTimesAccessed,
+                FirstAccessed = x.FirstAccessed,
+                LastAccessed = x.LastAccessed
+            })
+            .OrderByDescending(x => x.NumTimesAccessed)
             .ToList();
         SelectedGame = configOptions.GamePreference;
 
@@ -117,7 +123,13 @@ public partial class LandingViewModel : ViewModelBase
         }
 
         Smb4LeagueSelections = configOptions.Leagues
-            .Select(league => new Smb4LeagueSelection(league.Name, league.Id))
+            .Select(x => new Smb4LeagueSelection(x.Name, x.Id, x.PlayerTeam, x.NumSeasons)
+            {
+                NumTimesAccessed = x.NumTimesAccessed,
+                FirstAccessed = x.FirstAccessed,
+                LastAccessed = x.LastAccessed
+            })
+            .OrderByDescending(x => x.NumTimesAccessed)
             .ToList();
 
         OnPropertyChanged(nameof(AtLeastOneExistingLeague));
@@ -146,7 +158,7 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        var filePathResult = SaveFile.GetSmb4ExistingSaveFilePath(_systemIoWrapper, SelectedExistingLeague.LeagueId);
+        var filePathResult = SaveFile.GetSmb4ExistingSaveFilePath(_systemIoWrapper, SelectedExistingLeague.SaveGameLeagueId);
         if (filePathResult.TryPickT1(out var error, out var filePath) || string.IsNullOrEmpty(filePath))
         {
             DefaultExceptionHandler.HandleException(_systemIoWrapper, "Could not get save file path",
@@ -254,29 +266,57 @@ public partial class LandingViewModel : ViewModelBase
                     "Failed to retrieve leagues from config file", new Exception(error2.Value));
             }
 
-            var existingLeagues = configOptions.Leagues
-                .Select(x => new Smb4LeagueSelection(x.Name, x.Id))
-                .ToList();
-
-            var newLeagues = leaguesInConnection
-                .Where(x => !existingLeagues.Contains(x))
-                .ToList();
-
-            if (newLeagues.Any())
+            if (!hasError)
             {
-                configOptions.Leagues.AddRange(newLeagues
-                    .Select(x => new League
+                var existingLeagues = configOptions.Leagues
+                    .Select(x => new Smb4LeagueSelection(x.Name, x.Id, x.PlayerTeam, x.NumSeasons)
                     {
-                        Id = x.LeagueId,
-                        Name = x.LeagueName
-                    }));
+                        NumTimesAccessed = x.NumTimesAccessed,
+                        FirstAccessed = x.FirstAccessed,
+                        LastAccessed = x.LastAccessed
+                    })
+                    .ToList();
 
-                var configResult = _applicationConfig.SaveConfigOptions(configOptions);
-                if (configResult.TryPickT1(out var error3, out _))
+                var newLeagues = leaguesInConnection
+                    .Where(x => !existingLeagues.Contains(x))
+                    .ToList();
+
+                if (newLeagues.Any())
                 {
-                    hasError = true;
-                    DefaultExceptionHandler.HandleException(_systemIoWrapper,
-                        "Failed to save new league(s) to config file", new Exception(error3.Value));
+                    var now = DateTime.Now;
+                    configOptions.Leagues.AddRange(newLeagues
+                        .Select(x => new League
+                        {
+                            Id = x.SaveGameLeagueId,
+                            Name = x.LeagueName,
+                            PlayerTeam = x.PlayerTeam,
+                            NumSeasons = x.NumSeasons,
+                            NumTimesAccessed = 1,
+                            FirstAccessed = now,
+                            LastAccessed = now
+                        }));
+
+                    var configResult = _applicationConfig.SaveConfigOptions(configOptions);
+                    if (configResult.TryPickT1(out var error3, out _))
+                    {
+                        hasError = true;
+                        DefaultExceptionHandler.HandleException(_systemIoWrapper,
+                            "Failed to save new league(s) to config file", new Exception(error3.Value));
+                    }
+                }
+                else
+                {
+                    var existingLeague = existingLeagues
+                        .FirstOrDefault(x => 
+                            x.SaveGameLeagueId == _applicationContext.MostRecentSelectedSaveFileLeagueId);
+
+                    if (existingLeague is not null)
+                    {
+                        existingLeague.NumTimesAccessed++;
+                        existingLeague.LastAccessed = DateTime.Now;
+                        
+                        _applicationConfig.SaveConfigOptions(configOptions);
+                    }
                 }
             }
         }

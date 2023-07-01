@@ -15,7 +15,7 @@ public class League
     public string? PlayerTeam { get; set; }
     
     [JsonProperty("numSeasons")]
-    public int NumSeasons { get; set; }
+    public int? NumSeasons { get; set; }
     
     [JsonProperty("numTimesAccessed")]
     public int NumTimesAccessed { get; set; }

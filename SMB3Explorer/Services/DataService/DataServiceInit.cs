@@ -127,12 +127,17 @@ public partial class DataService
                           "config for later on", smb4LeagueFileName);
                 return new Error<string>("Failed to parse GUID from file name.");
             }
+            
+            _applicationContext.MostRecentSelectedSaveFileLeagueId = smb4LeagueId;
         }
 
         while (reader2.Read())
         {
             var leagueName = reader2.GetString(0);
-            var league = new Smb4LeagueSelection(leagueName, smb4LeagueId);
+            var playerTeamName = reader.IsDBNull(1) ? null : reader.GetString(1);
+            int? numSeasons = reader.IsDBNull(2) ? null : reader.GetInt32(2);
+
+            var league = new Smb4LeagueSelection(leagueName, smb4LeagueId, playerTeamName, numSeasons);
             leagues.Add(league);
         }
 
