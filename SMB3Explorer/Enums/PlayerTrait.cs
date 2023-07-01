@@ -62,6 +62,7 @@ public static class PlayerTrait
         {new DatabaseTraitSubtypePair(9, 6), Trait.BatterUtility},
         {new DatabaseTraitSubtypePair(10, 8), Trait.BatterFastballHitter},
         {new DatabaseTraitSubtypePair(10, 9), Trait.BatterOffSpeedHitter},
+        {new DatabaseTraitSubtypePair(11, 6), Trait.BatterBadBallHitter},
         {new DatabaseTraitSubtypePair(12, 10), Trait.BatterBigHack},
         {new DatabaseTraitSubtypePair(12, 11), Trait.BatterLittleHack},
         {new DatabaseTraitSubtypePair(13, 6), Trait.BatterRallyStarter},
@@ -98,9 +99,9 @@ public static class PlayerTrait
         {new DatabaseTraitSubtypePair(28, 6), Trait.BatterDistractor},
         {new DatabaseTraitSubtypePair(29, 6), Trait.MagicHands},
         {new DatabaseTraitSubtypePair(29, 7), Trait.ButterFingers},
-        {new DatabaseTraitSubtypePair(30, 6), Trait.Clutch},
         {new DatabaseTraitSubtypePair(30, 7), Trait.WildThrower},
         {new DatabaseTraitSubtypePair(31, 7), Trait.PitcherWildThing},
+        {new DatabaseTraitSubtypePair(32, 6), Trait.Clutch},
         {new DatabaseTraitSubtypePair(32, 7), Trait.Choker},
         {new DatabaseTraitSubtypePair(33, 25), Trait.Consistent},
         {new DatabaseTraitSubtypePair(33, 26), Trait.Volatile},
@@ -197,5 +198,6 @@ public enum Trait
     [Description("Elite SB")] PitcherEliteScrewball,
     [Description("Two Way (IF)")] PitcherTwoWayInfielder,
     [Description("Two Way (OF)")] PitcherTwoWayOutfielder,
-    [Description("Two Way (C)")] PitcherTwoWayCatcher
+    [Description("Two Way (C)")] PitcherTwoWayCatcher,
+    [Description("Bad Ball Hitter")] BatterBadBallHitter
 }

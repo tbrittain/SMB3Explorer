@@ -151,8 +151,8 @@ public partial class DataService
 
         var commandText = _applicationContext.SelectedGame switch
         {
-            SelectedGame.Smb3 => SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayers),
-            SelectedGame.Smb4 => throw new NotImplementedException(),
+            SelectedGame.Smb3 => SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayersSmb3),
+            SelectedGame.Smb4 => SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayersSmb4),
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -207,6 +207,12 @@ public partial class DataService
                         .ToArray(),
                     _ => throw new ArgumentException()
                 };
+            }
+
+            if (_applicationContext.SelectedGame is SelectedGame.Smb4)
+            {
+                var chemistry = reader.GetString(21);
+                seasonPlayer.Chemistry = chemistry;
             }
 
             yield return seasonPlayer;
