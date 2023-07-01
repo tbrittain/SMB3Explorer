@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
+using SMB3Explorer.AppConfig;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.HttpService;
@@ -19,43 +20,38 @@ namespace SMB3Explorer.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public INavigationService NavigationService { get; }
-
-    private readonly ISystemIoWrapper _systemIoWrapper;
+    private readonly IApplicationConfig _applicationConfig;
     private readonly IDataService _dataService;
     private readonly IHttpService _httpService;
-    private bool _isUpdateAvailable;
-    private string _updateVersion = string.Empty;
+
+    private readonly ISystemIoWrapper _systemIoWrapper;
     private AppUpdateResult? _appUpdateResult;
-    private Visibility _updateAvailableVisibility = Visibility.Collapsed;
     private Visibility _deselectSaveGameVisibility = Visibility.Collapsed;
+    private bool _isUpdateAvailable;
+    private Visibility _updateAvailableVisibility = Visibility.Collapsed;
+    private bool _isPlayerIdInExportsEnabled;
 
     public MainWindowViewModel(INavigationService navigationService, ISystemIoWrapper systemIoWrapper,
-        IDataService dataService, IHttpService httpService)
+        IDataService dataService, IHttpService httpService, IApplicationConfig applicationConfig)
     {
         NavigationService = navigationService;
         _systemIoWrapper = systemIoWrapper;
         _dataService = dataService;
         _httpService = httpService;
+        _applicationConfig = applicationConfig;
+        
+        var configResult = _applicationConfig.GetConfigOptions();
+        if (configResult.TryPickT0(out var configOptions, out _))
+        {
+            IsPlayerIdInExportsEnabled = configOptions.IncludePlayerIdsInExports;
+        }
 
         Log.Information("Initializing MainWindowViewModel");
 
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
     }
 
-    private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
-    {
-        DeselectSaveGameVisibility = _dataService.IsConnected
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-    }
-
-    public Task Initialize()
-    {
-        NavigationService.NavigateTo<LandingViewModel>();
-        _ = Task.Run(async () => await CheckForUpdates());
-        return Task.CompletedTask;
-    }
+    public INavigationService NavigationService { get; }
 
     private static Version CurrentVersion
     {
@@ -107,6 +103,35 @@ public partial class MainWindowViewModel : ViewModelBase
         ? $"Update Available: {AppUpdateResult?.Version.ToString()}"
         : "No Updates Available";
 
+    public bool IsPlayerIdInExportsEnabled
+    {
+        get => _isPlayerIdInExportsEnabled;
+        set
+        {
+            SetField(ref _isPlayerIdInExportsEnabled, value);
+            var configResult = _applicationConfig.GetConfigOptions();
+            if (!configResult.TryPickT0(out var configOptions, out _)) return;
+
+            if (configOptions.IncludePlayerIdsInExports == value) return;
+            configOptions.IncludePlayerIdsInExports = value;
+            _applicationConfig.SaveConfigOptions(configOptions);
+        }
+    }
+
+    private void DataServiceOnConnectionChanged(object? sender, EventArgs e)
+    {
+        DeselectSaveGameVisibility = _dataService.IsConnected
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+    }
+
+    public Task Initialize()
+    {
+        NavigationService.NavigateTo<LandingViewModel>();
+        _ = Task.Run(async () => await CheckForUpdates());
+        return Task.CompletedTask;
+    }
+
     [RelayCommand]
     private Task OpenExportsFolder()
     {
@@ -141,7 +166,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private Task SubmitFeatureRequest()
     {
         Log.Information("Opening feature request page");
-        
+
         SafeProcess.Start(FeatureRequestUrl, _systemIoWrapper);
 
         Log.Information("Opened feature request page");
@@ -153,7 +178,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         Log.Information("Opening discussions page");
 
-        
+
         SafeProcess.Start(DiscussionsUrl, _systemIoWrapper);
 
         Log.Information("Opened discussions page");
@@ -165,7 +190,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         Log.Information("Opening issues page");
 
-        
+
         SafeProcess.Start(IssuesUrl, _systemIoWrapper);
 
         Log.Information("Opened issues page");
@@ -188,7 +213,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         Log.Information("Opening github repo");
 
-        
+
         SafeProcess.Start(RepoUrl, _systemIoWrapper);
 
         Log.Information("Opened github repo");

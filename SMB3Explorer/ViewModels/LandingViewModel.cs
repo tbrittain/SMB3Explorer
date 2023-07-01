@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,13 +23,13 @@ namespace SMB3Explorer.ViewModels;
 
 public partial class LandingViewModel : ViewModelBase
 {
-    private readonly IApplicationContext _applicationContext;
     private readonly IApplicationConfig _applicationConfig;
+    private readonly IApplicationContext _applicationContext;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
     private readonly ISystemIoWrapper _systemIoWrapper;
-    private SelectedGame _selectedGame;
     private Smb4LeagueSelection? _selectedExistingLeague;
+    private SelectedGame _selectedGame;
 
     public LandingViewModel(IDataService dataService, INavigationService navigationService,
         ISystemIoWrapper systemIoWrapper, IApplicationContext applicationContext, IApplicationConfig applicationConfig)
@@ -43,7 +42,7 @@ public partial class LandingViewModel : ViewModelBase
 
         Log.Information("Initializing LandingViewModel");
 
-        var configResult = applicationConfig.GetConfigOptions();
+        var configResult = _applicationConfig.GetConfigOptions();
         if (configResult.TryPickT1(out var error, out var configOptions))
         {
             Log.Error("Could not retrieve config options for previously selected leagues: {Error}", error);
@@ -54,6 +53,7 @@ public partial class LandingViewModel : ViewModelBase
         Smb4LeagueSelections = configOptions.Leagues
             .Select(league => new Smb4LeagueSelection(league.Name, league.Id))
             .ToList();
+        SelectedGame = configOptions.GamePreference;
 
         _dataService.ConnectionChanged += DataServiceOnConnectionChanged;
     }
@@ -70,6 +70,17 @@ public partial class LandingViewModel : ViewModelBase
             SetField(ref _selectedGame, value);
 
             _applicationContext.SelectedGame = value;
+
+            var configResult = _applicationConfig.GetConfigOptions();
+            if (configResult.TryPickT0(out var configOptions, out _))
+            {
+                if (configOptions.GamePreference != value)
+                {
+                    configOptions.GamePreference = value;
+                    _applicationConfig.SaveConfigOptions(configOptions);
+                }
+            }
+
             OnPropertyChanged(nameof(Smb3ButtonVisibility));
             OnPropertyChanged(nameof(Smb4ButtonVisibility));
         }
@@ -116,7 +127,7 @@ public partial class LandingViewModel : ViewModelBase
     {
         return !_dataService.IsConnected;
     }
-    
+
     private bool CanConnectToExistingLeague()
     {
         return SelectedExistingLeague is not null;
@@ -138,12 +149,12 @@ public partial class LandingViewModel : ViewModelBase
         var filePathResult = SaveFile.GetSmb4ExistingSaveFilePath(_systemIoWrapper, SelectedExistingLeague.LeagueId);
         if (filePathResult.TryPickT1(out var error, out var filePath) || string.IsNullOrEmpty(filePath))
         {
-            DefaultExceptionHandler.HandleException(_systemIoWrapper, $"Could not get save file path",
+            DefaultExceptionHandler.HandleException(_systemIoWrapper, "Could not get save file path",
                 new Exception(error.Value));
             Mouse.OverrideCursor = Cursors.Arrow;
             return;
         }
-        
+
         var connectionResult = await EstablishDbConnection(filePath);
         HandleDatabaseConnection(connectionResult);
     }

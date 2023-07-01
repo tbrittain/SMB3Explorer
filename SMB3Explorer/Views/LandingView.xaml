@@ -28,7 +28,8 @@
             <StackPanel Orientation="Horizontal">
                 <RadioButton
                     GroupName="Options"
-                    Content="SMB3">
+                    Content="SMB3"
+                    Margin="5">
                     <RadioButton.IsChecked>
                         <Binding 
                             Path="SelectedGame" 
@@ -38,7 +39,8 @@
                 </RadioButton>
                 <RadioButton 
                     GroupName="Options"
-                    Content="SMB4">
+                    Content="SMB4"
+                    Margin="5">
                     <RadioButton.IsChecked>
                         <Binding 
                             Path="SelectedGame" 

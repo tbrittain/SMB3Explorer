@@ -19,6 +19,9 @@
                           Command="{Binding DeselectSaveGameCommand}"
                           Visibility="{Binding DeselectSaveGameVisibility}" />
                 <MenuItem Header="_Purge application data" Command="{Binding PurgeApplicationDataCommand}" />
+                <MenuItem Header="_Toggle player IDs in exports" 
+                          IsCheckable="True"
+                          IsChecked="{Binding IsPlayerIdInExportsEnabled}" />
             </MenuItem>
 
             <MenuItem Header="_Help">
