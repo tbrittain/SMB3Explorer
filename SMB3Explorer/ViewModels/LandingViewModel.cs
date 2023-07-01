@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -8,8 +9,8 @@ using CommunityToolkit.Mvvm.Input;
 using OneOf;
 using OneOf.Types;
 using Serilog;
-using SMB3Explorer.AppConfig;
-using SMB3Explorer.AppConfig.Models;
+using SMB3Explorer.ApplicationConfig;
+using SMB3Explorer.ApplicationConfig.Models;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.ApplicationContext;
@@ -51,7 +52,13 @@ public partial class LandingViewModel : ViewModelBase
         }
 
         Smb4LeagueSelections = configOptions.Leagues
-            .Select(league => new Smb4LeagueSelection(league.Name, league.Id))
+            .Select(x => new Smb4LeagueSelection(x.Name, x.Id, x.PlayerTeam, x.NumSeasons)
+            {
+                NumTimesAccessed = x.NumTimesAccessed,
+                FirstAccessed = x.FirstAccessed,
+                LastAccessed = x.LastAccessed
+            })
+            .OrderByDescending(x => x.NumTimesAccessed)
             .ToList();
         SelectedGame = configOptions.GamePreference;
 
@@ -117,7 +124,13 @@ public partial class LandingViewModel : ViewModelBase
         }
 
         Smb4LeagueSelections = configOptions.Leagues
-            .Select(league => new Smb4LeagueSelection(league.Name, league.Id))
+            .Select(x => new Smb4LeagueSelection(x.Name, x.Id, x.PlayerTeam, x.NumSeasons)
+            {
+                NumTimesAccessed = x.NumTimesAccessed,
+                FirstAccessed = x.FirstAccessed,
+                LastAccessed = x.LastAccessed
+            })
+            .OrderByDescending(x => x.NumTimesAccessed)
             .ToList();
 
         OnPropertyChanged(nameof(AtLeastOneExistingLeague));
@@ -146,7 +159,7 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        var filePathResult = SaveFile.GetSmb4ExistingSaveFilePath(_systemIoWrapper, SelectedExistingLeague.LeagueId);
+        var filePathResult = SaveFile.GetSmb4ExistingSaveFilePath(_systemIoWrapper, SelectedExistingLeague.SaveGameLeagueId);
         if (filePathResult.TryPickT1(out var error, out var filePath) || string.IsNullOrEmpty(filePath))
         {
             DefaultExceptionHandler.HandleException(_systemIoWrapper, "Could not get save file path",
@@ -198,7 +211,6 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        _applicationContext.MostRecentSelectedSaveFilePath = filePath;
         var connectionResult = await EstablishDbConnection(filePath);
         HandleDatabaseConnection(connectionResult);
     }
@@ -254,29 +266,84 @@ public partial class LandingViewModel : ViewModelBase
                     "Failed to retrieve leagues from config file", new Exception(error2.Value));
             }
 
-            var existingLeagues = configOptions.Leagues
-                .Select(x => new Smb4LeagueSelection(x.Name, x.Id))
-                .ToList();
-
-            var newLeagues = leaguesInConnection
-                .Where(x => !existingLeagues.Contains(x))
-                .ToList();
-
-            if (newLeagues.Any())
+            if (!hasError)
             {
-                configOptions.Leagues.AddRange(newLeagues
-                    .Select(x => new League
+                var existingLeagues = configOptions.Leagues
+                    .Select(x => new Smb4LeagueSelection(x.Name, x.Id, x.PlayerTeam, x.NumSeasons)
                     {
-                        Id = x.LeagueId,
-                        Name = x.LeagueName
-                    }));
+                        NumTimesAccessed = x.NumTimesAccessed,
+                        FirstAccessed = x.FirstAccessed,
+                        LastAccessed = x.LastAccessed
+                    })
+                    .ToList();
 
-                var configResult = _applicationConfig.SaveConfigOptions(configOptions);
-                if (configResult.TryPickT1(out var error3, out _))
+                var newLeagues = leaguesInConnection
+                    .Where(x => !existingLeagues.Contains(x))
+                    .ToList();
+
+                if (newLeagues.Any())
                 {
-                    hasError = true;
-                    DefaultExceptionHandler.HandleException(_systemIoWrapper,
-                        "Failed to save new league(s) to config file", new Exception(error3.Value));
+                    var now = DateTime.Now;
+                    configOptions.Leagues.AddRange(newLeagues
+                        .Select(x => new League
+                        {
+                            Id = x.SaveGameLeagueId,
+                            Name = x.LeagueName,
+                            PlayerTeam = x.PlayerTeam,
+                            NumSeasons = x.NumSeasons,
+                            NumTimesAccessed = 1,
+                            FirstAccessed = now,
+                            LastAccessed = now
+                        }));
+
+                    var configResult = _applicationConfig.SaveConfigOptions(configOptions);
+                    if (configResult.TryPickT1(out var error3, out _))
+                    {
+                        hasError = true;
+                        DefaultExceptionHandler.HandleException(_systemIoWrapper,
+                            "Failed to save new league(s) to config file", new Exception(error3.Value));
+                    }
+                }
+                else
+                {
+                    var smb4LeagueFileName = Path.GetFileName(filePath);
+                    var smb4LeagueName = Path.GetFileNameWithoutExtension(smb4LeagueFileName);
+                    smb4LeagueName = smb4LeagueName[7..];
+                    var ok = Guid.TryParse(smb4LeagueName, out var smb4LeagueId);
+                    if (!ok)
+                    {
+                        Log.Error("Failed to parse GUID from file name {FileName}. " +
+                                  "This occurs when we are attempting to cache the SMB4 league in the " +
+                                  "config for later on", smb4LeagueFileName);
+                        
+                        Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
+                        return new Error();
+                    }
+                    
+                    var existingLeagueCached = existingLeagues
+                        .FirstOrDefault(x => x.SaveGameLeagueId == smb4LeagueId);
+                    var existingLeagueFromQuery = leaguesInConnection
+                        .FirstOrDefault(x => x.SaveGameLeagueId == smb4LeagueId);
+
+                    if (existingLeagueCached is not null && existingLeagueFromQuery is not null)
+                    {
+                        existingLeagueCached.NumTimesAccessed++;
+                        existingLeagueCached.LastAccessed = DateTime.Now;
+                        
+                        configOptions.Leagues.RemoveAll(x => x.Id == smb4LeagueId);
+                        configOptions.Leagues.Add(new League
+                        {
+                            Id = existingLeagueCached.SaveGameLeagueId,
+                            Name = existingLeagueCached.LeagueName,
+                            PlayerTeam = existingLeagueCached.PlayerTeam,
+                            NumSeasons = existingLeagueFromQuery.NumSeasons,
+                            NumTimesAccessed = existingLeagueCached.NumTimesAccessed,
+                            FirstAccessed = existingLeagueCached.FirstAccessed,
+                            LastAccessed = existingLeagueCached.LastAccessed
+                        });
+
+                        _applicationConfig.SaveConfigOptions(configOptions);
+                    }
                 }
             }
         }

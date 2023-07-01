@@ -60,9 +60,9 @@
                 <Label Content="Select an existing SMB4 save:" />
                 <ComboBox
                     SelectedItem="{Binding SelectedExistingLeague}"
-                    Width="200"
+                    Width="500"
                     ItemsSource="{Binding Smb4LeagueSelections}"
-                    DisplayMemberPath="LeagueName" />
+                    DisplayMemberPath="DisplayName" />
             </StackPanel>
 
             <Button

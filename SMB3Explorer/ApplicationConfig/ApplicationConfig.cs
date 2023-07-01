@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 using OneOf;
 using OneOf.Types;
 using Serilog;
-using SMB3Explorer.AppConfig.Models;
+using SMB3Explorer.ApplicationConfig.Models;
 using SMB3Explorer.Constants;
 
-namespace SMB3Explorer.AppConfig;
+namespace SMB3Explorer.ApplicationConfig;
 
 public class ApplicationConfig : IApplicationConfig
 {
