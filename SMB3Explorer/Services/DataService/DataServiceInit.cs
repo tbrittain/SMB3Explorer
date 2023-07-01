@@ -102,6 +102,8 @@ public partial class DataService
             Log.Error("Invalid save file, missing expected tables");
             return new Error<string>("Invalid save file, missing expected tables");
         }
+        
+        if (_applicationContext.MostRecentSelectedSaveFilePath is null) return new List<Smb4LeagueSelection>();
 
         List<Smb4LeagueSelection> leagues = new();
         var command2 = Connection.CreateCommand();

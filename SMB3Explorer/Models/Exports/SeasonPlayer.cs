@@ -110,4 +110,7 @@ public class SeasonPlayer
     
     [Name("Trait 2"), Index(19)]
     public string? Trait2 { get; set; }
+    
+    [Name("Chemistry"), Index(20)]
+    public string? Chemistry { get; set; }
 }

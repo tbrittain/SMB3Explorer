@@ -49,10 +49,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controls" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="Resources\Sql\CareerStatsBatting.sql" />
       <EmbeddedResource Include="Resources\Sql\CareerStatsBatting.sql" />
       <None Remove="Resources\Sql\PlayoffCareerStatsBatting.sql" />
@@ -88,7 +84,6 @@
       <None Remove="Resources\Sql\GetFranchiseSeasons.sql" />
       <EmbeddedResource Include="Resources\Sql\FranchiseSeasons.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonPlayers.sql" />
-      <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayers.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonTeams.sql" />
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonTeams.sql" />
       <None Remove="Resources\Sql\SeasonAverageBatterStats.sql" />
@@ -99,6 +94,10 @@
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonSchedule.sql" />
       <None Remove="Resources\Sql\GetLeagues.sql" />
       <EmbeddedResource Include="Resources\Sql\GetLeagues.sql" />
+      <None Remove="Resources\Sql\MostRecentSeasonPlayersSmb3.sql" />
+      <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb3.sql" />
+      <None Remove="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />
+      <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />
     </ItemGroup>
 
 </Project>
