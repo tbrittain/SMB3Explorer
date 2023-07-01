@@ -6,6 +6,7 @@ using Microsoft.Data.Sqlite;
 using OneOf;
 using OneOf.Types;
 using Serilog;
+using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
@@ -101,6 +102,12 @@ public partial class DataService
         {
             Log.Error("Invalid save file, missing expected tables");
             return new Error<string>("Invalid save file, missing expected tables");
+        }
+
+        if (_applicationContext.SelectedGame is SelectedGame.Smb3)
+        {
+            Log.Information("Successfully established database connection");
+            return new List<Smb4LeagueSelection>();
         }
 
         List<Smb4LeagueSelection> leagues = new();
