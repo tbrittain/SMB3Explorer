@@ -97,6 +97,8 @@
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb3.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />
+      <None Remove="Resources\Sql\GetLeaguesForSmb4SaveGame.sql" />
+      <EmbeddedResource Include="Resources\Sql\GetLeaguesForSmb4SaveGame.sql" />
     </ItemGroup>
 
 </Project>

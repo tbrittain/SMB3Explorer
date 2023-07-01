@@ -102,8 +102,6 @@ public partial class DataService
             Log.Error("Invalid save file, missing expected tables");
             return new Error<string>("Invalid save file, missing expected tables");
         }
-        
-        if (_applicationContext.MostRecentSelectedSaveFilePath is null) return new List<Smb4LeagueSelection>();
 
         List<Smb4LeagueSelection> leagues = new();
         var command2 = Connection.CreateCommand();
@@ -111,31 +109,23 @@ public partial class DataService
         command2.CommandText = commandText;
         var reader2 = await command2.ExecuteReaderAsync();
 
-        var smb4LeagueId = Guid.Empty;
-        var smb4LeagueFilePath = _applicationContext.MostRecentSelectedSaveFilePath;
-
-        if (smb4LeagueFilePath is not null)
+        var smb4LeagueFileName = Path.GetFileName(filePath);
+        var smb4LeagueName = Path.GetFileNameWithoutExtension(smb4LeagueFileName);
+        smb4LeagueName = smb4LeagueName[7..];
+        var ok = Guid.TryParse(smb4LeagueName, out var smb4LeagueId);
+        if (!ok)
         {
-            var smb4LeagueFileName = Path.GetFileName(smb4LeagueFilePath);
-            var smb4LeagueName = Path.GetFileNameWithoutExtension(smb4LeagueFileName);
-            smb4LeagueName = smb4LeagueName[7..];
-            var ok = Guid.TryParse(smb4LeagueName, out smb4LeagueId);
-            if (!ok)
-            {
-                Log.Error("Failed to parse GUID from file name {FileName}. " +
-                          "This occurs when we are attempting to cache the SMB4 league in the " +
-                          "config for later on", smb4LeagueFileName);
-                return new Error<string>("Failed to parse GUID from file name.");
-            }
-            
-            _applicationContext.MostRecentSelectedSaveFileLeagueId = smb4LeagueId;
+            Log.Error("Failed to parse GUID from file name {FileName}. " +
+                      "This occurs when we are attempting to cache the SMB4 league in the " +
+                      "config for later on", smb4LeagueFileName);
+            return new Error<string>("Failed to parse GUID from file name.");
         }
 
         while (reader2.Read())
         {
             var leagueName = reader2.GetString(0);
-            var playerTeamName = reader.IsDBNull(1) ? null : reader.GetString(1);
-            int? numSeasons = reader.IsDBNull(2) ? null : reader.GetInt32(2);
+            var playerTeamName = reader2.IsDBNull(1) ? null : reader2.GetString(1);
+            int? numSeasons = reader2.IsDBNull(2) ? null : reader2.GetInt32(2);
 
             var league = new Smb4LeagueSelection(leagueName, smb4LeagueId, playerTeamName, numSeasons);
             leagues.Add(league);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -210,7 +211,6 @@ public partial class LandingViewModel : ViewModelBase
             return;
         }
 
-        _applicationContext.MostRecentSelectedSaveFilePath = filePath;
         var connectionResult = await EstablishDbConnection(filePath);
         HandleDatabaseConnection(connectionResult);
     }
@@ -306,15 +306,42 @@ public partial class LandingViewModel : ViewModelBase
                 }
                 else
                 {
-                    var existingLeague = existingLeagues
-                        .FirstOrDefault(x => 
-                            x.SaveGameLeagueId == _applicationContext.MostRecentSelectedSaveFileLeagueId);
-
-                    if (existingLeague is not null)
+                    var smb4LeagueFileName = Path.GetFileName(filePath);
+                    var smb4LeagueName = Path.GetFileNameWithoutExtension(smb4LeagueFileName);
+                    smb4LeagueName = smb4LeagueName[7..];
+                    var ok = Guid.TryParse(smb4LeagueName, out var smb4LeagueId);
+                    if (!ok)
                     {
-                        existingLeague.NumTimesAccessed++;
-                        existingLeague.LastAccessed = DateTime.Now;
+                        Log.Error("Failed to parse GUID from file name {FileName}. " +
+                                  "This occurs when we are attempting to cache the SMB4 league in the " +
+                                  "config for later on", smb4LeagueFileName);
                         
+                        Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
+                        return new Error();
+                    }
+                    
+                    var existingLeagueCached = existingLeagues
+                        .FirstOrDefault(x => x.SaveGameLeagueId == smb4LeagueId);
+                    var existingLeagueFromQuery = leaguesInConnection
+                        .FirstOrDefault(x => x.SaveGameLeagueId == smb4LeagueId);
+
+                    if (existingLeagueCached is not null && existingLeagueFromQuery is not null)
+                    {
+                        existingLeagueCached.NumTimesAccessed++;
+                        existingLeagueCached.LastAccessed = DateTime.Now;
+                        
+                        configOptions.Leagues.RemoveAll(x => x.Id == smb4LeagueId);
+                        configOptions.Leagues.Add(new League
+                        {
+                            Id = existingLeagueCached.SaveGameLeagueId,
+                            Name = existingLeagueCached.LeagueName,
+                            PlayerTeam = existingLeagueCached.PlayerTeam,
+                            NumSeasons = existingLeagueFromQuery.NumSeasons,
+                            NumTimesAccessed = existingLeagueCached.NumTimesAccessed,
+                            FirstAccessed = existingLeagueCached.FirstAccessed,
+                            LastAccessed = existingLeagueCached.LastAccessed
+                        });
+
                         _applicationConfig.SaveConfigOptions(configOptions);
                     }
                 }

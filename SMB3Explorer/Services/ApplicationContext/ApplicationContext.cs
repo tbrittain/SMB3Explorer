@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -41,9 +40,6 @@ public sealed class ApplicationContext : IApplicationContext, INotifyPropertyCha
     }
 
     public SelectedGame SelectedGame { get; set; }
-
-    public string? MostRecentSelectedSaveFilePath { get; set; }
-    public Guid MostRecentSelectedSaveFileLeagueId { get; set; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

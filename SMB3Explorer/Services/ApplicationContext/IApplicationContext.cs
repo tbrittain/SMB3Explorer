@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Internal;
@@ -14,7 +13,5 @@ public interface IApplicationContext
     FranchiseSeason? MostRecentFranchiseSeason { get; set; }
     bool FranchiseSeasonsLoading { get; set; }
     SelectedGame SelectedGame { get; set; }
-    string? MostRecentSelectedSaveFilePath { get; set; }
-    Guid MostRecentSelectedSaveFileLeagueId { get; set; }
     event PropertyChangedEventHandler? PropertyChanged;
 }
