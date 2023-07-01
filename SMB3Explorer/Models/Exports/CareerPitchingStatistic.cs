@@ -10,12 +10,12 @@ namespace SMB3Explorer.Models.Exports;
 public class CareerPitchingStatistic : CareerStatistic
 {
     [Ignore]
-    public int PitcherRole { get; set; }
+    public int? PitcherRole { get; set; }
     
     [Name("Pitcher Role"), Index(7)]
     // ReSharper disable once UnusedMember.Global
-    public string PitcherRoleDescription => ((PitcherRole) PitcherRole).GetEnumDescription();
-    
+    public string? PitcherRoleDescription => PitcherRole is null ? null : ((PitcherRole) PitcherRole).GetEnumDescription();
+
     [Name("W"), Index(8)]
     public int Wins { get; set; }
     

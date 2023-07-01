@@ -115,7 +115,7 @@ public partial class DataService
             mostRecentSeasonStatistic.FirstName = reader.GetString(3);
             mostRecentSeasonStatistic.LastName = reader.GetString(4);
             mostRecentSeasonStatistic.PositionNumber = reader.GetInt32(5);
-            mostRecentSeasonStatistic.PitcherRole = reader.GetInt32(6);
+            mostRecentSeasonStatistic.PitcherRole = reader.IsDBNull(6) ? null : reader.GetInt32(6);
             mostRecentSeasonStatistic.Wins = reader.GetInt32(8);
             mostRecentSeasonStatistic.Losses = reader.GetInt32(9);
             mostRecentSeasonStatistic.GamesStarted = reader.GetInt32(11);
@@ -149,7 +149,13 @@ public partial class DataService
     {
         var command = Connection!.CreateCommand();
 
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayers);
+        var commandText = _applicationContext.SelectedGame switch
+        {
+            SelectedGame.Smb3 => SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayersSmb3),
+            SelectedGame.Smb4 => SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayersSmb4),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
         command.CommandText = commandText;
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
@@ -188,12 +194,25 @@ public partial class DataService
             var traitsSerialized = reader.IsDBNull(20) ? null : reader.GetString(20);
             if (!string.IsNullOrEmpty(traitsSerialized))
             {
-                var traits = JsonConvert
-                    .DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized);
+                var traits = 
+                    JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ?? Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>();
 
-                seasonPlayer.Traits = (traits ?? Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>())
-                    .Select(_ => PlayerTrait.TraitMap[_])
-                    .ToArray();
+                seasonPlayer.Traits = _applicationContext.SelectedGame switch
+                {
+                    SelectedGame.Smb3 => traits
+                        .Select(x => PlayerTrait.Smb3TraitMap[x])
+                        .ToArray(),
+                    SelectedGame.Smb4 => traits
+                        .Select(x => PlayerTrait.Smb4TraitMap[x])
+                        .ToArray(),
+                    _ => throw new ArgumentException()
+                };
+            }
+
+            if (_applicationContext.SelectedGame is SelectedGame.Smb4)
+            {
+                var chemistry = reader.GetString(21);
+                seasonPlayer.Chemistry = chemistry;
             }
 
             yield return seasonPlayer;

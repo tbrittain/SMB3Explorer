@@ -63,8 +63,11 @@ public enum SqlFile
     [Description("TopPerformersRookiesBatting.sql")]
     TopPerformersRookiesBatting,
     
-    [Description("MostRecentSeasonPlayers.sql")]
-    MostRecentSeasonPlayers,
+    [Description("MostRecentSeasonPlayersSmb3.sql")]
+    MostRecentSeasonPlayersSmb3,
+    
+    [Description("MostRecentSeasonPlayersSmb4.sql")]
+    MostRecentSeasonPlayersSmb4,
     
     [Description("MostRecentSeasonTeams.sql")]
     MostRecentSeasonTeams,
@@ -77,6 +80,9 @@ public enum SqlFile
     
     [Description("MostRecentSeasonSchedule.sql")]
     MostRecentSeasonSchedule,
+    
+    [Description("GetLeaguesForSmb4SaveGame.sql")]
+    GetLeaguesForSmb4SaveGame,
 }
 
 public static class SqlRunner

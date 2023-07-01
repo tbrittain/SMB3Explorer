@@ -116,9 +116,11 @@ public partial class DataService
         pitcherStatistic.PreviousTeamName = string.IsNullOrEmpty(reader["previousRecentlyPlayedTeamName"].ToString()!)
             ? null
             : reader["previousRecentlyPlayedTeamName"].ToString()!;
-        
-        pitcherStatistic.PitcherRole = 
-            int.Parse(reader["pitcherRole"].ToString()!);
+
+        pitcherStatistic.PitcherRole = string.IsNullOrEmpty(reader["pitcherRole"].ToString()!)
+            ? null
+            : int.Parse(reader["pitcherRole"].ToString()!);
+
         pitcherStatistic.GamesPlayed = int.Parse(reader["games"].ToString()!);
         pitcherStatistic.GamesStarted = int.Parse(reader["gamesStarted"].ToString()!);
         pitcherStatistic.Wins = int.Parse(reader["wins"].ToString()!);

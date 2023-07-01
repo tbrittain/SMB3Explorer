@@ -6,6 +6,7 @@ using Microsoft.Data.Sqlite;
 using OneOf;
 using OneOf.Types;
 using Serilog;
+using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
 
@@ -51,7 +52,7 @@ public partial class DataService
         return decompressedFilePath;
     }
 
-    public async Task<OneOf<Success, Error<string>>> EstablishDbConnection(string filePath,
+    public async Task<OneOf<List<Smb4LeagueSelection>, Error<string>>> EstablishDbConnection(string filePath,
         bool isCompressedSaveGame = true)
     {
         Log.Information(
@@ -96,15 +97,42 @@ public partial class DataService
             tableNames.Add(tableName);
         }
 
-        // Using t_stats as a test table since it is an important one for this application
-        if (!tableNames.Contains("t_stats"))
+        if (!tableNames.Contains("t_stats") || !tableNames.Contains("t_leagues"))
         {
             Log.Error("Invalid save file, missing expected tables");
             return new Error<string>("Invalid save file, missing expected tables");
         }
 
+        List<Smb4LeagueSelection> leagues = new();
+        var command2 = Connection.CreateCommand();
+        commandText = SqlRunner.GetSqlCommand(SqlFile.GetLeaguesForSmb4SaveGame);
+        command2.CommandText = commandText;
+        var reader2 = await command2.ExecuteReaderAsync();
+
+        var smb4LeagueFileName = Path.GetFileName(filePath);
+        var smb4LeagueName = Path.GetFileNameWithoutExtension(smb4LeagueFileName);
+        smb4LeagueName = smb4LeagueName[7..];
+        var ok = Guid.TryParse(smb4LeagueName, out var smb4LeagueId);
+        if (!ok)
+        {
+            Log.Error("Failed to parse GUID from file name {FileName}. " +
+                      "This occurs when we are attempting to cache the SMB4 league in the " +
+                      "config for later on", smb4LeagueFileName);
+            return new Error<string>("Failed to parse GUID from file name.");
+        }
+
+        while (reader2.Read())
+        {
+            var leagueName = reader2.GetString(0);
+            var playerTeamName = reader2.IsDBNull(1) ? null : reader2.GetString(1);
+            int? numSeasons = reader2.IsDBNull(2) ? null : reader2.GetInt32(2);
+
+            var league = new Smb4LeagueSelection(leagueName, smb4LeagueId, playerTeamName, numSeasons);
+            leagues.Add(league);
+        }
+
         Log.Information("Successfully established database connection");
-        return new Success();
+        return leagues;
     }
 
     public async Task Disconnect()

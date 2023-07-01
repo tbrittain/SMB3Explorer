@@ -35,12 +35,12 @@ public abstract class PitchingStatistic
     public int PositionNumber { get; set; }
     
     [Ignore]
-    public int PitcherRole { get; set; }
+    public int? PitcherRole { get; set; }
 
     [Name("Pitcher Role"), Index(6)]
     // ReSharper disable once UnusedMember.Global
-    public string PitcherRoleDescription => ((PitcherRole) PitcherRole).GetEnumDescription();
-    
+    public string? PitcherRoleDescription => PitcherRole is null ? null : ((PitcherRole) PitcherRole).GetEnumDescription();
+
     [Name("Age"), Index(7)]
     public int Age { get; set; }
 

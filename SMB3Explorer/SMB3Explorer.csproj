@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
@@ -6,8 +6,8 @@
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <IsPackable>false</IsPackable>
-        <Version>1.4.0</Version>
-        <Title>SMB3 Explorer</Title>
+        <Version>1.5.0</Version>
+        <Title>SMB Explorer</Title>
         <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
         <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
         <RepositoryUrl>https://github.com/tbrittain/SMB3Explorer.git</RepositoryUrl>
@@ -23,12 +23,12 @@
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
       <PackageReference Include="CsvHelper" Version="30.0.1" />
       <PackageReference Include="DotNetZip" Version="1.16.0" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.5" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.8" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-      <PackageReference Include="OneOf" Version="3.0.243" />
-      <PackageReference Include="Serilog" Version="2.12.0" />
+      <PackageReference Include="OneOf" Version="3.0.255" />
+      <PackageReference Include="Serilog" Version="3.0.1" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     </ItemGroup>
@@ -46,10 +46,6 @@
       <None Remove="Resources\Sql\GetFranchises.sql" />
       <None Remove="Resources\Sql\GetAllFranchiseBatters.sql" />
       <None Remove="Resources\Sql\GetAllFranchisePitchers.sql" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Controls" />
     </ItemGroup>
 
     <ItemGroup>
@@ -88,7 +84,6 @@
       <None Remove="Resources\Sql\GetFranchiseSeasons.sql" />
       <EmbeddedResource Include="Resources\Sql\FranchiseSeasons.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonPlayers.sql" />
-      <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayers.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonTeams.sql" />
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonTeams.sql" />
       <None Remove="Resources\Sql\SeasonAverageBatterStats.sql" />
@@ -97,6 +92,13 @@
       <EmbeddedResource Include="Resources\Sql\SeasonAveragePitcherStats.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonSchedule.sql" />
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonSchedule.sql" />
+      <None Remove="Resources\Sql\GetLeagues.sql" />
+      <None Remove="Resources\Sql\MostRecentSeasonPlayersSmb3.sql" />
+      <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb3.sql" />
+      <None Remove="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />
+      <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />
+      <None Remove="Resources\Sql\GetLeaguesForSmb4SaveGame.sql" />
+      <EmbeddedResource Include="Resources\Sql\GetLeaguesForSmb4SaveGame.sql" />
     </ItemGroup>
 
 </Project>
