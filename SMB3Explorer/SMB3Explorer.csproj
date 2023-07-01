@@ -93,7 +93,6 @@
       <None Remove="Resources\Sql\MostRecentSeasonSchedule.sql" />
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonSchedule.sql" />
       <None Remove="Resources\Sql\GetLeagues.sql" />
-      <EmbeddedResource Include="Resources\Sql\GetLeagues.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonPlayersSmb3.sql" />
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb3.sql" />
       <None Remove="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />

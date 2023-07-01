@@ -107,7 +107,7 @@ public partial class DataService
 
         List<Smb4LeagueSelection> leagues = new();
         var command2 = Connection.CreateCommand();
-        commandText = SqlRunner.GetSqlCommand(SqlFile.GetLeagues);
+        commandText = SqlRunner.GetSqlCommand(SqlFile.GetLeaguesForSmb4SaveGame);
         command2.CommandText = commandText;
         var reader2 = await command2.ExecuteReaderAsync();
 
