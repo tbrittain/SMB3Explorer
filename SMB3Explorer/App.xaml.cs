@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using SMB3Explorer.AppConfig;
+using SMB3Explorer.ApplicationConfig;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.CsvWriterWrapper;
 using SMB3Explorer.Services.DataService;
@@ -51,7 +51,7 @@ public partial class App
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IApplicationContext, ApplicationContext>();
         services.AddSingleton<ISystemIoWrapper, SystemIoWrapper>();
-        services.AddSingleton<IApplicationConfig, ApplicationConfig>();
+        services.AddSingleton<IApplicationConfig, ApplicationConfig.ApplicationConfig>();
 
         services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
         {

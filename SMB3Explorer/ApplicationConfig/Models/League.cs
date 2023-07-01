@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace SMB3Explorer.AppConfig.Models;
+namespace SMB3Explorer.ApplicationConfig.Models;
 
 public class League
 {

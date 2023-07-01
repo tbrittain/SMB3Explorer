@@ -1,8 +1,8 @@
 ﻿using OneOf;
 using OneOf.Types;
-using SMB3Explorer.AppConfig.Models;
+using SMB3Explorer.ApplicationConfig.Models;
 
-namespace SMB3Explorer.AppConfig;
+namespace SMB3Explorer.ApplicationConfig;
 
 public interface IApplicationConfig
 {

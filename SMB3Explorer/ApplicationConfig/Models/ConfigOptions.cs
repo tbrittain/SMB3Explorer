@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using SMB3Explorer.Enums;
 
-namespace SMB3Explorer.AppConfig.Models;
+namespace SMB3Explorer.ApplicationConfig.Models;
 
 public class ConfigOptions
 {
