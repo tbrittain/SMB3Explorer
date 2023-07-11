@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using SMB3Explorer.Services.HttpService;
 using SMB3Explorer.Services.NavigationService;
 using SMB3Explorer.Services.SystemIoWrapper;
 using SMB3Explorer.Utils;
+using SMB3Explorer.Views;
 using static SMB3Explorer.Constants.FileExports;
 using static SMB3Explorer.Constants.Github;
 
@@ -104,6 +106,29 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         NavigationService.NavigateTo<LandingViewModel>();
         _ = Task.Run(async () => await CheckForUpdates());
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    private Task OpenLeagueInformationModal()
+    {
+        Log.Information("Opening league information modal");
+
+        var existingModal = Application.Current.Windows
+            .OfType<LeagueInformationWindow>()
+            .FirstOrDefault();
+
+        if (existingModal is not null)
+        {
+            existingModal.Activate();
+        }
+        else
+        {
+            var modal = new LeagueInformationWindow();
+            modal.ShowDialog();
+        }
+
+        Log.Information("Opened league information modal");
         return Task.CompletedTask;
     }
 

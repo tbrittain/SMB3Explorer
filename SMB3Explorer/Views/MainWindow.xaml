@@ -20,6 +20,11 @@
                           Visibility="{Binding DeselectSaveGameVisibility}" />
                 <MenuItem Header="_Purge application data" Command="{Binding PurgeApplicationDataCommand}" />
             </MenuItem>
+            
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Open SMB4 League Information"
+                          Command="{Binding OpenLeagueInformationModalCommand}" />
+            </MenuItem>
 
             <MenuItem Header="_Help">
                 <MenuItem Header="Open _GitHub repository" Command="{Binding OpenGithubRepoCommand}" />
