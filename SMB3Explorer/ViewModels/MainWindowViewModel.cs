@@ -129,7 +129,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             var modal = new LeagueInformationWindow
             {
-                DataContext = new LeagueInformationViewModel(_applicationConfig)
+                DataContext = new LeagueInformationViewModel(_applicationConfig, _systemIoWrapper)
             };
             modal.ShowDialog();
             modal.Activate();

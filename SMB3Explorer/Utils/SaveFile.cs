@@ -56,6 +56,31 @@ public static class SaveFile
         return leagueSaveFile;
     }
 
+    public static OneOf<string, None> GetSmb4SaveFileDirectory(ISystemIoWrapper systemIoWrapper)
+    {
+        if (!systemIoWrapper.DirectoryExists(BaseGameSmb3DirectoryPath))
+        {
+            return new None();
+        }
+        
+        var subdirectories = systemIoWrapper.DirectoryGetDirectories(BaseGameSmb4DirectoryPath);
+
+        var steamUserDirectories = subdirectories
+            .Where(x =>
+            {
+                var lastBackslashIndex = x.LastIndexOf('\\');
+                var lastPart = x[(lastBackslashIndex + 1)..];
+                return long.TryParse(lastPart, out _);
+            })
+            .ToList();
+
+        if (steamUserDirectories.Count != 1)
+            return new None();
+
+        var steamUserDirectory = steamUserDirectories[0];
+        return steamUserDirectory;
+    }
+
     public static OneOf<string, None> GetSaveFilePath(ISystemIoWrapper systemIoWrapper, SelectedGame selectedGame)
     {
         var directoryPath = selectedGame switch

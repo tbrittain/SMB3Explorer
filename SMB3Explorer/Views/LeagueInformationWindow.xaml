@@ -3,12 +3,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:SMB3Explorer.Views"
+        xmlns:viewModels="clr-namespace:SMB3Explorer.ViewModels"
         mc:Ignorable="d"
-        Title="SMB4 League Information" Height="500" Width="500">
-    <Grid>
-        <Label>
-            This will display cached SMB4 league information from the previously connected leagues
-        </Label>
-    </Grid>
+        Title="SMB4 League Information" Height="500" Width="800"
+        d:DataContext="{d:DesignInstance viewModels:LeagueInformationViewModel}">
+    <StackPanel>
+        <DataGrid
+            ItemsSource="{Binding ExistingLeagues}"
+            AutoGenerateColumns="True"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserReorderColumns="False" 
+            ClipboardCopyMode="IncludeHeader"/>
+        <Button
+            Height="25"
+            Width="250"
+            Margin="0,10,0,0"
+            Content="Open SMB4 save folder"
+            Command="{Binding OpenSmb4SaveFileDirectoryCommand}" />
+    </StackPanel>
 </Window>
