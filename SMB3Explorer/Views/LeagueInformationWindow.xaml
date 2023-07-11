@@ -5,9 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:SMB3Explorer.Views"
         mc:Ignorable="d"
-        Title="LeagueInformationWindow" Height="500" Width="500"
-        ShowActivated="True"
-        >
+        Title="SMB4 League Information" Height="500" Width="500">
     <Grid>
         <Label>
             This will display cached SMB4 league information from the previously connected leagues

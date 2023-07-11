@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
+using SMB3Explorer.ApplicationConfig;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.DataService;
 using SMB3Explorer.Services.HttpService;
@@ -25,18 +26,20 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IHttpService _httpService;
 
     private readonly ISystemIoWrapper _systemIoWrapper;
+    private readonly IApplicationConfig _applicationConfig;
     private AppUpdateResult? _appUpdateResult;
     private Visibility _deselectSaveGameVisibility = Visibility.Collapsed;
     private bool _isUpdateAvailable;
     private Visibility _updateAvailableVisibility = Visibility.Collapsed;
 
     public MainWindowViewModel(INavigationService navigationService, ISystemIoWrapper systemIoWrapper,
-        IDataService dataService, IHttpService httpService)
+        IDataService dataService, IHttpService httpService, IApplicationConfig applicationConfig)
     {
         NavigationService = navigationService;
         _systemIoWrapper = systemIoWrapper;
         _dataService = dataService;
         _httpService = httpService;
+        _applicationConfig = applicationConfig;
 
         Log.Information("Initializing MainWindowViewModel");
 
@@ -124,8 +127,12 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         else
         {
-            var modal = new LeagueInformationWindow();
+            var modal = new LeagueInformationWindow
+            {
+                DataContext = new LeagueInformationViewModel(_applicationConfig)
+            };
             modal.ShowDialog();
+            modal.Activate();
         }
 
         Log.Information("Opened league information modal");
