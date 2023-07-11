@@ -104,7 +104,7 @@ public partial class DataService
             return new Error<string>("Invalid save file, missing expected tables");
         }
 
-        if (_applicationContext.SelectedGame is SelectedGame.Smb3)
+        if (_applicationContext.SelectedGame is SelectedGame.Smb3 || !isCompressedSaveGame)
         {
             Log.Information("Successfully established database connection");
             return new List<Smb4LeagueSelection>();
