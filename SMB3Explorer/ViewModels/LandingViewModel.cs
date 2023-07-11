@@ -256,7 +256,7 @@ public partial class LandingViewModel : ViewModelBase
                 new Exception(error.Value));
         }
 
-        if (_applicationContext.SelectedGame is SelectedGame.Smb4)
+        if (_applicationContext.SelectedGame is SelectedGame.Smb4 && isCompressedSaveGame)
         {
             var leaguesInConfig = _applicationConfig.GetConfigOptions();
             if (leaguesInConfig.TryPickT1(out var error2, out var configOptions))
