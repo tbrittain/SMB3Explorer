@@ -27,7 +27,9 @@
                                           vss.gamesLost                                                AS losses,
                                           vss.gamesBack                                                AS gamesBack,
                                           CAST(vss.gamesWon AS FLOAT) / (vss.gamesWon + vss.gamesLost) AS winPercentage,
-                                          vss.runsFor - vss.runsAgainst                                AS runDifferential
+                                          vss.runsFor - vss.runsAgainst                                AS runDifferential,
+                                          vss.runsFor                                                  AS runsFor,
+                                          vss.runsAgainst                                              AS runsAgainst
                                    FROM v_season_standings vss
                                             JOIN mostRecentSeason fs ON vss.seasonGUID = fs.seasonGUID
                                             JOIN t_teams tt ON vss.teamGUID = tt.GUID)
@@ -43,6 +45,8 @@ SELECT teams.*,
        mostRecentSeasonStandings.gamesBack,
        mostRecentSeasonStandings.winPercentage,
        mostRecentSeasonStandings.runDifferential,
+       mostRecentSeasonStandings.runsFor,
+       mostRecentSeasonStandings.runsAgainst,
        SUM(tbp.power)                                               AS power,
        SUM(tbp.contact)                                             AS contact,
        SUM(tbp.speed)                                               AS speed,
