@@ -194,8 +194,9 @@ public partial class DataService
             var traitsSerialized = reader.IsDBNull(20) ? null : reader.GetString(20);
             if (!string.IsNullOrEmpty(traitsSerialized))
             {
-                var traits = 
-                    JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ?? Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>();
+                var traits =
+                    JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ??
+                    Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>();
 
                 seasonPlayer.Traits = _applicationContext.SelectedGame switch
                 {
@@ -289,11 +290,15 @@ public partial class DataService
             seasonSchedule.GameNum = reader.GetInt32(2);
             seasonSchedule.Day = reader.GetInt32(3);
             seasonSchedule.HomeTeam = reader.GetString(5);
-            seasonSchedule.AwayTeam = reader.GetString(7);
-            seasonSchedule.HomeRunsScored = reader.IsDBNull(8) ? null : reader.GetInt32(8);
-            seasonSchedule.AwayRunsScored = reader.IsDBNull(9) ? null : reader.GetInt32(9);
-            seasonSchedule.HomePitcherName = reader.IsDBNull(11) ? null : reader.GetString(11);
-            seasonSchedule.AwayPitcherName = reader.IsDBNull(13) ? null : reader.GetString(13);
+            seasonSchedule.HomeTeamId = reader.GetGuid(6);
+            seasonSchedule.AwayTeam = reader.GetString(8);
+            seasonSchedule.AwayTeamId = reader.GetGuid(9);
+            seasonSchedule.HomeRunsScored = reader.IsDBNull(10) ? null : reader.GetInt32(10);
+            seasonSchedule.AwayRunsScored = reader.IsDBNull(11) ? null : reader.GetInt32(11);
+            seasonSchedule.HomePitcherId = reader.IsDBNull(13) ? null : reader.GetGuid(13);
+            seasonSchedule.HomePitcherName = reader.IsDBNull(14) ? null : reader.GetString(14);
+            seasonSchedule.AwayPitcherId = reader.IsDBNull(16) ? null : reader.GetGuid(16);
+            seasonSchedule.AwayPitcherName = reader.IsDBNull(17) ? null : reader.GetString(17);
 
             yield return seasonSchedule;
         }
