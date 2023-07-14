@@ -254,14 +254,16 @@ public partial class DataService
             seasonTeam.GamesBack = reader.GetDouble(15);
             seasonTeam.WinPercentage = reader.GetDouble(16);
             seasonTeam.RunDifferential = reader.GetInt32(17);
-            seasonTeam.Power = reader.GetInt32(18);
-            seasonTeam.Contact = reader.GetInt32(19);
-            seasonTeam.Speed = reader.GetInt32(20);
-            seasonTeam.Fielding = reader.GetInt32(21);
-            seasonTeam.Arm = reader.GetInt32(22);
-            seasonTeam.Velocity = reader.GetInt32(23);
-            seasonTeam.Junk = reader.GetInt32(24);
-            seasonTeam.Accuracy = reader.GetInt32(25);
+            seasonTeam.RunsFor = reader.GetInt32(18);
+            seasonTeam.RunsAgainst = reader.GetInt32(19);
+            seasonTeam.Power = reader.GetInt32(20);
+            seasonTeam.Contact = reader.GetInt32(21);
+            seasonTeam.Speed = reader.GetInt32(22);
+            seasonTeam.Fielding = reader.GetInt32(23);
+            seasonTeam.Arm = reader.GetInt32(24);
+            seasonTeam.Velocity = reader.GetInt32(25);
+            seasonTeam.Junk = reader.GetInt32(26);
+            seasonTeam.Accuracy = reader.GetInt32(27);
 
             yield return seasonTeam;
         }
