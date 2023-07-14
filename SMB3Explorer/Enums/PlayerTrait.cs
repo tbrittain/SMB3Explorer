@@ -10,6 +10,7 @@ public static class PlayerTrait
 {
     public record struct DatabaseTraitSubtypePair(int TraitId, int? SubtypeId);
 
+    // ReSharper disable once InconsistentNaming
     private static Dictionary<DatabaseTraitSubtypePair, Trait> _smb3TraitMap { get; } = new()
     {
         {new DatabaseTraitSubtypePair(0, 0), Trait.BatterPowerVsRight},
@@ -37,6 +38,7 @@ public static class PlayerTrait
     public static ImmutableDictionary<DatabaseTraitSubtypePair, Trait> Smb3TraitMap { get; } =
         _smb3TraitMap.ToImmutableDictionary();
 
+    // ReSharper disable once InconsistentNaming
     private static Dictionary<DatabaseTraitSubtypePair, Trait> _smb4TraitMap { get; } = new()
     {
         {new DatabaseTraitSubtypePair(0, 0), Trait.BatterPowerVsRight},

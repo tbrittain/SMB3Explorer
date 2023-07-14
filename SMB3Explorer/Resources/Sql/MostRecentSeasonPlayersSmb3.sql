@@ -41,7 +41,7 @@ SELECT vbpi.baseballPlayerGUID,
        CASE
            WHEN COUNT(tbpt.trait) = 0 THEN NULL
            ELSE json_group_array(json_object('traitId', tbpt.trait, 'subtypeId', tbpt.subType))
-           END AS traits
+           END                                        AS traits
 
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID

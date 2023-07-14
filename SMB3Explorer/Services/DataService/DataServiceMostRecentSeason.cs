@@ -202,9 +202,11 @@ public partial class DataService
                 {
                     SelectedGame.Smb3 => traits
                         .Select(x => PlayerTrait.Smb3TraitMap[x])
+                        .Distinct()
                         .ToArray(),
                     SelectedGame.Smb4 => traits
                         .Select(x => PlayerTrait.Smb4TraitMap[x])
+                        .Distinct()
                         .ToArray(),
                     _ => throw new ArgumentException()
                 };
@@ -214,6 +216,23 @@ public partial class DataService
             {
                 var chemistry = reader.GetString(21);
                 seasonPlayer.Chemistry = chemistry;
+                
+                seasonPlayer.ThrowHand = reader.GetString(22);
+                seasonPlayer.BatHand = reader.GetString(23);
+            
+                var pitchesSerialized = reader.IsDBNull(24) ? null : reader.GetString(24);
+                if (!string.IsNullOrEmpty(pitchesSerialized))
+                {
+                    var pitches = JsonConvert.DeserializeObject<DatabaseIntOption[]>(pitchesSerialized) ??
+                                  Array.Empty<DatabaseIntOption>();
+
+                    seasonPlayer.Pitches = pitches
+                        .Select(x => PitchTypes.Pitches[x])
+                        .Where(x => x is not null)
+                        .Cast<PitchType>()
+                        .Distinct()
+                        .ToArray();
+                }
             }
 
             yield return seasonPlayer;
