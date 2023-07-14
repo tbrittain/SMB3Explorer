@@ -7,13 +7,13 @@ WITH teams AS
                    JOIN t_conferences c on d.conferenceGUID = c.GUID
                    JOIN t_leagues l on c.leagueGUID = l.GUID
                    JOIN t_franchise tf ON l.GUID = tf.leagueGUID
-          WHERE l.GUID = CAST(@leagueId AS BLOB)),
+          WHERE l.name = 'Baseball United v3'),
      mostRecentSeason AS (SELECT id                        AS seasonID,
                                  RANK() OVER (ORDER BY id) AS seasonNum
                           FROM t_seasons
                                    JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
                                    JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
-                          WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
+                          WHERE t_leagues.name = 'Baseball United v3'
                           ORDER BY ID DESC
                           LIMIT 1),
      gameResults AS (SELECT (ROW_NUMBER() OVER (PARTITION BY tsg.seasonID ORDER BY tgr.ID) - 1) /
@@ -39,14 +39,18 @@ SELECT ss.seasonID,
        ss.gameNumber,
        ss.day,
        ss.homeTeamID,
-       homeTeams.teamName,
+       homeTeams.teamName                               AS homeTeamName,
+       homeTeams.teamGUID                               AS homeTeamGUID,
        ss.awayTeamID,
-       awayTeams.teamName,
+       awayTeams.teamName                               AS awayTeamName,
+       awayTeams.teamGUID                               AS awayTeamGUID,
        gr.homeRunsScored,
        gr.awayRunsScored,
        gr.homePitcherLocalID,
+       vbpi_home.baseballPlayerGUID                     AS homePitcherGUID,
        vbpi_home.firstName || ' ' || vbpi_home.lastName AS homePitcherName,
        gr.awayPitcherLocalID,
+       vbpi_away.baseballPlayerGUID                     AS awayPitcherGUID,
        vbpi_away.firstName || ' ' || vbpi_away.lastName AS awayPitcherName
 FROM seasonSchedule ss
          LEFT JOIN gameResults gr
