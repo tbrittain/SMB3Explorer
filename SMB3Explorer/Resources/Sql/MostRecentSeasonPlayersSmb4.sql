@@ -54,7 +54,20 @@ SELECT vbpi.baseballPlayerGUID,
            WHEN chemistry.optionValue = 4
                THEN 'Crafty'
            ELSE 'Unknown'
-           END                                        AS chemistryType
+           END                                        AS chemistryType,
+       CASE
+           WHEN throwHand.optionValue = 0 THEN 'L'
+           WHEN throwHand.optionValue = 1 THEN 'R'
+           ELSE 'Unknown' END                         AS throwHand,
+       CASE
+           WHEN batHand.optionValue = 0 THEN 'L'
+           WHEN batHand.optionValue = 1 THEN 'R'
+           WHEN batHand.optionValue = 2 THEN 'S'
+           ELSE 'Unknown' END                         AS batHand,
+       CASE
+           WHEN COUNT(pitches.optionValue) = 0 THEN NULL
+           ELSE json_group_array(json_object('optionKey', pitches.optionKey, 'optionValue', pitches.optionValue))
+           END                                        AS pitches
 
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
@@ -73,6 +86,13 @@ FROM [v_baseball_player_info] vbpi
 
          LEFT JOIN t_baseball_player_options secondaryPosition
                    ON tbpli.localID = secondaryPosition.baseballPlayerLocalID AND secondaryPosition.optionKey = 55
+         JOIN t_baseball_player_options throwHand
+              ON tbpli.localID = throwHand.baseballPlayerLocalID AND throwHand.optionKey = 4
+         JOIN t_baseball_player_options batHand
+              ON tbpli.localID = batHand.baseballPlayerLocalID AND batHand.optionKey = 5
+         LEFT JOIN t_baseball_player_options pitches
+                   ON tbpli.localID = pitches.baseballPlayerLocalID AND pitches.optionKey >= 58 AND
+                      pitches.optionKey <= 65
 
          LEFT JOIN t_baseball_player_options chemistry
                    ON tbpli.localID = chemistry.baseballPlayerLocalID AND chemistry.optionKey = 107
