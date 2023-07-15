@@ -12,7 +12,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="200" />
                 <ColumnDefinition Width="2*" MinWidth="200" />
-                <ColumnDefinition Width="2*" MinWidth="200" />
+                <ColumnDefinition Width="4*" MinWidth="200" />
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
@@ -49,7 +49,8 @@
                       Padding="5">
                 <WrapPanel Orientation="Vertical"
                            HorizontalAlignment="Stretch"
-                           Width="auto">
+                           Width="auto"
+                           Height="250">
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -91,7 +92,8 @@
                       Padding="5">
                 <WrapPanel Orientation="Vertical"
                            HorizontalAlignment="Stretch"
-                           Width="auto">
+                           Width="auto"
+                           Height="250">
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -132,7 +134,8 @@
                       Margin="5"
                       Padding="5">
                 <WrapPanel Orientation="Vertical"
-                           HorizontalAlignment="Stretch">
+                           HorizontalAlignment="Stretch"
+                           Height="250">
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -155,7 +158,8 @@
                       Grid.Row="1"
                       Grid.Column="2">
                 <WrapPanel Orientation="Vertical"
-                           HorizontalAlignment="Stretch">
+                           HorizontalAlignment="Stretch"
+                           Height="250">
                     <Button
                         Margin="0, 5, 0, 0"
                         Padding="5"
@@ -193,6 +197,22 @@
                         Padding="5"
                         HorizontalAlignment="Stretch"
                         Height="50"
+                        Command="{Binding ExportTopPerformersBattingPlayoffsCommand}"
+                        Content="Export current season top playoff batters" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportTopPerformersPitchingPlayoffsCommand}"
+                        Content="Export current season top playoff pitchers" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
                         Command="{Binding ExportMostRecentSeasonPlayersCommand}"
                         Content="Export current season players" />
                     
@@ -213,7 +233,6 @@
                         Content="Export current season schedule" />
                 </WrapPanel>
             </GroupBox>
-
         </Grid>
     </StackPanel>
 </UserControl>

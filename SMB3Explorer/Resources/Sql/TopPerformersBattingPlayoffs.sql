@@ -42,10 +42,10 @@ SELECT baseballPlayerGUID,
                            ) / @leagueOps)            AS sortOrder,
        currentTeam.teamName                           AS teamName,
        currentTeam.teamGUID                           AS teamGUID,
-       mostRecentTeam.teamName                        AS mostRecentlyPlayedTeamName,
-       mostRecentTeam.teamGUID                        AS mostRecentlyPlayedTeamGUID,
-       previouslyRecentPlayedTeam.teamName            AS previousRecentlyPlayedTeamName,
-       previouslyRecentPlayedTeam.teamGUID            AS previousRecentlyPlayedTeamGUID,
+       NULL                                           AS mostRecentlyPlayedTeamName,
+       NULL                                           AS mostRecentlyPlayedTeamGUID,
+       NULL                                           AS previousRecentlyPlayedTeamName,
+       NULL                                           AS previousRecentlyPlayedTeamGUID,
        tbp.age                                        AS age
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
@@ -55,9 +55,9 @@ FROM [v_baseball_player_info] vbpi
 
          LEFT JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
 
-         LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
+         LEFT JOIN t_playoff_stats tps ON ts.aggregatorID = tps.aggregatorID
 
-         JOIN t_seasons tsea ON tss.seasonID = tsea.ID
+         JOIN t_seasons tsea ON tps.seasonID = tsea.ID
          JOIN mostRecentSeason s ON tsea.ID = s.seasonID
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
@@ -69,7 +69,5 @@ FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_team_local_ids tt2 ON ts.mostRecentlyPlayedTeamLocalID = tt2.localID
          LEFT JOIN t_team_local_ids tt3 ON ts.previousRecentlyPlayedTeamLocalID = tt3.localID
          LEFT JOIN teams currentTeam ON tt1.GUID = currentTeam.teamGUID
-         LEFT JOIN teams mostRecentTeam ON tt2.GUID = mostRecentTeam.teamGUID
-         LEFT JOIN teams previouslyRecentPlayedTeam ON tt3.GUID = previouslyRecentPlayedTeam.teamGUID
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
 ORDER BY sortOrder DESC

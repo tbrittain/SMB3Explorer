@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using OneOf;
+using OneOf.Types;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Utils;
@@ -13,13 +15,19 @@ namespace SMB3Explorer.Services.DataService;
 public partial class DataService
 {
     public async IAsyncEnumerable<BattingMostRecentSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(
-        bool isRookies = false)
+        MostRecentSeasonFilter filter)
     {
-        var seasonAverageOps = await GetAverageSeasonOps();
+        var seasonAverageOps = await GetAverageSeasonOps(filter);
 
         var command = Connection!.CreateCommand();
 
-        var sqlFile = isRookies ? SqlFile.TopPerformersRookiesBatting : SqlFile.TopPerformersBatting;
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.TopPerformersBatting,
+            MostRecentSeasonFilter.Rookies => SqlFile.TopPerformersRookiesBatting,
+            MostRecentSeasonFilter.Playoffs => SqlFile.TopPerformersBattingPlayoffs,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
 
         var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
@@ -68,22 +76,31 @@ public partial class DataService
             positionPlayerStatistic.PassedBalls = reader.GetInt32(26);
             positionPlayerStatistic.OnBasePercentagePlus = reader.IsDBNull(27) ? null : reader.GetDouble(27);
             positionPlayerStatistic.TeamName = reader.IsDBNull(29) ? null : reader.GetString(29);
-            positionPlayerStatistic.MostRecentTeamName = reader.IsDBNull(30) ? null : reader.GetString(30);
-            positionPlayerStatistic.PreviousTeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
-            positionPlayerStatistic.Age = reader.GetInt32(32);
+            positionPlayerStatistic.TeamId = reader.IsDBNull(30) ? null : reader.GetGuid(30);
+            positionPlayerStatistic.MostRecentTeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
+            positionPlayerStatistic.MostRecentTeamId = reader.IsDBNull(31) ? null : reader.GetGuid(32);
+            positionPlayerStatistic.PreviousTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
+            positionPlayerStatistic.PreviousTeamId = reader.IsDBNull(34) ? null : reader.GetGuid(34);
+            positionPlayerStatistic.Age = reader.GetInt32(35);
 
             yield return positionPlayerStatistic;
         }
     }
 
     public async IAsyncEnumerable<PitchingMostRecentSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(
-        bool isRookies = false)
+        MostRecentSeasonFilter filter)
     {
-        var seasonAveragePitcherStats = await GetAverageSeasonPitcherStats();
+        var seasonAveragePitcherStats = await GetAverageSeasonPitcherStats(filter);
 
         var command = Connection!.CreateCommand();
 
-        var sqlFile = isRookies ? SqlFile.TopPerformersRookiesPitching : SqlFile.TopPerformersPitching;
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.TopPerformersPitching,
+            MostRecentSeasonFilter.Rookies => SqlFile.TopPerformersRookiesPitching,
+            MostRecentSeasonFilter.Playoffs => SqlFile.TopPerformersPitchingPlayoffs,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
 
         var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
@@ -137,9 +154,12 @@ public partial class DataService
             mostRecentSeasonStatistic.EarnedRunsAllowedMinus = reader.GetDouble(28);
             mostRecentSeasonStatistic.FieldingIndependentPitchingMinus = reader.GetDouble(29);
             mostRecentSeasonStatistic.TeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
-            mostRecentSeasonStatistic.MostRecentTeamName = reader.IsDBNull(32) ? null : reader.GetString(32);
-            mostRecentSeasonStatistic.PreviousTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
-            mostRecentSeasonStatistic.Age = reader.GetInt32(34);
+            mostRecentSeasonStatistic.TeamId = reader.IsDBNull(32) ? null : reader.GetGuid(32);
+            mostRecentSeasonStatistic.MostRecentTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
+            mostRecentSeasonStatistic.MostRecentTeamId = reader.IsDBNull(34) ? null : reader.GetGuid(34);
+            mostRecentSeasonStatistic.PreviousTeamName = reader.IsDBNull(35) ? null : reader.GetString(35);
+            mostRecentSeasonStatistic.PreviousTeamId = reader.IsDBNull(36) ? null : reader.GetGuid(36);
+            mostRecentSeasonStatistic.Age = reader.GetInt32(37);
 
             yield return mostRecentSeasonStatistic;
         }
@@ -216,10 +236,10 @@ public partial class DataService
             {
                 var chemistry = reader.GetString(21);
                 seasonPlayer.Chemistry = chemistry;
-                
+
                 seasonPlayer.ThrowHand = reader.GetString(22);
                 seasonPlayer.BatHand = reader.GetString(23);
-            
+
                 var pitchesSerialized = reader.IsDBNull(24) ? null : reader.GetString(24);
                 if (!string.IsNullOrEmpty(pitchesSerialized))
                 {
@@ -325,11 +345,36 @@ public partial class DataService
         }
     }
 
-    private async Task<double> GetAverageSeasonOps()
+    public async Task<bool> DoesMostRecentSeasonPlayoffExist()
+    {
+        var command = Connection!.CreateCommand();
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.PlayoffsAverageBatterStats);
+        command.CommandText = commandText;
+
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        });
+
+        var reader = await command.ExecuteReaderAsync();
+        reader.Read();
+
+        return !reader.IsDBNull(0);
+    }
+
+    private async Task<double> GetAverageSeasonOps(MostRecentSeasonFilter filter)
     {
         var command = Connection!.CreateCommand();
 
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.SeasonAverageBatterStats);
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.SeasonAverageBatterStats,
+            MostRecentSeasonFilter.Rookies => SqlFile.SeasonAverageBatterStats,
+            MostRecentSeasonFilter.Playoffs => SqlFile.PlayoffsAverageBatterStats,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+
+        var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
@@ -344,11 +389,19 @@ public partial class DataService
         return opsOrdinal;
     }
 
-    private async Task<AverageSeasonPitcherStats> GetAverageSeasonPitcherStats()
+    private async Task<AverageSeasonPitcherStats> GetAverageSeasonPitcherStats(MostRecentSeasonFilter filter)
     {
         var command = Connection!.CreateCommand();
 
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.SeasonAveragePitcherStats);
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.SeasonAveragePitcherStats,
+            MostRecentSeasonFilter.Rookies => SqlFile.SeasonAveragePitcherStats,
+            MostRecentSeasonFilter.Playoffs => SqlFile.PlayoffsAveragePitcherStats,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+
+        var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)

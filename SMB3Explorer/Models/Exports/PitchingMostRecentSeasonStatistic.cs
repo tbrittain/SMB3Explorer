@@ -1,7 +1,5 @@
 ﻿using System;
 using CsvHelper.Configuration.Attributes;
-using SMB3Explorer.Enums;
-using SMB3Explorer.Utils;
 
 namespace SMB3Explorer.Models.Exports;
 
@@ -15,4 +13,16 @@ public class PitchingMostRecentSeasonStatistic : PitchingStatistic
     
     [Name("PlayerId"), Index(42)]
     public new Guid PlayerId { get; set; }
+    
+    [Name("SeasonId"), Index(43)]
+    public new int SeasonId { get; set; }
+
+    [Name("TeamId"), Index(44)]
+    public Guid? TeamId { get; set; }
+    
+    [Name("MostRecentTeamId"), Index(45)]
+    public Guid? MostRecentTeamId { get; set; }
+    
+    [Name("PreviousTeamId"), Index(46)]
+    public Guid? PreviousTeamId { get; set; }
 }
