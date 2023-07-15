@@ -99,6 +99,10 @@
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />
       <None Remove="Resources\Sql\GetLeaguesForSmb4SaveGame.sql" />
       <EmbeddedResource Include="Resources\Sql\GetLeaguesForSmb4SaveGame.sql" />
+      <None Remove="Resources\Sql\TopPerformersBattingPlayoffs.sql" />
+      <EmbeddedResource Include="Resources\Sql\TopPerformersBattingPlayoffs.sql" />
+      <None Remove="Resources\Sql\TopPerformersPitchingPlayoffs.sql" />
+      <EmbeddedResource Include="Resources\Sql\TopPerformersPitchingPlayoffs.sql" />
     </ItemGroup>
 
 </Project>
