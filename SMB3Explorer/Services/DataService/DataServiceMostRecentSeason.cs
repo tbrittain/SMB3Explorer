@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using OneOf;
+using OneOf.Types;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Utils;
@@ -341,6 +343,23 @@ public partial class DataService
 
             yield return seasonSchedule;
         }
+    }
+
+    public async Task<bool> DoesMostRecentSeasonPlayoffExist()
+    {
+        var command = Connection!.CreateCommand();
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.PlayoffsAverageBatterStats);
+        command.CommandText = commandText;
+
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        });
+
+        var reader = await command.ExecuteReaderAsync();
+        reader.Read();
+
+        return !reader.IsDBNull(0);
     }
 
     private async Task<double> GetAverageSeasonOps(MostRecentSeasonFilter filter)

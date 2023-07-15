@@ -121,6 +121,8 @@ public partial class HomeViewModel : ViewModelBase
                     ExportTopRookiesBattingCommand.NotifyCanExecuteChanged();
                     ExportTopPerformersPitchingCommand.NotifyCanExecuteChanged();
                     ExportTopRookiesPitchingCommand.NotifyCanExecuteChanged();
+                    ExportTopPerformersBattingPlayoffsCommand.NotifyCanExecuteChanged();
+                    ExportTopPerformersPitchingPlayoffsCommand.NotifyCanExecuteChanged();
                     
                     ExportMostRecentSeasonPlayersCommand.NotifyCanExecuteChanged();
                     ExportMostRecentSeasonTeamsCommand.NotifyCanExecuteChanged();
@@ -299,6 +301,17 @@ public partial class HomeViewModel : ViewModelBase
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
+        if (filter is MostRecentSeasonFilter.Playoffs)
+        {
+            var playoffsExist = await _dataService.DoesMostRecentSeasonPlayoffExist();
+            if (!playoffsExist)
+            {
+                MessageBox.Show("The current season does not yet contain playoff data");
+                Mouse.OverrideCursor = Cursors.Arrow;
+                return;
+            }
+        }
+
         var playersEnumerable = _dataService.GetMostRecentSeasonTopBattingStatistics(filter);
 
         var exportType = filter switch
@@ -339,6 +352,17 @@ public partial class HomeViewModel : ViewModelBase
     private async Task HandleTopPerformersPitchingExport(MostRecentSeasonFilter filter)
     {
         Mouse.OverrideCursor = Cursors.Wait;
+        
+        if (filter is MostRecentSeasonFilter.Playoffs)
+        {
+            var playoffsExist = await _dataService.DoesMostRecentSeasonPlayoffExist();
+            if (!playoffsExist)
+            {
+                MessageBox.Show("The current season does not yet contain playoff data");
+                Mouse.OverrideCursor = Cursors.Arrow;
+                return;
+            }
+        }
 
         var playersEnumerable = _dataService.GetMostRecentSeasonTopPitchingStatistics(filter);
 
