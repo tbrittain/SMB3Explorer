@@ -103,6 +103,10 @@
       <EmbeddedResource Include="Resources\Sql\TopPerformersBattingPlayoffs.sql" />
       <None Remove="Resources\Sql\TopPerformersPitchingPlayoffs.sql" />
       <EmbeddedResource Include="Resources\Sql\TopPerformersPitchingPlayoffs.sql" />
+      <None Remove="Resources\Sql\PlayoffsAverageBatterStats.sql" />
+      <EmbeddedResource Include="Resources\Sql\PlayoffsAverageBatterStats.sql" />
+      <None Remove="Resources\Sql\PlayoffsAveragePitcherStats.sql" />
+      <EmbeddedResource Include="Resources\Sql\PlayoffsAveragePitcherStats.sql" />
     </ItemGroup>
 
 </Project>
