@@ -13,13 +13,20 @@ namespace SMB3Explorer.Services.DataService;
 public partial class DataService
 {
     public async IAsyncEnumerable<BattingMostRecentSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(
-        bool isRookies = false)
+        MostRecentSeasonFilter filter)
     {
-        var seasonAverageOps = await GetAverageSeasonOps();
+        var seasonAverageOps = await GetAverageSeasonOps(filter);
 
         var command = Connection!.CreateCommand();
 
-        var sqlFile = isRookies ? SqlFile.TopPerformersRookiesBatting : SqlFile.TopPerformersBatting;
+        // TODO: fix the mappings for the top performers queries
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.TopPerformersBatting,
+            MostRecentSeasonFilter.Rookies => SqlFile.TopPerformersRookiesBatting,
+            MostRecentSeasonFilter.Playoffs => SqlFile.TopPerformersBattingPlayoffs,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
 
         var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
@@ -77,13 +84,20 @@ public partial class DataService
     }
 
     public async IAsyncEnumerable<PitchingMostRecentSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(
-        bool isRookies = false)
+        MostRecentSeasonFilter filter)
     {
-        var seasonAveragePitcherStats = await GetAverageSeasonPitcherStats();
+        var seasonAveragePitcherStats = await GetAverageSeasonPitcherStats(filter);
 
         var command = Connection!.CreateCommand();
 
-        var sqlFile = isRookies ? SqlFile.TopPerformersRookiesPitching : SqlFile.TopPerformersPitching;
+        // TODO: fix the mappings for the top performers queries
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.TopPerformersPitching,
+            MostRecentSeasonFilter.Rookies => SqlFile.TopPerformersRookiesPitching,
+            MostRecentSeasonFilter.Playoffs => SqlFile.TopPerformersPitchingPlayoffs,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
 
         var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
@@ -216,10 +230,10 @@ public partial class DataService
             {
                 var chemistry = reader.GetString(21);
                 seasonPlayer.Chemistry = chemistry;
-                
+
                 seasonPlayer.ThrowHand = reader.GetString(22);
                 seasonPlayer.BatHand = reader.GetString(23);
-            
+
                 var pitchesSerialized = reader.IsDBNull(24) ? null : reader.GetString(24);
                 if (!string.IsNullOrEmpty(pitchesSerialized))
                 {
@@ -325,11 +339,19 @@ public partial class DataService
         }
     }
 
-    private async Task<double> GetAverageSeasonOps()
+    private async Task<double> GetAverageSeasonOps(MostRecentSeasonFilter filter)
     {
         var command = Connection!.CreateCommand();
 
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.SeasonAverageBatterStats);
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.SeasonAverageBatterStats,
+            MostRecentSeasonFilter.Rookies => SqlFile.SeasonAverageBatterStats,
+            MostRecentSeasonFilter.Playoffs => SqlFile.PlayoffsAverageBatterStats,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+
+        var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
@@ -344,11 +366,19 @@ public partial class DataService
         return opsOrdinal;
     }
 
-    private async Task<AverageSeasonPitcherStats> GetAverageSeasonPitcherStats()
+    private async Task<AverageSeasonPitcherStats> GetAverageSeasonPitcherStats(MostRecentSeasonFilter filter)
     {
         var command = Connection!.CreateCommand();
 
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.SeasonAveragePitcherStats);
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.SeasonAveragePitcherStats,
+            MostRecentSeasonFilter.Rookies => SqlFile.SeasonAveragePitcherStats,
+            MostRecentSeasonFilter.Playoffs => SqlFile.PlayoffsAveragePitcherStats,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+
+        var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)

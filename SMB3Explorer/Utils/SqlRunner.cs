@@ -54,8 +54,14 @@ public enum SqlFile
     [Description("TopPerformersPitching.sql")]
     TopPerformersPitching,
     
+    [Description("TopPerformersPitchingPlayoffs.sql")]
+    TopPerformersPitchingPlayoffs,
+    
     [Description("TopPerformersBatting.sql")]
     TopPerformersBatting,
+    
+    [Description("TopPerformersBattingPlayoffs.sql")]
+    TopPerformersBattingPlayoffs,
     
     [Description("TopPerformersRookiesPitching.sql")]
     TopPerformersRookiesPitching,
@@ -75,8 +81,14 @@ public enum SqlFile
     [Description("SeasonAverageBatterStats.sql")]
     SeasonAverageBatterStats,
     
+    [Description("PlayoffsAverageBatterStats.sql")]
+    PlayoffsAverageBatterStats,
+
     [Description("SeasonAveragePitcherStats.sql")]
     SeasonAveragePitcherStats,
+    
+    [Description("PlayoffsAveragePitcherStats.sql")]
+    PlayoffsAveragePitcherStats,
     
     [Description("MostRecentSeasonSchedule.sql")]
     MostRecentSeasonSchedule,
