@@ -19,7 +19,6 @@ public partial class DataService
 
         var command = Connection!.CreateCommand();
 
-        // TODO: fix the mappings for the top performers queries
         var sqlFile = filter switch
         {
             MostRecentSeasonFilter.RegularSeason => SqlFile.TopPerformersBatting,
@@ -75,9 +74,12 @@ public partial class DataService
             positionPlayerStatistic.PassedBalls = reader.GetInt32(26);
             positionPlayerStatistic.OnBasePercentagePlus = reader.IsDBNull(27) ? null : reader.GetDouble(27);
             positionPlayerStatistic.TeamName = reader.IsDBNull(29) ? null : reader.GetString(29);
-            positionPlayerStatistic.MostRecentTeamName = reader.IsDBNull(30) ? null : reader.GetString(30);
-            positionPlayerStatistic.PreviousTeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
-            positionPlayerStatistic.Age = reader.GetInt32(32);
+            positionPlayerStatistic.TeamId = reader.IsDBNull(30) ? null : reader.GetGuid(30);
+            positionPlayerStatistic.MostRecentTeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
+            positionPlayerStatistic.MostRecentTeamId = reader.IsDBNull(31) ? null : reader.GetGuid(32);
+            positionPlayerStatistic.PreviousTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
+            positionPlayerStatistic.PreviousTeamId = reader.IsDBNull(34) ? null : reader.GetGuid(34);
+            positionPlayerStatistic.Age = reader.GetInt32(35);
 
             yield return positionPlayerStatistic;
         }
@@ -90,7 +92,6 @@ public partial class DataService
 
         var command = Connection!.CreateCommand();
 
-        // TODO: fix the mappings for the top performers queries
         var sqlFile = filter switch
         {
             MostRecentSeasonFilter.RegularSeason => SqlFile.TopPerformersPitching,
@@ -151,9 +152,12 @@ public partial class DataService
             mostRecentSeasonStatistic.EarnedRunsAllowedMinus = reader.GetDouble(28);
             mostRecentSeasonStatistic.FieldingIndependentPitchingMinus = reader.GetDouble(29);
             mostRecentSeasonStatistic.TeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
-            mostRecentSeasonStatistic.MostRecentTeamName = reader.IsDBNull(32) ? null : reader.GetString(32);
-            mostRecentSeasonStatistic.PreviousTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
-            mostRecentSeasonStatistic.Age = reader.GetInt32(34);
+            mostRecentSeasonStatistic.TeamId = reader.IsDBNull(32) ? null : reader.GetGuid(32);
+            mostRecentSeasonStatistic.MostRecentTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
+            mostRecentSeasonStatistic.MostRecentTeamId = reader.IsDBNull(34) ? null : reader.GetGuid(34);
+            mostRecentSeasonStatistic.PreviousTeamName = reader.IsDBNull(35) ? null : reader.GetString(35);
+            mostRecentSeasonStatistic.PreviousTeamId = reader.IsDBNull(36) ? null : reader.GetGuid(36);
+            mostRecentSeasonStatistic.Age = reader.GetInt32(37);
 
             yield return mostRecentSeasonStatistic;
         }

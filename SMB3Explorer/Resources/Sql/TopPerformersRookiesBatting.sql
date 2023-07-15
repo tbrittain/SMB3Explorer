@@ -49,9 +49,12 @@ SELECT vbpi.baseballPlayerGUID,
                                    (([hits] - [doubles] - [triples] - [homeruns]) + 2 * [doubles] + 3 * [triples] +
                                     4 * [homeruns]) / CAST(NULLIF([atBats], 0) AS [REAL])
                            ) / @leagueOps)            AS sortOrder,
-       currentTeam.teamName                AS teamName,
-       mostRecentTeam.teamName             AS mostRecentlyPlayedTeamName,
-       previouslyRecentPlayedTeam.teamName AS previousRecentlyPlayedTeamName,
+       currentTeam.teamName                           AS teamName,
+       currentTeam.teamGUID                           AS teamGUID,
+       mostRecentTeam.teamName                        AS mostRecentlyPlayedTeamName,
+       mostRecentTeam.teamGUID                        AS mostRecentlyPlayedTeamGUID,
+       previouslyRecentPlayedTeam.teamName            AS previousRecentlyPlayedTeamName,
+       previouslyRecentPlayedTeam.teamGUID            AS previousRecentlyPlayedTeamGUID,
        tbp.age                                        AS age
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
