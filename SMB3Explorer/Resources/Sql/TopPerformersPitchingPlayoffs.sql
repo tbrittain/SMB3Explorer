@@ -54,6 +54,10 @@ SELECT baseballPlayerGUID,
                    ) END                   AS sortOrder,
        currentTeam.teamName                AS teamName,
        currentTeam.teamGUID                AS teamGUID,
+       NULL                                AS mostRecentlyPlayedTeamName,
+       NULL                                AS mostRecentlyPlayedTeamGUID,
+       NULL                                AS previousRecentlyPlayedTeamName,
+       NULL                                AS previousRecentlyPlayedTeamGUID,
        tbp.age                             AS age
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
