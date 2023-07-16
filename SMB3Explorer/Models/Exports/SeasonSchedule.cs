@@ -5,9 +5,6 @@ namespace SMB3Explorer.Models.Exports;
 
 public class SeasonSchedule
 {
-    [Ignore]
-    public int SeasonId { get; set; }
-    
     [Name("Season"), Index(0)]
     public int SeasonNum { get; set; }
     
@@ -46,4 +43,7 @@ public class SeasonSchedule
 
     [Name("HomePitcherId"), Index(12)]
     public Guid? AwayPitcherId { get; set; }
+    
+    [Name("SeasonId"), Index(13)]
+    public int SeasonId { get; set; }
 }
