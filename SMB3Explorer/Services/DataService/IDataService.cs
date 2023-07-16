@@ -42,6 +42,7 @@ public interface IDataService
     IAsyncEnumerable<SeasonPlayer> GetMostRecentSeasonPlayers();
     IAsyncEnumerable<SeasonTeam> GetMostRecentSeasonTeams();
     IAsyncEnumerable<SeasonSchedule> GetMostRecentSeasonSchedule();
+    IAsyncEnumerable<SeasonPlayoffSchedule> GetMostRecentSeasonPlayoffSchedule();
 
     Task<bool> DoesMostRecentSeasonPlayoffExist();
 }

@@ -127,6 +127,7 @@ public partial class HomeViewModel : ViewModelBase
                     ExportMostRecentSeasonPlayersCommand.NotifyCanExecuteChanged();
                     ExportMostRecentSeasonTeamsCommand.NotifyCanExecuteChanged();
                     ExportMostRecentSeasonScheduleCommand.NotifyCanExecuteChanged();
+                    ExportMostRecentSeasonPlayoffScheduleCommand.NotifyCanExecuteChanged();
                 });
 
                 break;
@@ -427,6 +428,30 @@ public partial class HomeViewModel : ViewModelBase
                        $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, scheduleEnumerable, fileName);
+        
+        HandleExportSuccess(filePath);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportMostRecentSeasonPlayoffSchedule()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+        
+        var playoffsExist = await _dataService.DoesMostRecentSeasonPlayoffExist();
+        if (!playoffsExist)
+        {
+            MessageBox.Show("The current season does not yet contain playoff data");
+            Mouse.OverrideCursor = Cursors.Arrow;
+            return;
+        }
+
+        var playoffScheduleEnumerable = _dataService.GetMostRecentSeasonPlayoffSchedule();
+        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
+        
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_schedule" +
+                       $"_playoffs_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playoffScheduleEnumerable, fileName);
         
         HandleExportSuccess(filePath);
     }

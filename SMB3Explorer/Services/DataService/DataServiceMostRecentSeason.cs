@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
-using OneOf;
-using OneOf.Types;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Utils;
@@ -342,6 +340,49 @@ public partial class DataService
             seasonSchedule.AwayPitcherName = reader.IsDBNull(17) ? null : reader.GetString(17);
 
             yield return seasonSchedule;
+        }
+    }
+
+    public async IAsyncEnumerable<SeasonPlayoffSchedule> GetMostRecentSeasonPlayoffSchedule()
+    {
+        var command = Connection!.CreateCommand();
+
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayoffSchedule);
+        command.CommandText = commandText;
+
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        });
+
+        var reader = await command.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            var seasonPlayoffSchedule = new SeasonPlayoffSchedule();
+
+            seasonPlayoffSchedule.SeasonId = reader.GetInt32(0);
+            seasonPlayoffSchedule.SeasonNum = reader.GetInt32(1);
+            seasonPlayoffSchedule.SeriesNum = reader.GetInt32(2);
+            seasonPlayoffSchedule.Team1Guid = reader.GetGuid(3);
+            seasonPlayoffSchedule.Team1Name = reader.GetString(4);
+            seasonPlayoffSchedule.Team1Seed = reader.GetInt32(5);
+            seasonPlayoffSchedule.Team2Guid = reader.GetGuid(6);
+            seasonPlayoffSchedule.Team2Name = reader.GetString(7);
+            seasonPlayoffSchedule.Team2Seed = reader.GetInt32(8);
+            seasonPlayoffSchedule.GameNum = reader.GetInt32(9);
+            seasonPlayoffSchedule.HomeTeamId = reader.GetGuid(10);
+            seasonPlayoffSchedule.HomeTeamName = reader.GetString(11);
+            seasonPlayoffSchedule.AwayTeamId = reader.GetGuid(12);
+            seasonPlayoffSchedule.AwayTeamName = reader.GetString(13);
+            seasonPlayoffSchedule.HomeRunsScored = reader.IsDBNull(14) ? null : reader.GetInt32(14);
+            seasonPlayoffSchedule.AwayRunsScored = reader.IsDBNull(15) ? null : reader.GetInt32(15);
+            seasonPlayoffSchedule.HomePitcherId = reader.IsDBNull(16) ? null : reader.GetGuid(16);
+            seasonPlayoffSchedule.HomePitcherName = reader.IsDBNull(17) ? null : reader.GetString(17);
+            seasonPlayoffSchedule.AwayPitcherId = reader.IsDBNull(18) ? null : reader.GetGuid(18);
+            seasonPlayoffSchedule.AwayPitcherName = reader.IsDBNull(19) ? null : reader.GetString(19);
+
+            yield return seasonPlayoffSchedule;
         }
     }
 
