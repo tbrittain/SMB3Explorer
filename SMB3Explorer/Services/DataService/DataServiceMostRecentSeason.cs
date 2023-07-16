@@ -377,10 +377,10 @@ public partial class DataService
             seasonPlayoffSchedule.AwayTeamName = reader.GetString(13);
             seasonPlayoffSchedule.HomeRunsScored = reader.IsDBNull(14) ? null : reader.GetInt32(14);
             seasonPlayoffSchedule.AwayRunsScored = reader.IsDBNull(15) ? null : reader.GetInt32(15);
-            seasonPlayoffSchedule.HomePitcherId = reader.IsDBNull(17) ? null : reader.GetGuid(17);
-            seasonPlayoffSchedule.HomePitcherName = reader.IsDBNull(18) ? null : reader.GetString(18);
-            seasonPlayoffSchedule.AwayPitcherId = reader.IsDBNull(20) ? null : reader.GetGuid(20);
-            seasonPlayoffSchedule.AwayPitcherName = reader.IsDBNull(21) ? null : reader.GetString(21);
+            seasonPlayoffSchedule.HomePitcherId = reader.IsDBNull(16) ? null : reader.GetGuid(16);
+            seasonPlayoffSchedule.HomePitcherName = reader.IsDBNull(17) ? null : reader.GetString(17);
+            seasonPlayoffSchedule.AwayPitcherId = reader.IsDBNull(18) ? null : reader.GetGuid(18);
+            seasonPlayoffSchedule.AwayPitcherName = reader.IsDBNull(19) ? null : reader.GetString(19);
 
             yield return seasonPlayoffSchedule;
         }

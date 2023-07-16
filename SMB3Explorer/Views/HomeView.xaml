@@ -231,6 +231,14 @@
                         Height="50"
                         Command="{Binding ExportMostRecentSeasonScheduleCommand}"
                         Content="Export current season schedule" />
+                    
+                    <Button
+                        Margin="0, 5, 0, 0"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Height="50"
+                        Command="{Binding ExportMostRecentSeasonPlayoffScheduleCommand}"
+                        Content="Export current season playoff schedule" />
                 </WrapPanel>
             </GroupBox>
         </Grid>
