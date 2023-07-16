@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
+using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.DataService;
@@ -120,10 +121,13 @@ public partial class HomeViewModel : ViewModelBase
                     ExportTopRookiesBattingCommand.NotifyCanExecuteChanged();
                     ExportTopPerformersPitchingCommand.NotifyCanExecuteChanged();
                     ExportTopRookiesPitchingCommand.NotifyCanExecuteChanged();
+                    ExportTopPerformersBattingPlayoffsCommand.NotifyCanExecuteChanged();
+                    ExportTopPerformersPitchingPlayoffsCommand.NotifyCanExecuteChanged();
                     
                     ExportMostRecentSeasonPlayersCommand.NotifyCanExecuteChanged();
                     ExportMostRecentSeasonTeamsCommand.NotifyCanExecuteChanged();
                     ExportMostRecentSeasonScheduleCommand.NotifyCanExecuteChanged();
+                    ExportMostRecentSeasonPlayoffScheduleCommand.NotifyCanExecuteChanged();
                 });
 
                 break;
@@ -279,25 +283,49 @@ public partial class HomeViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportTopPerformersBatting()
     {
-        await HandleTopPerformersBattingExport();
+        await HandleTopPerformersBattingExport(MostRecentSeasonFilter.RegularSeason);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportTopRookiesBatting()
     {
-        await HandleTopPerformersBattingExport(true);
+        await HandleTopPerformersBattingExport(MostRecentSeasonFilter.Rookies);
     }
 
-    private async Task HandleTopPerformersBattingExport(bool isRookies = false)
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportTopPerformersBattingPlayoffs()
+    {
+        await HandleTopPerformersBattingExport(MostRecentSeasonFilter.Playoffs);
+    }
+
+    private async Task HandleTopPerformersBattingExport(MostRecentSeasonFilter filter)
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
-        var playersEnumerable = _dataService.GetMostRecentSeasonTopBattingStatistics(isRookies);
+        if (filter is MostRecentSeasonFilter.Playoffs)
+        {
+            var playoffsExist = await _dataService.DoesMostRecentSeasonPlayoffExist();
+            if (!playoffsExist)
+            {
+                MessageBox.Show("The current season does not yet contain playoff data");
+                Mouse.OverrideCursor = Cursors.Arrow;
+                return;
+            }
+        }
 
-        var rookieType = isRookies ? "rookies" : "all";
+        var playersEnumerable = _dataService.GetMostRecentSeasonTopBattingStatistics(filter);
+
+        var exportType = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => "all_season",
+            MostRecentSeasonFilter.Rookies => "rookies_season",
+            MostRecentSeasonFilter.Playoffs => "all_playoffs",
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+
         var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_top_batting_{rookieType}" +
-                       $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_top_batting_{exportType}_" +
+                       $"{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
@@ -307,25 +335,49 @@ public partial class HomeViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportTopPerformersPitching()
     {
-        await HandleTopPerformersPitchingExport();
+        await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.RegularSeason);
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportTopRookiesPitching()
     {
-        await HandleTopPerformersPitchingExport(true);
+        await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.Rookies);
     }
 
-    private async Task HandleTopPerformersPitchingExport(bool isRookies = false)
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportTopPerformersPitchingPlayoffs()
+    {
+        await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.Playoffs);
+    }
+
+    private async Task HandleTopPerformersPitchingExport(MostRecentSeasonFilter filter)
     {
         Mouse.OverrideCursor = Cursors.Wait;
+        
+        if (filter is MostRecentSeasonFilter.Playoffs)
+        {
+            var playoffsExist = await _dataService.DoesMostRecentSeasonPlayoffExist();
+            if (!playoffsExist)
+            {
+                MessageBox.Show("The current season does not yet contain playoff data");
+                Mouse.OverrideCursor = Cursors.Arrow;
+                return;
+            }
+        }
 
-        var playersEnumerable = _dataService.GetMostRecentSeasonTopPitchingStatistics(isRookies);
+        var playersEnumerable = _dataService.GetMostRecentSeasonTopPitchingStatistics(filter);
 
-        var rookieType = isRookies ? "rookies" : "all";
+        var exportType = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => "all_season",
+            MostRecentSeasonFilter.Rookies => "rookies_season",
+            MostRecentSeasonFilter.Playoffs => "all_playoffs",
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+
         var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_top_pitching_{rookieType}" +
-                       $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_top_pitching_{exportType}_" +
+                       $"{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
 
@@ -376,6 +428,30 @@ public partial class HomeViewModel : ViewModelBase
                        $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, scheduleEnumerable, fileName);
+        
+        HandleExportSuccess(filePath);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportMostRecentSeasonPlayoffSchedule()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+        
+        var playoffsExist = await _dataService.DoesMostRecentSeasonPlayoffExist();
+        if (!playoffsExist)
+        {
+            MessageBox.Show("The current season does not yet contain playoff data");
+            Mouse.OverrideCursor = Cursors.Arrow;
+            return;
+        }
+
+        var playoffScheduleEnumerable = _dataService.GetMostRecentSeasonPlayoffSchedule();
+        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
+        
+        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_schedule" +
+                       $"_playoffs_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
+        
+        var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playoffScheduleEnumerable, fileName);
         
         HandleExportSuccess(filePath);
     }

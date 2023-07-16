@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <IsPackable>false</IsPackable>
-        <Version>1.5.1</Version>
+        <Version>1.6.0</Version>
         <Title>SMB Explorer</Title>
         <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
         <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
@@ -20,7 +20,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
       <PackageReference Include="CsvHelper" Version="30.0.1" />
       <PackageReference Include="DotNetZip" Version="1.16.0" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.8" />
@@ -99,6 +99,16 @@
       <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayersSmb4.sql" />
       <None Remove="Resources\Sql\GetLeaguesForSmb4SaveGame.sql" />
       <EmbeddedResource Include="Resources\Sql\GetLeaguesForSmb4SaveGame.sql" />
+      <None Remove="Resources\Sql\TopPerformersBattingPlayoffs.sql" />
+      <EmbeddedResource Include="Resources\Sql\TopPerformersBattingPlayoffs.sql" />
+      <None Remove="Resources\Sql\TopPerformersPitchingPlayoffs.sql" />
+      <EmbeddedResource Include="Resources\Sql\TopPerformersPitchingPlayoffs.sql" />
+      <None Remove="Resources\Sql\PlayoffsAverageBatterStats.sql" />
+      <EmbeddedResource Include="Resources\Sql\PlayoffsAverageBatterStats.sql" />
+      <None Remove="Resources\Sql\PlayoffsAveragePitcherStats.sql" />
+      <EmbeddedResource Include="Resources\Sql\PlayoffsAveragePitcherStats.sql" />
+      <None Remove="Resources\Sql\MostRecentSeasonPlayoffSchedule.sql" />
+      <EmbeddedResource Include="Resources\Sql\MostRecentSeasonPlayoffSchedule.sql" />
     </ItemGroup>
 
 </Project>

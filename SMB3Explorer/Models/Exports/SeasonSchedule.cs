@@ -1,12 +1,10 @@
-﻿using CsvHelper.Configuration.Attributes;
+﻿using System;
+using CsvHelper.Configuration.Attributes;
 
 namespace SMB3Explorer.Models.Exports;
 
 public class SeasonSchedule
 {
-    [Ignore]
-    public int SeasonId { get; set; }
-    
     [Name("Season"), Index(0)]
     public int SeasonNum { get; set; }
     
@@ -33,4 +31,19 @@ public class SeasonSchedule
     
     [Name("Away Pitcher"), Index(8)]
     public string? AwayPitcherName { get; set; } = string.Empty;
+
+    [Name("HomeTeamId"), Index(9)]
+    public Guid HomeTeamId { get; set; }
+
+    [Name("AwayTeamId"), Index(10)]
+    public Guid AwayTeamId { get; set; }
+
+    [Name("HomePitcherId"), Index(11)]
+    public Guid? HomePitcherId { get; set; }
+
+    [Name("HomePitcherId"), Index(12)]
+    public Guid? AwayPitcherId { get; set; }
+    
+    [Name("SeasonId"), Index(13)]
+    public int SeasonId { get; set; }
 }

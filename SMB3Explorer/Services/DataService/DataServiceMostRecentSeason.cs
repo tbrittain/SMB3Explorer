@@ -13,13 +13,19 @@ namespace SMB3Explorer.Services.DataService;
 public partial class DataService
 {
     public async IAsyncEnumerable<BattingMostRecentSeasonStatistic> GetMostRecentSeasonTopBattingStatistics(
-        bool isRookies = false)
+        MostRecentSeasonFilter filter)
     {
-        var seasonAverageOps = await GetAverageSeasonOps();
+        var seasonAverageOps = await GetAverageSeasonOps(filter);
 
         var command = Connection!.CreateCommand();
 
-        var sqlFile = isRookies ? SqlFile.TopPerformersRookiesBatting : SqlFile.TopPerformersBatting;
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.TopPerformersBatting,
+            MostRecentSeasonFilter.Rookies => SqlFile.TopPerformersRookiesBatting,
+            MostRecentSeasonFilter.Playoffs => SqlFile.TopPerformersBattingPlayoffs,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
 
         var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
@@ -68,22 +74,31 @@ public partial class DataService
             positionPlayerStatistic.PassedBalls = reader.GetInt32(26);
             positionPlayerStatistic.OnBasePercentagePlus = reader.IsDBNull(27) ? null : reader.GetDouble(27);
             positionPlayerStatistic.TeamName = reader.IsDBNull(29) ? null : reader.GetString(29);
-            positionPlayerStatistic.MostRecentTeamName = reader.IsDBNull(30) ? null : reader.GetString(30);
-            positionPlayerStatistic.PreviousTeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
-            positionPlayerStatistic.Age = reader.GetInt32(32);
+            positionPlayerStatistic.TeamId = reader.IsDBNull(30) ? null : reader.GetGuid(30);
+            positionPlayerStatistic.MostRecentTeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
+            positionPlayerStatistic.MostRecentTeamId = reader.IsDBNull(31) ? null : reader.GetGuid(32);
+            positionPlayerStatistic.PreviousTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
+            positionPlayerStatistic.PreviousTeamId = reader.IsDBNull(34) ? null : reader.GetGuid(34);
+            positionPlayerStatistic.Age = reader.GetInt32(35);
 
             yield return positionPlayerStatistic;
         }
     }
 
     public async IAsyncEnumerable<PitchingMostRecentSeasonStatistic> GetMostRecentSeasonTopPitchingStatistics(
-        bool isRookies = false)
+        MostRecentSeasonFilter filter)
     {
-        var seasonAveragePitcherStats = await GetAverageSeasonPitcherStats();
+        var seasonAveragePitcherStats = await GetAverageSeasonPitcherStats(filter);
 
         var command = Connection!.CreateCommand();
 
-        var sqlFile = isRookies ? SqlFile.TopPerformersRookiesPitching : SqlFile.TopPerformersPitching;
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.TopPerformersPitching,
+            MostRecentSeasonFilter.Rookies => SqlFile.TopPerformersRookiesPitching,
+            MostRecentSeasonFilter.Playoffs => SqlFile.TopPerformersPitchingPlayoffs,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
 
         var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
@@ -137,9 +152,12 @@ public partial class DataService
             mostRecentSeasonStatistic.EarnedRunsAllowedMinus = reader.GetDouble(28);
             mostRecentSeasonStatistic.FieldingIndependentPitchingMinus = reader.GetDouble(29);
             mostRecentSeasonStatistic.TeamName = reader.IsDBNull(31) ? null : reader.GetString(31);
-            mostRecentSeasonStatistic.MostRecentTeamName = reader.IsDBNull(32) ? null : reader.GetString(32);
-            mostRecentSeasonStatistic.PreviousTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
-            mostRecentSeasonStatistic.Age = reader.GetInt32(34);
+            mostRecentSeasonStatistic.TeamId = reader.IsDBNull(32) ? null : reader.GetGuid(32);
+            mostRecentSeasonStatistic.MostRecentTeamName = reader.IsDBNull(33) ? null : reader.GetString(33);
+            mostRecentSeasonStatistic.MostRecentTeamId = reader.IsDBNull(34) ? null : reader.GetGuid(34);
+            mostRecentSeasonStatistic.PreviousTeamName = reader.IsDBNull(35) ? null : reader.GetString(35);
+            mostRecentSeasonStatistic.PreviousTeamId = reader.IsDBNull(36) ? null : reader.GetGuid(36);
+            mostRecentSeasonStatistic.Age = reader.GetInt32(37);
 
             yield return mostRecentSeasonStatistic;
         }
@@ -194,16 +212,19 @@ public partial class DataService
             var traitsSerialized = reader.IsDBNull(20) ? null : reader.GetString(20);
             if (!string.IsNullOrEmpty(traitsSerialized))
             {
-                var traits = 
-                    JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ?? Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>();
+                var traits =
+                    JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ??
+                    Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>();
 
                 seasonPlayer.Traits = _applicationContext.SelectedGame switch
                 {
                     SelectedGame.Smb3 => traits
                         .Select(x => PlayerTrait.Smb3TraitMap[x])
+                        .Distinct()
                         .ToArray(),
                     SelectedGame.Smb4 => traits
                         .Select(x => PlayerTrait.Smb4TraitMap[x])
+                        .Distinct()
                         .ToArray(),
                     _ => throw new ArgumentException()
                 };
@@ -213,6 +234,23 @@ public partial class DataService
             {
                 var chemistry = reader.GetString(21);
                 seasonPlayer.Chemistry = chemistry;
+
+                seasonPlayer.ThrowHand = reader.GetString(22);
+                seasonPlayer.BatHand = reader.GetString(23);
+
+                var pitchesSerialized = reader.IsDBNull(24) ? null : reader.GetString(24);
+                if (!string.IsNullOrEmpty(pitchesSerialized))
+                {
+                    var pitches = JsonConvert.DeserializeObject<DatabaseIntOption[]>(pitchesSerialized) ??
+                                  Array.Empty<DatabaseIntOption>();
+
+                    seasonPlayer.Pitches = pitches
+                        .Select(x => PitchTypes.Pitches[x])
+                        .Where(x => x is not null)
+                        .Cast<PitchType>()
+                        .Distinct()
+                        .ToArray();
+                }
             }
 
             yield return seasonPlayer;
@@ -253,14 +291,16 @@ public partial class DataService
             seasonTeam.GamesBack = reader.GetDouble(15);
             seasonTeam.WinPercentage = reader.GetDouble(16);
             seasonTeam.RunDifferential = reader.GetInt32(17);
-            seasonTeam.Power = reader.GetInt32(18);
-            seasonTeam.Contact = reader.GetInt32(19);
-            seasonTeam.Speed = reader.GetInt32(20);
-            seasonTeam.Fielding = reader.GetInt32(21);
-            seasonTeam.Arm = reader.GetInt32(22);
-            seasonTeam.Velocity = reader.GetInt32(23);
-            seasonTeam.Junk = reader.GetInt32(24);
-            seasonTeam.Accuracy = reader.GetInt32(25);
+            seasonTeam.RunsFor = reader.GetInt32(18);
+            seasonTeam.RunsAgainst = reader.GetInt32(19);
+            seasonTeam.Power = reader.GetInt32(20);
+            seasonTeam.Contact = reader.GetInt32(21);
+            seasonTeam.Speed = reader.GetInt32(22);
+            seasonTeam.Fielding = reader.GetInt32(23);
+            seasonTeam.Arm = reader.GetInt32(24);
+            seasonTeam.Velocity = reader.GetInt32(25);
+            seasonTeam.Junk = reader.GetInt32(26);
+            seasonTeam.Accuracy = reader.GetInt32(27);
 
             yield return seasonTeam;
         }
@@ -289,21 +329,93 @@ public partial class DataService
             seasonSchedule.GameNum = reader.GetInt32(2);
             seasonSchedule.Day = reader.GetInt32(3);
             seasonSchedule.HomeTeam = reader.GetString(5);
-            seasonSchedule.AwayTeam = reader.GetString(7);
-            seasonSchedule.HomeRunsScored = reader.IsDBNull(8) ? null : reader.GetInt32(8);
-            seasonSchedule.AwayRunsScored = reader.IsDBNull(9) ? null : reader.GetInt32(9);
-            seasonSchedule.HomePitcherName = reader.IsDBNull(11) ? null : reader.GetString(11);
-            seasonSchedule.AwayPitcherName = reader.IsDBNull(13) ? null : reader.GetString(13);
+            seasonSchedule.HomeTeamId = reader.GetGuid(6);
+            seasonSchedule.AwayTeam = reader.GetString(8);
+            seasonSchedule.AwayTeamId = reader.GetGuid(9);
+            seasonSchedule.HomeRunsScored = reader.IsDBNull(10) ? null : reader.GetInt32(10);
+            seasonSchedule.AwayRunsScored = reader.IsDBNull(11) ? null : reader.GetInt32(11);
+            seasonSchedule.HomePitcherId = reader.IsDBNull(13) ? null : reader.GetGuid(13);
+            seasonSchedule.HomePitcherName = reader.IsDBNull(14) ? null : reader.GetString(14);
+            seasonSchedule.AwayPitcherId = reader.IsDBNull(16) ? null : reader.GetGuid(16);
+            seasonSchedule.AwayPitcherName = reader.IsDBNull(17) ? null : reader.GetString(17);
 
             yield return seasonSchedule;
         }
     }
 
-    private async Task<double> GetAverageSeasonOps()
+    public async IAsyncEnumerable<SeasonPlayoffSchedule> GetMostRecentSeasonPlayoffSchedule()
     {
         var command = Connection!.CreateCommand();
 
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.SeasonAverageBatterStats);
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.MostRecentSeasonPlayoffSchedule);
+        command.CommandText = commandText;
+
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        });
+
+        var reader = await command.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            var seasonPlayoffSchedule = new SeasonPlayoffSchedule();
+
+            seasonPlayoffSchedule.SeasonId = reader.GetInt32(0);
+            seasonPlayoffSchedule.SeasonNum = reader.GetInt32(1);
+            seasonPlayoffSchedule.SeriesNum = reader.GetInt32(2);
+            seasonPlayoffSchedule.Team1Guid = reader.GetGuid(3);
+            seasonPlayoffSchedule.Team1Name = reader.GetString(4);
+            seasonPlayoffSchedule.Team1Seed = reader.GetInt32(5);
+            seasonPlayoffSchedule.Team2Guid = reader.GetGuid(6);
+            seasonPlayoffSchedule.Team2Name = reader.GetString(7);
+            seasonPlayoffSchedule.Team2Seed = reader.GetInt32(8);
+            seasonPlayoffSchedule.GameNum = reader.GetInt32(9);
+            seasonPlayoffSchedule.HomeTeamId = reader.GetGuid(10);
+            seasonPlayoffSchedule.HomeTeamName = reader.GetString(11);
+            seasonPlayoffSchedule.AwayTeamId = reader.GetGuid(12);
+            seasonPlayoffSchedule.AwayTeamName = reader.GetString(13);
+            seasonPlayoffSchedule.HomeRunsScored = reader.IsDBNull(14) ? null : reader.GetInt32(14);
+            seasonPlayoffSchedule.AwayRunsScored = reader.IsDBNull(15) ? null : reader.GetInt32(15);
+            seasonPlayoffSchedule.HomePitcherId = reader.IsDBNull(16) ? null : reader.GetGuid(16);
+            seasonPlayoffSchedule.HomePitcherName = reader.IsDBNull(17) ? null : reader.GetString(17);
+            seasonPlayoffSchedule.AwayPitcherId = reader.IsDBNull(18) ? null : reader.GetGuid(18);
+            seasonPlayoffSchedule.AwayPitcherName = reader.IsDBNull(19) ? null : reader.GetString(19);
+
+            yield return seasonPlayoffSchedule;
+        }
+    }
+
+    public async Task<bool> DoesMostRecentSeasonPlayoffExist()
+    {
+        var command = Connection!.CreateCommand();
+        var commandText = SqlRunner.GetSqlCommand(SqlFile.PlayoffsAverageBatterStats);
+        command.CommandText = commandText;
+
+        command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
+        {
+            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+        });
+
+        var reader = await command.ExecuteReaderAsync();
+        reader.Read();
+
+        return !reader.IsDBNull(0);
+    }
+
+    private async Task<double> GetAverageSeasonOps(MostRecentSeasonFilter filter)
+    {
+        var command = Connection!.CreateCommand();
+
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.SeasonAverageBatterStats,
+            MostRecentSeasonFilter.Rookies => SqlFile.SeasonAverageBatterStats,
+            MostRecentSeasonFilter.Playoffs => SqlFile.PlayoffsAverageBatterStats,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+
+        var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
@@ -318,11 +430,19 @@ public partial class DataService
         return opsOrdinal;
     }
 
-    private async Task<AverageSeasonPitcherStats> GetAverageSeasonPitcherStats()
+    private async Task<AverageSeasonPitcherStats> GetAverageSeasonPitcherStats(MostRecentSeasonFilter filter)
     {
         var command = Connection!.CreateCommand();
 
-        var commandText = SqlRunner.GetSqlCommand(SqlFile.SeasonAveragePitcherStats);
+        var sqlFile = filter switch
+        {
+            MostRecentSeasonFilter.RegularSeason => SqlFile.SeasonAveragePitcherStats,
+            MostRecentSeasonFilter.Rookies => SqlFile.SeasonAveragePitcherStats,
+            MostRecentSeasonFilter.Playoffs => SqlFile.PlayoffsAveragePitcherStats,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+
+        var commandText = SqlRunner.GetSqlCommand(sqlFile);
         command.CommandText = commandText;
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)

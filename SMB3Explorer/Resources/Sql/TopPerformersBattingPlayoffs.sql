@@ -10,7 +10,7 @@
                           WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
                           ORDER BY ID DESC
                           LIMIT 1)
-SELECT vbpi.baseballPlayerGUID,
+SELECT baseballPlayerGUID,
        tsea.ID                                        AS seasonId,
        s.seasonNum,
        CASE
@@ -26,47 +26,48 @@ SELECT vbpi.baseballPlayerGUID,
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[pitcherRole]
            ELSE vbpi.[pitcherRole] END                AS pitcherRole,
        CAST(secondaryPosition.optionValue AS INTEGER) AS secondaryPosition,
-       currentTeam.teamName                           AS currentTeam,
-       previousTeam.teamName                          AS previousTeam,
-       tbp.power,
-       tbp.contact,
-       tbp.speed,
-       tbp.fielding,
-       tbp.arm,
-       tbp.velocity,
-       tbp.junk,
-       tbp.accuracy,
-       tbp.age,
-       salary.salary * 200                            AS salaryDollars,
-       CASE
-           WHEN COUNT(tbpt.trait) = 0 THEN NULL
-           ELSE json_group_array(json_object('traitId', tbpt.trait, 'subtypeId', tbpt.subType))
-           END                                        AS traits
-
+       tsb.*,
+       100 * ((
+                          ([hits] + [baseOnBalls] + [hitByPitch]) /
+                          CAST(NULLIF([atBats] + [baseOnBalls] + [hitByPitch] + [sacrificeFlies], 0) AS [REAL]) +
+                          (([hits] - [doubles] - [triples] - [homeruns]) + 2 * [doubles] + 3 * [triples] +
+                           4 * [homeruns]) / CAST(NULLIF([atBats], 0) AS [REAL])
+                  ) / @leagueOps)                     AS opsPlus,
+       -- sortOrder is a weighted OPS+ based on number of at bats
+       atBats * 100 * ((
+                                   ([hits] + [baseOnBalls] + [hitByPitch]) /
+                                   CAST(NULLIF([atBats] + [baseOnBalls] + [hitByPitch] + [sacrificeFlies], 0) AS [REAL]) +
+                                   (([hits] - [doubles] - [triples] - [homeruns]) + 2 * [doubles] + 3 * [triples] +
+                                    4 * [homeruns]) / CAST(NULLIF([atBats], 0) AS [REAL])
+                           ) / @leagueOps)            AS sortOrder,
+       currentTeam.teamName                           AS teamName,
+       currentTeam.teamGUID                           AS teamGUID,
+       NULL                                           AS mostRecentlyPlayedTeamName,
+       NULL                                           AS mostRecentlyPlayedTeamGUID,
+       NULL                                           AS previousRecentlyPlayedTeamName,
+       NULL                                           AS previousRecentlyPlayedTeamGUID,
+       tbp.age                                        AS age
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
          LEFT JOIN t_stats_players tsp ON tbpli.localID = tsp.baseballPlayerLocalID
          LEFT JOIN t_stats ts ON tsp.statsPlayerID = ts.statsPlayerID
-         LEFT JOIN t_season_stats tss ON ts.aggregatorID = tss.aggregatorID
-         JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
-         LEFT JOIN t_baseball_player_traits tbpt ON tbpli.localID = tbpt.baseballPlayerLocalID
+         LEFT JOIN t_stats_batting tsb ON ts.aggregatorID = tsb.aggregatorID
 
-         JOIN t_seasons tsea ON tss.seasonID = tsea.ID
+         LEFT JOIN t_baseball_players tbp ON tbpli.GUID = tbp.GUID
+
+         LEFT JOIN t_playoff_stats tps ON ts.aggregatorID = tps.aggregatorID
+
+         JOIN t_seasons tsea ON tps.seasonID = tsea.ID
          JOIN mostRecentSeason s ON tsea.ID = s.seasonID
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
 
-         JOIN t_salary salary ON vbpi.baseballPlayerGUID = salary.baseballPlayerGUID
-
          LEFT JOIN t_baseball_player_options secondaryPosition
                    ON tbpli.localID = secondaryPosition.baseballPlayerLocalID AND secondaryPosition.optionKey = 55
 
-         LEFT JOIN [t_team_local_ids] tt1 ON ts.[currentTeamLocalID] = tt1.[localID]
-         LEFT JOIN [t_team_local_ids] tt2
-                   ON ts.[previousRecentlyPlayedTeamLocalID] = tt2.[localID]
+         LEFT JOIN t_team_local_ids tt1 ON ts.currentTeamLocalID = tt1.localID
+         LEFT JOIN t_team_local_ids tt2 ON ts.mostRecentlyPlayedTeamLocalID = tt2.localID
+         LEFT JOIN t_team_local_ids tt3 ON ts.previousRecentlyPlayedTeamLocalID = tt3.localID
          LEFT JOIN teams currentTeam ON tt1.GUID = currentTeam.teamGUID
-         LEFT JOIN teams previousTeam ON tt2.GUID = previousTeam.teamGUID
-
 WHERE tl.GUID = CAST(@leagueId AS BLOB)
-GROUP BY vbpi.baseballPlayerGUID, currentTeam, salaryDollars
-ORDER BY currentTeam IS NULL, currentTeam, salaryDollars DESC
+ORDER BY sortOrder DESC

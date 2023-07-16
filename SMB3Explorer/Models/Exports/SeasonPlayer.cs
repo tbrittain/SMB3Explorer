@@ -13,6 +13,7 @@ namespace SMB3Explorer.Models.Exports;
 public class SeasonPlayer
 {
     private Trait[] _traits = Array.Empty<Trait>();
+    private PitchType[] _pitches = Array.Empty<PitchType>();
 
     [Ignore]
     public Guid PlayerId { get; set; }
@@ -113,4 +114,49 @@ public class SeasonPlayer
     
     [Name("Chemistry"), Index(20)]
     public string? Chemistry { get; set; }
+
+    [Name("Throw Hand"), Index(21)]
+    public string ThrowHand { get; set; } = string.Empty;
+    
+    [Name("Bat Hand"), Index(22)]
+    public string BatHand { get; set; } = string.Empty;
+
+    [Ignore]
+    public PitchType[] Pitches
+    {
+        set
+        {
+            _pitches = value;
+            if (!_pitches.Any()) return;
+
+            Pitch1 = _pitches[0].GetEnumDescription();
+
+            if (_pitches.Length > 1)
+                Pitch2 = _pitches[1].GetEnumDescription();
+            
+            if (_pitches.Length > 2)
+                Pitch3 = _pitches[2].GetEnumDescription();
+            
+            if (_pitches.Length > 3)
+                Pitch4 = _pitches[3].GetEnumDescription();
+            
+            if (_pitches.Length > 4)
+                Pitch5 = _pitches[4].GetEnumDescription();
+        }
+    }
+
+    [Name("Pitch 1"), Index(23)]
+    public string? Pitch1 { get; set; }
+    
+    [Name("Pitch 2"), Index(24)]
+    public string? Pitch2 { get; set; }
+    
+    [Name("Pitch 3"), Index(25)]
+    public string? Pitch3 { get; set; }
+    
+    [Name("Pitch 4"), Index(26)]
+    public string? Pitch4 { get; set; }
+    
+    [Name("Pitch 5"), Index(27)]
+    public string? Pitch5 { get; set; }
 }

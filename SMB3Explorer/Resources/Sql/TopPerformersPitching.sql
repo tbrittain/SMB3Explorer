@@ -53,8 +53,11 @@ SELECT baseballPlayerGUID,
                        ((tspitch.earnedRuns * 9) / (tspitch.outsPitched / 3.0))
                    ) END                   AS sortOrder,
        currentTeam.teamName                AS teamName,
+       currentTeam.teamGUID                AS teamGUID,
        mostRecentTeam.teamName             AS mostRecentlyPlayedTeamName,
+       mostRecentTeam.teamGUID             AS mostRecentlyPlayedTeamGUID,
        previouslyRecentPlayedTeam.teamName AS previousRecentlyPlayedTeamName,
+       previouslyRecentPlayedTeam.teamGUID AS previousRecentlyPlayedTeamGUID,
        tbp.age                             AS age
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
