@@ -7,14 +7,14 @@
                    JOIN t_conferences c on d.conferenceGUID = c.GUID
                    JOIN t_leagues l on c.leagueGUID = l.GUID
                    JOIN t_franchise tf ON l.GUID = tf.leagueGUID
-          WHERE l.name = 'Baseball United v3'),
+          WHERE l.GUID = CAST(@leagueId AS BLOB)),
      mostRecentSeason AS (SELECT id                        AS seasonID,
                                  t_seasons.GUID            AS seasonGUID,
                                  RANK() OVER (ORDER BY id) AS seasonNum
                           FROM t_seasons
                                    JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
                                    JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
-                          WHERE t_leagues.name = 'Baseball United v3'
+                          WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
                           ORDER BY ID DESC
                           LIMIT 1),
      mostRecentSeasonPlayoff AS (SELECT GUID AS playoffGUID,
@@ -39,14 +39,35 @@ SELECT pg.seasonID,
        pg.seasonNum,
        pg.seriesNumber,
        pg.team1GUID,
+       team1.teamName                                       AS team1Name,
        pg.team1Standing,
        pg.team2GUID,
+       team2.teamName                                       AS team2Name,
        pg.team2Standing,
        pg.gameNumber,
-       pg.homeTeamLocalID,
-       pg.awayTeamLocalID,
+       homeTeam.teamGUID                                    AS homeTeamId,
+       homeTeam.teamName                                    AS homeTeamName,
+       awayTeam.teamGUID                                    AS awayTeamId,
+       awayTeam.teamName                                    AS awayTeamName,
        pg.homeRunsScored,
        pg.awayRunsScored,
-       pg.homePitcherLocalID,
-       pg.awayPitcherLocalID
+       homePitcher.baseballPlayerGUID                       AS homePitcherId,
+       homePitcher.firstName || ' ' || homePitcher.lastName AS homePitcherName,
+       awayPitcher.baseballPlayerGUID                       AS awayPitcherId,
+       awayPitcher.firstName || ' ' || awayPitcher.lastName AS awayPitcherName
 FROM playoffGames pg
+         JOIN teams team1 ON team1.teamGUID = pg.team1GUID
+         JOIN teams team2 ON team2.teamGUID = pg.team2GUID
+
+         JOIN t_team_local_ids homeTeamLocal ON pg.homeTeamLocalID = homeTeamLocal.localID
+         JOIN teams homeTeam ON homeTeamLocal.GUID = homeTeam.teamGUID
+
+         JOIN t_team_local_ids awayTeamLocal ON pg.awayTeamLocalID = awayTeamLocal.localID
+         JOIN teams awayTeam ON awayTeamLocal.GUID = awayTeam.teamGUID
+
+         LEFT JOIN t_baseball_player_local_ids homePitcherLocal ON pg.homePitcherLocalID = homePitcherLocal.localID
+         LEFT JOIN v_baseball_player_info homePitcher ON homePitcherLocal.GUID = homePitcher.baseballPlayerGUID
+
+         LEFT JOIN t_baseball_player_local_ids awayPitcherLocal ON pg.awayPitcherLocalID = awayPitcherLocal.localID
+         LEFT JOIN v_baseball_player_info awayPitcher ON awayPitcherLocal.GUID = awayPitcher.baseballPlayerGUID
+ORDER BY pg.seriesNumber, pg.gameNumber
