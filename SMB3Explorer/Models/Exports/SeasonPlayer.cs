@@ -15,12 +15,6 @@ public class SeasonPlayer
     private Trait[] _traits = Array.Empty<Trait>();
     private PitchType[] _pitches = Array.Empty<PitchType>();
 
-    [Ignore]
-    public Guid PlayerId { get; set; }
-    
-    [Ignore]
-    public int SeasonId { get; set; }
-    
     [Name("Season"), Index(0)]
     public int SeasonNum { get; set; }
     
@@ -159,4 +153,10 @@ public class SeasonPlayer
     
     [Name("Pitch 5"), Index(27)]
     public string? Pitch5 { get; set; }
+    
+    [Name("PlayerId"), Index(28)]
+    public Guid PlayerId { get; set; }
+    
+    [Name("SeasonId"), Index(29)]
+    public int SeasonId { get; set; }
 }

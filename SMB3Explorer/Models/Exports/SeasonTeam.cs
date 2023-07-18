@@ -20,10 +20,7 @@ public class SeasonTeam
     
     [Name("Conference"), Index(2)]
     public string ConferenceName { get; set; } = string.Empty;
-    
-    [Ignore]
-    public int SeasonId { get; set; }
-    
+
     [Name("Season"), Index(3)]
     public int SeasonNum { get; set; }
     
@@ -98,4 +95,7 @@ public class SeasonTeam
 
     [Name("TeamId"), Index(26)]
     public Guid TeamId { get; set; }
+    
+    [Name("SeasonId"), Index(27)]
+    public int SeasonId { get; set; }
 }
