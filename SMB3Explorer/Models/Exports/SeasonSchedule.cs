@@ -41,7 +41,7 @@ public class SeasonSchedule
     [Name("HomePitcherId"), Index(11)]
     public Guid? HomePitcherId { get; set; }
 
-    [Name("HomePitcherId"), Index(12)]
+    [Name("AwayPitcherId"), Index(12)]
     public Guid? AwayPitcherId { get; set; }
     
     [Name("SeasonId"), Index(13)]
