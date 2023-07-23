@@ -45,7 +45,7 @@ public static class PlayerTrait
         {new DatabaseTraitSubtypePair(0, 1), Trait.BatterPowerVsLeft},
         {new DatabaseTraitSubtypePair(1, 0), Trait.BatterContactVsRight},
         {new DatabaseTraitSubtypePair(1, 1), Trait.BatterContactVsLeft},
-        {new DatabaseTraitSubtypePair(2, 6), Trait.BatterRbiMan},
+        {new DatabaseTraitSubtypePair(2, 6), Trait.BatterRbiHero},
         {new DatabaseTraitSubtypePair(2, 7), Trait.BatterRbiZero},
         {new DatabaseTraitSubtypePair(3, 2), Trait.BatterHighPitch},
         {new DatabaseTraitSubtypePair(3, 3), Trait.BatterLowPitch},
@@ -201,5 +201,6 @@ public enum Trait
     [Description("Two Way (IF)")] PitcherTwoWayInfielder,
     [Description("Two Way (OF)")] PitcherTwoWayOutfielder,
     [Description("Two Way (C)")] PitcherTwoWayCatcher,
-    [Description("Bad Ball Hitter")] BatterBadBallHitter
+    [Description("Bad Ball Hitter")] BatterBadBallHitter,
+    [Description("RBI Hero")] BatterRbiHero
 }
