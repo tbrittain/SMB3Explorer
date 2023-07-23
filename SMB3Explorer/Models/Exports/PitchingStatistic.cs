@@ -142,6 +142,6 @@ public abstract class PitchingStatistic
     [Name("Pitches Per Inning"), Index(38)]
     public double PitchesPerInning => TotalPitches / InningsPitched;
     
-    [Name("Pitcher Per Game"), Index(39)]
+    [Name("Pitches Per Game"), Index(39)]
     public double PitchesPerGame => TotalPitches / (double) GamesPlayed;
 }
