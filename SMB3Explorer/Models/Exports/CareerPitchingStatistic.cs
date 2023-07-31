@@ -84,8 +84,8 @@ public class CareerPitchingStatistic : CareerStatistic
     
     [Name("FIP"), Index(29)]
     public double FieldingIndependentPitching =>
-        (((13 * HomeRunsAllowed) + (3 * (WalksAllowed + HitByPitch)) - 
-          (2 * Strikeouts)) / (double) OutsPitched) + 3.10;
+        (13 * HomeRunsAllowed + 3 * (WalksAllowed + HitByPitch) - 
+         2 * Strikeouts) / ((double) OutsPitched / 3) + 3.10;
 
     [Name("WHIP"), Index(30)]
     public double WalksAndHitsPerInning => (WalksAllowed + HitsAllowed) / InningsPitched;
