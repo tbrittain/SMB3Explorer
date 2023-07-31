@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <IsPackable>false</IsPackable>
-        <Version>1.6.0</Version>
+        <Version>1.6.1</Version>
         <Title>SMB Explorer</Title>
         <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
         <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
