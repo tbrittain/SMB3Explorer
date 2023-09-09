@@ -16,8 +16,9 @@ WITH teams AS
                           WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
                           ORDER BY ID DESC
                           LIMIT 1),
-     gameResults AS (SELECT (ROW_NUMBER() OVER (PARTITION BY tsg.seasonID ORDER BY tgr.ID) - 1) /
-                            ((SELECT COUNT(*) FROM teams) / 2) + 1 AS day,
+     gameResults AS (SELECT RANK() OVER (PARTITION BY tsg.seasonID ORDER BY tgr.ID) AS gameNumber,
+                            (ROW_NUMBER() OVER (PARTITION BY tsg.seasonID ORDER BY tgr.ID) - 1) /
+                            ((SELECT COUNT(*) FROM teams) / 2) + 1                  AS day,
                             tgr.*
                      FROM t_game_results tgr
                               JOIN t_season_games tsg on tgr.ID = tsg.gameID
@@ -54,7 +55,10 @@ SELECT ss.seasonID,
        vbpi_away.firstName || ' ' || vbpi_away.lastName AS awayPitcherName
 FROM seasonSchedule ss
          LEFT JOIN gameResults gr
-                   ON gr.homeTeamLocalID = ss.homeTeamID AND gr.awayTeamLocalID = ss.awayTeamID AND ss.day = gr.day
+                   ON gr.homeTeamLocalID = ss.homeTeamID
+                       AND gr.awayTeamLocalID = ss.awayTeamID
+                       AND ss.gameNumber = gr.gameNumber
+                       AND ss.day = gr.day
 
          JOIN teams homeTeams ON ss.homeTeamID = homeTeams.localID
          JOIN teams awayTeams ON ss.awayTeamID = awayTeams.localID
@@ -64,4 +68,4 @@ FROM seasonSchedule ss
 
          LEFT JOIN v_baseball_player_info vbpi_home ON tbpli_home.GUID = vbpi_home.baseballPlayerGUID
          LEFT JOIN v_baseball_player_info vbpi_away ON tbpli_away.GUID = vbpi_away.baseballPlayerGUID
-ORDER BY gameNumber;
+ORDER BY ss.gameNumber;

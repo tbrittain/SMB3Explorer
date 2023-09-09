@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <IsPackable>false</IsPackable>
-        <Version>1.6.1</Version>
+        <Version>1.6.2</Version>
         <Title>SMB Explorer</Title>
         <Authors>Trey Brittain &lt;treybrittain@gmail.com&gt;</Authors>
         <PackageProjectUrl>https://github.com/tbrittain/SMB3Explorer</PackageProjectUrl>
@@ -23,7 +23,7 @@
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
       <PackageReference Include="CsvHelper" Version="30.0.1" />
       <PackageReference Include="DotNetZip" Version="1.16.0" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.9" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
