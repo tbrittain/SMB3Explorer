@@ -1,4 +1,4 @@
-﻿using Ionic.Zlib;
+﻿using System.IO.Compression;
 using Moq;
 using SMB3Explorer.Services.ApplicationContext;
 using SMB3Explorer.Services.DataService;
@@ -22,7 +22,7 @@ public class DataServiceInitTests
             .Returns(mockFileStream.Object);
 
         mockSystemIoWrapper.Setup(x => x.GetZlibDecompressionStream(It.IsAny<Stream>()))
-            .Returns(new ZlibStream(mockFileStream.Object, CompressionMode.Decompress));
+            .Returns(new DeflateStream(mockFileStream.Object, CompressionMode.Decompress));
 
         mockSystemIoWrapper.Setup(x => x.FileCreateStream(It.IsAny<string>()))
             .Returns(mockFileStream.Object);
