@@ -81,9 +81,9 @@ public class SystemIoWrapper : ISystemIoWrapper
         return File.OpenRead(path);
     }
 
-    public DeflateStream GetZlibDecompressionStream(Stream stream)
+    public ZLibStream GetZlibDecompressionStream(Stream stream)
     {
-        return new DeflateStream(stream, CompressionMode.Decompress);
+        return new ZLibStream(stream, CompressionMode.Decompress);
     }
 
     public long FileGetSize(string path)

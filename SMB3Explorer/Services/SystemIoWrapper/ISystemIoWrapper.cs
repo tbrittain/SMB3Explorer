@@ -26,7 +26,7 @@ public interface ISystemIoWrapper
     Stream? FileOpenRead(string path);
     long FileGetSize(string path);
     
-    DeflateStream GetZlibDecompressionStream(Stream stream);
+    ZLibStream GetZlibDecompressionStream(Stream stream);
     
     bool DirectoryExists(string path);
     void DirectoryCreate(string path);
