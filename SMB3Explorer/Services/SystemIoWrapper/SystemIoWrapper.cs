@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Windows;
-using Ionic.Zlib;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using Serilog;
@@ -81,9 +81,9 @@ public class SystemIoWrapper : ISystemIoWrapper
         return File.OpenRead(path);
     }
 
-    public ZlibStream GetZlibDecompressionStream(Stream stream)
+    public ZLibStream GetZlibDecompressionStream(Stream stream)
     {
-        return new ZlibStream(stream, CompressionMode.Decompress);
+        return new ZLibStream(stream, CompressionMode.Decompress);
     }
 
     public long FileGetSize(string path)

@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Windows;
-using Ionic.Zlib;
 using Microsoft.Win32;
 using SMB3Explorer.Services.CsvWriterWrapper;
 
@@ -26,7 +26,7 @@ public interface ISystemIoWrapper
     Stream? FileOpenRead(string path);
     long FileGetSize(string path);
     
-    ZlibStream GetZlibDecompressionStream(Stream stream);
+    ZLibStream GetZlibDecompressionStream(Stream stream);
     
     bool DirectoryExists(string path);
     void DirectoryCreate(string path);
