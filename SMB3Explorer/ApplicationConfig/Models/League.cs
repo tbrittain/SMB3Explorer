@@ -1,28 +1,28 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace SMB3Explorer.ApplicationConfig.Models;
 
 public class League
 {
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public Guid Id { get; set; }
 
-    [JsonProperty("playerTeam")]
+    [JsonPropertyName("playerTeam")]
     public string? PlayerTeam { get; set; }
     
-    [JsonProperty("numSeasons")]
+    [JsonPropertyName("numSeasons")]
     public int? NumSeasons { get; set; }
     
-    [JsonProperty("numTimesAccessed")]
+    [JsonPropertyName("numTimesAccessed")]
     public int NumTimesAccessed { get; set; }
 
-    [JsonProperty("firstAccessed")]
+    [JsonPropertyName("firstAccessed")]
     public DateTime FirstAccessed { get; set; }
 
-    [JsonProperty("lastAccessed")]
+    [JsonPropertyName("lastAccessed")]
     public DateTime LastAccessed { get; set; }
 }

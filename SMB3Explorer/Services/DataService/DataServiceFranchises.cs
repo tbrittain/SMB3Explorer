@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Utils;
@@ -15,13 +14,13 @@ public partial class DataService
         command.CommandText = commandText;
         var reader = await command.ExecuteReaderAsync();
 
-        List<FranchiseSelection> franchises = new();
+        List<FranchiseSelection> franchises = [];
         while (reader.Read())
         {
-            var leagueBytes = reader["leagueId"] as byte[] ?? Array.Empty<byte>();
+            var leagueBytes = reader["leagueId"] as byte[] ?? [];
             var leagueId = leagueBytes.ToGuid();
 
-            var franchiseBytes = reader["franchiseId"] as byte[] ?? Array.Empty<byte>();
+            var franchiseBytes = reader["franchiseId"] as byte[] ?? [];
             var franchiseId = franchiseBytes.ToGuid();
 
             var franchise = new FranchiseSelection

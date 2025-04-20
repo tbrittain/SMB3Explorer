@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
-using Newtonsoft.Json;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Utils;
@@ -213,8 +213,7 @@ public partial class DataService
             if (!string.IsNullOrEmpty(traitsSerialized))
             {
                 var traits =
-                    JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ??
-                    Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>();
+                    JsonSerializer.Deserialize<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ?? [];
 
                 seasonPlayer.Traits = _applicationContext.SelectedGame switch
                 {
@@ -241,8 +240,7 @@ public partial class DataService
                 var pitchesSerialized = reader.IsDBNull(24) ? null : reader.GetString(24);
                 if (!string.IsNullOrEmpty(pitchesSerialized))
                 {
-                    var pitches = JsonConvert.DeserializeObject<DatabaseIntOption[]>(pitchesSerialized) ??
-                                  Array.Empty<DatabaseIntOption>();
+                    var pitches = JsonSerializer.Deserialize<DatabaseIntOption[]>(pitchesSerialized) ?? [];
 
                     seasonPlayer.Pitches = pitches
                         .Select(x => PitchTypes.Pitches[x])

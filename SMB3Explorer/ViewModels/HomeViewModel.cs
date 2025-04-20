@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -24,7 +23,7 @@ public partial class HomeViewModel : ViewModelBase
     private readonly INavigationService _navigationService;
     private readonly ISystemIoWrapper _systemIoWrapper;
 
-    private ObservableCollection<FranchiseSelection> _franchises = new();
+    private ObservableCollection<FranchiseSelection> _franchises = [];
     private bool _interactionEnabled;
     private FranchiseSelection? _selectedFranchise;
     private bool _atLeastOneFranchiseSeasonExists;
@@ -473,7 +472,7 @@ public partial class HomeViewModel : ViewModelBase
                     return;
                 }
 
-                if (task.Result.Any())
+                if (task.Result.Count != 0)
                 {
                     Log.Debug("{Count} Franchises found", task.Result.Count);
                     Franchises = new ObservableCollection<FranchiseSelection>(task.Result);

@@ -110,7 +110,7 @@ public partial class DataService
             return new List<Smb4LeagueSelection>();
         }
 
-        List<Smb4LeagueSelection> leagues = new();
+        List<Smb4LeagueSelection> leagues = [];
         var command2 = Connection.CreateCommand();
         commandText = SqlRunner.GetSqlCommand(SqlFile.GetLeaguesForSmb4SaveGame);
         command2.CommandText = commandText;

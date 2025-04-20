@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
 using OneOf;
 using OneOf.Types;
 using Serilog;
@@ -19,8 +19,11 @@ public class ApplicationConfig : IApplicationConfig
         if (File.Exists(configFilePath))
         {
             var configJson = File.ReadAllText(configFilePath);
-            var config = JsonConvert.DeserializeObject<ConfigOptions>(configJson);
-            if (config is not null) return config;
+            var config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+            if (config is not null)
+            {
+                return config;
+            }
 
             Log.Error("Failed to deserialize config file");
             return new Error<string>("Failed to deserialize config file.");
@@ -48,7 +51,12 @@ public class ApplicationConfig : IApplicationConfig
             }
         }
 
-        var configJson = JsonConvert.SerializeObject(configOptions, Formatting.Indented);
+        var configJson = JsonSerializer.Serialize(configOptions,
+            new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            });
+
         try
         {
             File.WriteAllText(configFilePath, configJson);
