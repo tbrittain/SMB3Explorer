@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SMB3Explorer.Models.Internal;
 using SMB3Explorer.Utils;
@@ -23,16 +24,17 @@ public partial class DataService
             var franchiseBytes = reader["franchiseId"] as byte[];
             var franchiseId = franchiseBytes?.ToGuid();
 
-            var isElimination = (bool)reader["elimination"];
+            var isEliminationRaw = reader["elimination"] is DBNull ? null : (long?)reader["elimination"];
 
             var franchise = new FranchiseSelection
             {
                 LeagueId = leagueId,
-                Mode = (franchiseId, isElimination) switch
+                Mode = (franchiseId, isEliminationRaw) switch
                 {
-                    (null, true) => LeagueMode.Elimination,
-                    (null, false) => LeagueMode.Season,
-                    _ => LeagueMode.Franchise
+                    (not null, _) => LeagueMode.Franchise,
+                    (null, 1) => LeagueMode.Elimination,
+                    (null, 0) => LeagueMode.Season,
+                    _ => LeagueMode.None
                 },
                 LeagueName = reader["leagueName"].ToString()!,
                 LeagueType = reader["leagueTypeName"].ToString()!,

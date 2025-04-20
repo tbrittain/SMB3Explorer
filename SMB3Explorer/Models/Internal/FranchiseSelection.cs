@@ -7,6 +7,10 @@ namespace SMB3Explorer.Models.Internal;
 
 public enum LeagueMode
 {
+    /// <summary>
+    /// This may be the case if no games have been played yet
+    /// </summary>
+    None,
     Franchise,
     Season,
     Elimination
@@ -53,6 +57,9 @@ public record FranchiseSelection
                     break;
                 case LeagueMode.Elimination:
                     sb.Append($": Elimination mode ({LeagueType})");
+                    break;
+                case LeagueMode.None:
+                    sb.Append($": No games played yet ({LeagueType})");
                     break;
             }
 
