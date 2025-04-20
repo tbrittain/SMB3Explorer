@@ -281,7 +281,7 @@ public partial class LandingViewModel : ViewModelBase
                     .Where(x => !existingLeagues.Contains(x))
                     .ToList();
 
-                if (newLeagues.Any())
+                if (newLeagues.Count != 0)
                 {
                     var now = DateTime.Now;
                     configOptions.Leagues.AddRange(newLeagues

@@ -20,16 +20,23 @@ public partial class DataService
             var leagueBytes = reader["leagueId"] as byte[] ?? [];
             var leagueId = leagueBytes.ToGuid();
 
-            var franchiseBytes = reader["franchiseId"] as byte[] ?? [];
-            var franchiseId = franchiseBytes.ToGuid();
+            var franchiseBytes = reader["franchiseId"] as byte[];
+            var franchiseId = franchiseBytes?.ToGuid();
+
+            var isElimination = (bool)reader["elimination"];
 
             var franchise = new FranchiseSelection
             {
                 LeagueId = leagueId,
-                FranchiseId = franchiseId,
+                Mode = (franchiseId, isElimination) switch
+                {
+                    (null, true) => LeagueMode.Elimination,
+                    (null, false) => LeagueMode.Season,
+                    _ => LeagueMode.Franchise
+                },
                 LeagueName = reader["leagueName"].ToString()!,
                 LeagueType = reader["leagueTypeName"].ToString()!,
-                PlayerTeamName = reader["playerTeamName"].ToString()!,
+                PlayerTeamName = reader["playerTeamName"].ToString(),
                 NumSeasons = int.Parse(reader["numSeasons"].ToString()!)
             };
             franchises.Add(franchise);

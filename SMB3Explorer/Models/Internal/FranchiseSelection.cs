@@ -1,8 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace SMB3Explorer.Models.Internal;
+
+public enum LeagueMode
+{
+    Franchise,
+    Season,
+    Elimination
+}
 
 public record FranchiseSelection
 {
@@ -10,15 +18,49 @@ public record FranchiseSelection
         .Concat(Path.GetInvalidFileNameChars())
         .ToArray();
     
-    public Guid LeagueId { get; init; }
-    public Guid FranchiseId { get; init; }
-    public string LeagueName { get; init; } = string.Empty;
-    public string LeagueType { get; init; } = string.Empty;
-    public string PlayerTeamName { get; init; } = string.Empty;
-    public int NumSeasons { get; init; }
+    private string? _displayText;
 
+    public required Guid LeagueId { get; init; }
+    public required LeagueMode Mode { get; init; }
+    public required string LeagueName { get; init; } = string.Empty;
+    public required string LeagueType { get; init; } = string.Empty;
+    public required string? PlayerTeamName { get; init; } = string.Empty;
+    public required int NumSeasons { get; init; }
+    
     // ReSharper disable once UnusedMember.Global
-    public string DisplayText => $"{LeagueName}: {NumSeasons} seasons as {PlayerTeamName}";
+    public string DisplayText
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(_displayText))
+            {
+                return _displayText;
+            }
+
+            var sb = new StringBuilder(LeagueName);
+
+            switch (Mode)
+            {
+                case LeagueMode.Franchise:
+                    sb.Append($": Franchise mode ({LeagueType}) with {NumSeasons} seasons");
+                    if (!string.IsNullOrEmpty(PlayerTeamName))
+                    {
+                        sb.Append($" as {PlayerTeamName}");
+                    }
+                    break;
+                case LeagueMode.Season:
+                    sb.Append($": Season mode ({LeagueType}) with {NumSeasons} seasons");
+                    break;
+                case LeagueMode.Elimination:
+                    sb.Append($": Elimination mode ({LeagueType})");
+                    break;
+            }
+
+            _displayText = sb.ToString();
+
+            return _displayText;
+        }
+    }
 
     public string LeagueNameSafe => new(LeagueName
         .Select(c => _invalidChars

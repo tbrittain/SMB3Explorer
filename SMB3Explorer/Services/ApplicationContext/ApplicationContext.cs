@@ -16,16 +16,10 @@ public sealed class ApplicationContext : IApplicationContext, INotifyPropertyCha
     public FranchiseSelection? SelectedFranchise
     {
         get => _selectedFranchise;
-        set
-        {
-            SetField(ref _selectedFranchise, value);
-            OnPropertyChanged(nameof(IsFranchiseSelected));
-        }
+        set => SetField(ref _selectedFranchise, value);
     }
 
-    public bool IsFranchiseSelected => SelectedFranchise is not null;
-
-    public ConcurrentBag<FranchiseSeason> FranchiseSeasons { get; } = new();
+    public ConcurrentBag<FranchiseSeason> FranchiseSeasons { get; } = [];
 
     public FranchiseSeason? MostRecentFranchiseSeason
     {
