@@ -30,11 +30,11 @@
                         HorizontalAlignment="Stretch"
                         Height="25"
                         DisplayMemberPath="DisplayText"
-                        ItemsSource="{Binding Franchises}"
-                        SelectedItem="{Binding SelectedFranchise}" />
+                        ItemsSource="{Binding Leagues}"
+                        SelectedItem="{Binding SelectedLeague}" />
 
                     <Label
-                        Visibility="{Binding NoFranchiseSeasonsVisibility}"
+                        Visibility="{Binding NoLeagueSeasonsVisibility}"
                         Content="No seasons exist for this franchise"
                         Foreground="Red"
                         FontWeight="Bold" />

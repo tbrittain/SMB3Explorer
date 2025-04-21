@@ -8,14 +8,14 @@ namespace SMB3Explorer.Services.DataService;
 
 public partial class DataService
 {
-    public async Task<List<FranchiseSelection>> GetFranchises()
+    public async Task<List<LeagueSelection>> GetLeagues()
     {
         var command = Connection!.CreateCommand();
         var commandText = SqlRunner.GetSqlCommand(SqlFile.Franchises);
         command.CommandText = commandText;
         var reader = await command.ExecuteReaderAsync();
 
-        List<FranchiseSelection> franchises = [];
+        List<LeagueSelection> franchises = [];
         while (reader.Read())
         {
             var leagueBytes = reader["leagueId"] as byte[] ?? [];
@@ -26,7 +26,7 @@ public partial class DataService
 
             var isEliminationRaw = reader["elimination"] is DBNull ? null : (long?)reader["elimination"];
 
-            var franchise = new FranchiseSelection
+            var franchise = new LeagueSelection
             {
                 LeagueId = leagueId,
                 Mode = (franchiseId, isEliminationRaw) switch

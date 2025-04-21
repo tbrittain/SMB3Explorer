@@ -15,7 +15,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -50,7 +50,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();

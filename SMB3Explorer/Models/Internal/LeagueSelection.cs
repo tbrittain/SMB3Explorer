@@ -16,7 +16,7 @@ public enum LeagueMode
     Elimination
 }
 
-public record FranchiseSelection
+public record LeagueSelection
 {
     private readonly char[] _invalidChars = new[] {' '}
         .Concat(Path.GetInvalidFileNameChars())

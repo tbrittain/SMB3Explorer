@@ -32,7 +32,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         command.Parameters.Add(new SqliteParameter("@leagueOps", SqliteType.Real)
@@ -105,7 +105,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         command.Parameters.Add(new SqliteParameter("@leagueEra", SqliteType.Real)
@@ -178,7 +178,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -264,7 +264,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -313,7 +313,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -350,7 +350,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -392,7 +392,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -418,7 +418,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -445,7 +445,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
