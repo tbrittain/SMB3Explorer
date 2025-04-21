@@ -12,6 +12,10 @@ namespace SMB3Explorer.ApplicationConfig;
 public class ApplicationConfig : IApplicationConfig
 {
     private const string ConfigFileName = "config.json";
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        WriteIndented = true
+    };
 
     public OneOf<ConfigOptions, Error<string>> GetConfigOptions()
     {
@@ -51,11 +55,7 @@ public class ApplicationConfig : IApplicationConfig
             }
         }
 
-        var configJson = JsonSerializer.Serialize(configOptions,
-            new JsonSerializerOptions
-            {
-                WriteIndented = true,
-            });
+        var configJson = JsonSerializer.Serialize(configOptions, JsonSerializerOptions);
 
         try
         {

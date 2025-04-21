@@ -133,8 +133,16 @@ public partial class DataService
             var leagueName = reader2.GetString(0);
             var playerTeamName = reader2.IsDBNull(1) ? null : reader2.GetString(1);
             int? numSeasons = reader2.IsDBNull(2) ? null : reader2.GetInt32(2);
+            
+            var isElimination = reader2.IsDBNull(3) ? null : (bool?)reader2.GetBoolean(3);
 
-            var league = new Smb4LeagueSelection(leagueName, smb4LeagueId, playerTeamName, numSeasons);
+            var franchiseBytes = reader2["franchiseId"] as byte[];
+            var franchiseId = franchiseBytes?.ToGuid();
+
+            var league = new Smb4LeagueSelection(leagueName, smb4LeagueId, playerTeamName, numSeasons)
+            {
+                Mode = LeagueModeExtensions.Parse(franchiseId is not null, isElimination)
+            };
             leagues.Add(league);
         }
 

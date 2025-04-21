@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using SMB3Explorer.Models.Internal;
 
 namespace SMB3Explorer.ApplicationConfig.Models;
 
@@ -10,6 +11,9 @@ public class League
 
     [JsonPropertyName("id")]
     public Guid Id { get; init; }
+
+    [JsonPropertyName("mode")]
+    public LeagueMode? Mode { get; init; }
 
     [JsonPropertyName("playerTeam")]
     public string? PlayerTeam { get; init; }

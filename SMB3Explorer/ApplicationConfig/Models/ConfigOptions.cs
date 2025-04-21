@@ -10,5 +10,5 @@ public class ConfigOptions
     public SelectedGame GamePreference { get; set; } = SelectedGame.Smb4;
 
     [JsonPropertyName("smb4Leagues")]
-    public List<League> Leagues { get; set; } = new();
+    public List<League> Leagues { get; init; } = [];
 }

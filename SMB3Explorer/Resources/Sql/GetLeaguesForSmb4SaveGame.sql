@@ -1,4 +1,8 @@
-﻿SELECT tl.name AS LeagueName, tt.teamName, COUNT(ts.GUID) AS NumSeasons
+﻿SELECT tl.name             AS LeagueName,
+       tt.teamName,
+       COUNT(ts.GUID)      AS NumSeasons,
+       MAX(ts.elimination) AS elimination,
+       tf.GUID             AS franchiseId
 FROM t_leagues tl
          LEFT JOIN t_franchise tf on tl.GUID = tf.leagueGUID
          LEFT JOIN t_teams tt on tf.playerTeamGUID = tt.GUID

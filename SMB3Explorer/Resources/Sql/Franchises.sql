@@ -1,12 +1,12 @@
-﻿SELECT tl.GUID               AS leagueId,
-       tl.name               AS leagueName,
-       tl.allowedTeamType    AS leagueTeamTypeId,
-       ttt.typeName          AS leagueTypeName,
-       tf.GUID               AS franchiseId,
-       tf.playerTeamGUID     AS playerTeamId,
-       tt.teamName           AS playerTeamName,
-       COUNT(tfs.seasonGUID) AS numSeasons,
-       MAX(ts.elimination)   AS elimination
+﻿SELECT tl.GUID                     AS leagueId,
+       tl.name                     AS leagueName,
+       tl.allowedTeamType          AS leagueTeamTypeId,
+       ttt.typeName                AS leagueTypeName,
+       tf.GUID                     AS franchiseId,
+       tf.playerTeamGUID           AS playerTeamId,
+       tt.teamName                 AS playerTeamName,
+       SQRT(COUNT(tfs.seasonGUID)) AS numSeasons,
+       MAX(ts.elimination)         AS elimination
 FROM t_leagues tl
          LEFT JOIN t_franchise tf ON tl.GUID = tf.leagueGUID
          LEFT JOIN t_franchise_seasons tfs ON tf.GUID = tfs.franchiseGUID

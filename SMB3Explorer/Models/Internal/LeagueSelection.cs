@@ -16,6 +16,20 @@ public enum LeagueMode
     Elimination
 }
 
+public static class LeagueModeExtensions
+{
+    public static LeagueMode Parse(bool hasFranchise, bool? isElimination)
+    {
+        return (hasFranchise, isElimination) switch
+        {
+            (true, _) => LeagueMode.Franchise,
+            (false, true) => LeagueMode.Elimination,
+            (false, false) => LeagueMode.Season,
+            _ => LeagueMode.None
+        };
+    }
+}
+
 public record LeagueSelection
 {
     private readonly char[] _invalidChars = new[] {' '}
@@ -53,7 +67,7 @@ public record LeagueSelection
                     }
                     break;
                 case LeagueMode.Season:
-                    sb.Append($": Season mode ({LeagueType}) with {NumSeasons} seasons");
+                    sb.Append($": Season mode ({LeagueType})");
                     break;
                 case LeagueMode.Elimination:
                     sb.Append($": Elimination mode ({LeagueType})");
