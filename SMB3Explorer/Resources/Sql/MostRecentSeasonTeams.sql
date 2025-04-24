@@ -11,14 +11,14 @@
                    JOIN t_division_teams tdt ON tt.GUID = tdt.teamGUID
                    JOIN t_divisions td ON tdt.divisionGUID = td.GUID
                    JOIN t_conferences tc ON td.conferenceGUID = tc.GUID),
-     mostRecentSeason AS (SELECT id                        AS seasonID,
-                                 t_seasons.GUID            AS seasonGUID,
-                                 incomePerTick * 200       AS payrollMax,
-                                 RANK() OVER (ORDER BY id) AS seasonNum
-                          FROM t_seasons
-                                   JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
-                                   JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
-                          WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
+     mostRecentSeason AS (SELECT ts.id                                                    AS seasonID,
+                                 ts.GUID                                                  AS seasonGUID,
+                                 IIF(tf.incomePerTick IS NULL, 0, tf.incomePerTick) * 200 AS payrollMax,
+                                 RANK() OVER (ORDER BY ts.id)                             AS seasonNum
+                          FROM t_seasons ts
+                                   JOIN t_leagues tl ON ts.historicalLeagueGUID = tl.GUID
+                                   LEFT JOIN t_franchise tf ON tl.GUID = tf.leagueGUID
+                          WHERE tl.GUID = CAST(@leagueId AS BLOB)
                           ORDER BY ID DESC
                           LIMIT 1),
      mostRecentSeasonStandings AS (SELECT fs.seasonID                                                  AS seasonID,
@@ -34,12 +34,12 @@
                                             JOIN mostRecentSeason fs ON vss.seasonGUID = fs.seasonGUID
                                             JOIN t_teams tt ON vss.teamGUID = tt.GUID)
 SELECT teams.*,
-       tsea.ID                                                      AS seasonId,
+       tsea.ID                                                                              AS seasonId,
        s.seasonNum,
-       payrollMax                                                   AS budget,
-       SUM(salary.salary * 200)                                     AS payroll,
-       payrollMax - SUM(salary.salary * 200)                        AS surplus,
-       (payrollMax - SUM(salary.salary * 200)) / tfscp.seasonLength AS surplusPerGame,
+       payrollMax                                                                           AS budget,
+       IIF(salary.salary IS NULL, 0, SUM(salary.salary * 200))                              AS payroll,
+       IIF(payrollMax = 0, 0, payrollMax - SUM(salary.salary * 200))                        AS surplus,
+       IIF(payrollMax = 0, 0, (payrollMax - SUM(salary.salary * 200)) / tfscp.seasonLength) AS surplusPerGame,
        mostRecentSeasonStandings.wins,
        mostRecentSeasonStandings.losses,
        mostRecentSeasonStandings.gamesBack,
@@ -47,14 +47,14 @@ SELECT teams.*,
        mostRecentSeasonStandings.runDifferential,
        mostRecentSeasonStandings.runsFor,
        mostRecentSeasonStandings.runsAgainst,
-       SUM(tbp.power)                                               AS power,
-       SUM(tbp.contact)                                             AS contact,
-       SUM(tbp.speed)                                               AS speed,
-       SUM(tbp.fielding)                                            AS fielding,
-       SUM(tbp.arm)                                                 AS arm,
-       SUM(tbp.velocity)                                            AS velocity,
-       SUM(tbp.junk)                                                AS junk,
-       SUM(tbp.accuracy)                                            AS accuracy
+       SUM(tbp.power)                                                                       AS power,
+       SUM(tbp.contact)                                                                     AS contact,
+       SUM(tbp.speed)                                                                       AS speed,
+       SUM(tbp.fielding)                                                                    AS fielding,
+       SUM(tbp.arm)                                                                         AS arm,
+       SUM(tbp.velocity)                                                                    AS velocity,
+       SUM(tbp.junk)                                                                        AS junk,
+       SUM(tbp.accuracy)                                                                    AS accuracy
 
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
@@ -68,12 +68,12 @@ FROM [v_baseball_player_info] vbpi
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
 
-         JOIN t_franchise tf ON tl.GUID = tf.leagueGUID
-         JOIN t_franchise_season_creation_params tfscp ON tf.GUID = tfscp.franchiseGUID
+         LEFT JOIN t_franchise tf ON tl.GUID = tf.leagueGUID
+         LEFT JOIN t_franchise_season_creation_params tfscp ON tf.GUID = tfscp.franchiseGUID
 
          JOIN teams ON ts.currentTeamLocalID = teams.teamLocalID
-         JOIN t_salary salary
-              ON vbpi.baseballPlayerGUID = salary.baseballPlayerGUID
+         LEFT JOIN t_salary salary
+                   ON vbpi.baseballPlayerGUID = salary.baseballPlayerGUID
 
          JOIN mostRecentSeasonStandings ON mostRecentSeasonStandings.teamGUID = teams.teamGUID
 
