@@ -191,13 +191,13 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExportSeason))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseSeasonBattingStatistics()
     {
         await HandleFranchiseSeasonBattingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseSeasonPlayoffBattingStatistics()
     {
         await HandleFranchiseSeasonBattingExport(false);
@@ -219,13 +219,13 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExportSeason))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseSeasonPitchingStatistics()
     {
         await HandleFranchiseSeasonPitchingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseSeasonPlayoffPitchingStatistics()
     {
         await HandleFranchiseSeasonPitchingExport(false);
