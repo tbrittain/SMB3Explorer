@@ -17,6 +17,11 @@ public record Smb4LeagueSelection(string LeagueName, Guid SaveGameLeagueId, stri
         {
             var sb = new StringBuilder(LeagueName);
 
+            if (Mode is not null)
+            {
+                sb.Append($" ({Mode} mode)");
+            }
+
             if (!string.IsNullOrEmpty(PlayerTeam) && NumSeasons is not null)
             {
                 sb.Append($" ({NumSeasons} seasons as {PlayerTeam})");
