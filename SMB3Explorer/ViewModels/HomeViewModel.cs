@@ -135,13 +135,13 @@ public partial class HomeViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseCareerBattingStatistics()
     {
         await HandleFranchiseCareerBattingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseCareerPlayoffBattingStatistics()
     {
         await HandleFranchiseCareerBattingExport(false);
@@ -163,13 +163,13 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseCareerPitchingStatistics()
     {
         await HandleFranchiseCareerPitchingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseCareerPlayoffPitchingStatistics()
     {
         await HandleFranchiseCareerPitchingExport(false);
@@ -191,13 +191,13 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportFranchiseSeasonBattingStatistics()
     {
         await HandleFranchiseSeasonBattingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportFranchiseSeasonPlayoffBattingStatistics()
     {
         await HandleFranchiseSeasonBattingExport(false);
@@ -219,13 +219,13 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportFranchiseSeasonPitchingStatistics()
     {
         await HandleFranchiseSeasonPitchingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportFranchiseSeasonPlayoffPitchingStatistics()
     {
         await HandleFranchiseSeasonPitchingExport(false);
@@ -247,7 +247,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportFranchiseTeamSeasonStandings()
     {
         Log.Information("Exporting franchise season standings...");
@@ -263,7 +263,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportFranchiseTeamPlayoffStandings()
     {
         Log.Information("Exporting franchise playoff standings...");
@@ -280,19 +280,19 @@ public partial class HomeViewModel : ViewModelBase
     }
 
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportTopPerformersBatting()
     {
         await HandleTopPerformersBattingExport(MostRecentSeasonFilter.RegularSeason);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportTopRookiesBatting()
     {
         await HandleTopPerformersBattingExport(MostRecentSeasonFilter.Rookies);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportTopPerformersBattingPlayoffs()
     {
         await HandleTopPerformersBattingExport(MostRecentSeasonFilter.Playoffs);
@@ -332,19 +332,19 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportTopPerformersPitching()
     {
         await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.RegularSeason);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportTopRookiesPitching()
     {
         await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.Rookies);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportTopPerformersPitchingPlayoffs()
     {
         await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.Playoffs);
@@ -384,7 +384,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportMostRecentSeasonPlayers()
     {
         Mouse.OverrideCursor = Cursors.Wait;
@@ -400,7 +400,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportMostRecentSeasonTeams()
     {
         Mouse.OverrideCursor = Cursors.Wait;
@@ -416,7 +416,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportMostRecentSeasonSchedule()
     {
         Mouse.OverrideCursor = Cursors.Wait;
@@ -432,7 +432,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportMostRecentSeasonPlayoffSchedule()
     {
         Mouse.OverrideCursor = Cursors.Wait;
@@ -456,9 +456,61 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    private bool CanExport()
+    /// <summary>
+    /// Applies to exports that have a season context (franchise and season)
+    /// </summary>
+    /// <returns></returns>
+    private bool CanExportSeason()
     {
-        return LeagueSelected && AtLeastOneLeagueSeasonExists;
+        if (!LeagueSelected || !AtLeastOneLeagueSeasonExists)
+        {
+            return false;
+        }
+
+        return _selectedLeague!.Mode switch
+        {
+            LeagueMode.Franchise => true,
+            LeagueMode.Season => true,
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// Applies to exports that are contain a playoff format (franchise, season, and elimination)
+    /// </summary>
+    /// <returns></returns>
+    private bool CanExportPlayoff()
+    {
+        if (!LeagueSelected || !AtLeastOneLeagueSeasonExists)
+        {
+            return false;
+        }
+
+        return _selectedLeague!.Mode switch
+        {
+            LeagueMode.Franchise => true,
+            LeagueMode.Season => true,
+            LeagueMode.Elimination => true,
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// Applies to exports that are historical in nature (franchise only)
+    /// </summary>
+    /// <returns></returns>
+    private bool CanExportHistorical()
+    {
+        if (!LeagueSelected || !AtLeastOneLeagueSeasonExists)
+        {
+            return false;
+        }
+
+        return _selectedLeague!.Mode switch
+        {
+            LeagueMode.Franchise => true,
+            _ => false
+        };
     }
 
     private void GetFranchises()
