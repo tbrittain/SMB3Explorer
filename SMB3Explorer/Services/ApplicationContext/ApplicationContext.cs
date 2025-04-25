@@ -9,31 +9,25 @@ namespace SMB3Explorer.Services.ApplicationContext;
 
 public sealed class ApplicationContext : IApplicationContext, INotifyPropertyChanged
 {
-    private FranchiseSelection? _selectedFranchise;
+    private LeagueSelection? _selectedFranchise;
     private bool _franchiseSeasonsLoading;
     private FranchiseSeason? _mostRecentFranchiseSeason;
 
-    public FranchiseSelection? SelectedFranchise
+    public LeagueSelection? SelectedLeague
     {
         get => _selectedFranchise;
-        set
-        {
-            SetField(ref _selectedFranchise, value);
-            OnPropertyChanged(nameof(IsFranchiseSelected));
-        }
+        set => SetField(ref _selectedFranchise, value);
     }
 
-    public bool IsFranchiseSelected => SelectedFranchise is not null;
+    public ConcurrentBag<FranchiseSeason> LeagueSeasons { get; } = [];
 
-    public ConcurrentBag<FranchiseSeason> FranchiseSeasons { get; } = new();
-
-    public FranchiseSeason? MostRecentFranchiseSeason
+    public FranchiseSeason? MostRecentLeagueSeason
     {
         get => _mostRecentFranchiseSeason;
         set => SetField(ref _mostRecentFranchiseSeason, value);
     }
 
-    public bool FranchiseSeasonsLoading
+    public bool LeagueSeasonsLoading
     {
         get => _franchiseSeasonsLoading;
         set => SetField(ref _franchiseSeasonsLoading, value);

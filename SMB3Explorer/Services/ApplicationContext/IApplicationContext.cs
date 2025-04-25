@@ -7,11 +7,10 @@ namespace SMB3Explorer.Services.ApplicationContext;
 
 public interface IApplicationContext
 {
-    FranchiseSelection? SelectedFranchise { get; set; }
-    bool IsFranchiseSelected { get; }
-    ConcurrentBag<FranchiseSeason> FranchiseSeasons { get; }
-    FranchiseSeason? MostRecentFranchiseSeason { get; set; }
-    bool FranchiseSeasonsLoading { get; set; }
+    LeagueSelection? SelectedLeague { get; set; }
+    ConcurrentBag<FranchiseSeason> LeagueSeasons { get; }
+    FranchiseSeason? MostRecentLeagueSeason { get; set; }
+    bool LeagueSeasonsLoading { get; set; }
     SelectedGame SelectedGame { get; set; }
     event PropertyChangedEventHandler? PropertyChanged;
 }

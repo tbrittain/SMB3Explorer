@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using OneOf;
 using OneOf.Types;
 using Serilog;
@@ -11,15 +11,8 @@ using static SMB3Explorer.Constants.Github;
 
 namespace SMB3Explorer.Services.HttpService;
 
-public class HttpService : IHttpService
+public class HttpService(IHttpClientFactory httpClientFactory) : IHttpService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public HttpService(IHttpClientFactory httpClientFactory)
-    {
-        _httpClientFactory = httpClientFactory;
-    }
-
     public async Task<OneOf<AppUpdateResult, None, Error<string>>> CheckForUpdates()
     {
         var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version;
@@ -29,7 +22,7 @@ public class HttpService : IHttpService
             return new Error<string>("Unable to determine current version.");
         }
 
-        var httpClient = _httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient();
 
         httpClient.DefaultRequestHeaders.Add("User-Agent", $"SMB3Explorer/{currentVersion.ToString()}");
         httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -43,7 +36,7 @@ public class HttpService : IHttpService
         }
 
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<GitHubReleaseResponse>(content);
+        var result = JsonSerializer.Deserialize<GitHubReleaseResponse>(content);
 
         if (result is null)
         {

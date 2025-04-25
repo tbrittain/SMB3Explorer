@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using SMB3Explorer.Enums;
 
 namespace SMB3Explorer.ApplicationConfig.Models;
 
 public class ConfigOptions
 {
-    [JsonProperty("gamePreference")]
+    [JsonPropertyName("gamePreference")]
     public SelectedGame GamePreference { get; set; } = SelectedGame.Smb4;
 
-    [JsonProperty("smb4Leagues")]
-    public List<League> Leagues { get; set; } = new();
+    [JsonPropertyName("smb4Leagues")]
+    public List<League> Leagues { get; init; } = [];
 }

@@ -24,10 +24,10 @@ public partial class HomeViewModel : ViewModelBase
     private readonly INavigationService _navigationService;
     private readonly ISystemIoWrapper _systemIoWrapper;
 
-    private ObservableCollection<FranchiseSelection> _franchises = new();
+    private ObservableCollection<LeagueSelection> _leagues = [];
     private bool _interactionEnabled;
-    private FranchiseSelection? _selectedFranchise;
-    private bool _atLeastOneFranchiseSeasonExists;
+    private LeagueSelection? _selectedLeague;
+    private bool _atLeastOneLeagueSeasonExists;
 
     public HomeViewModel(INavigationService navigationService, IDataService dataService,
         IApplicationContext applicationContext, ISystemIoWrapper systemIoWrapper)
@@ -44,24 +44,24 @@ public partial class HomeViewModel : ViewModelBase
         GetFranchises();
     }
 
-    public FranchiseSelection? SelectedFranchise
+    public LeagueSelection? SelectedLeague
     {
-        get => _selectedFranchise;
+        get => _selectedLeague;
         set
         {
-            SetField(ref _selectedFranchise, value);
-            _applicationContext.SelectedFranchise = value;
+            SetField(ref _selectedLeague, value);
+            _applicationContext.SelectedLeague = value;
             
             var leagueName = value?.LeagueNameSafe ?? "None";
             Log.Information("Set selected league to {LeagueNameSafe}", leagueName);
-            OnPropertyChanged(nameof(FranchiseSelected));
+            OnPropertyChanged(nameof(LeagueSelected));
         }
     }
 
-    public ObservableCollection<FranchiseSelection> Franchises
+    public ObservableCollection<LeagueSelection> Leagues
     {
-        get => _franchises;
-        private set => SetField(ref _franchises, value);
+        get => _leagues;
+        private set => SetField(ref _leagues, value);
     }
 
     public bool InteractionEnabled
@@ -70,27 +70,27 @@ public partial class HomeViewModel : ViewModelBase
         set => SetField(ref _interactionEnabled, value);
     }
 
-    public Visibility NoFranchiseSeasonsVisibility
+    public Visibility NoLeagueSeasonsVisibility
     {
         get
         {
-            if (!FranchiseSelected) return Visibility.Collapsed;
+            if (!LeagueSelected) return Visibility.Collapsed;
 
-            if (AtLeastOneFranchiseSeasonExists) return Visibility.Collapsed;
+            if (AtLeastOneLeagueSeasonExists) return Visibility.Collapsed;
 
             return Visibility.Visible;
         }
     }
 
-    private bool FranchiseSelected => SelectedFranchise is not null;
+    private bool LeagueSelected => SelectedLeague is not null;
 
-    private bool AtLeastOneFranchiseSeasonExists
+    private bool AtLeastOneLeagueSeasonExists
     {
-        get => _atLeastOneFranchiseSeasonExists;
+        get => _atLeastOneLeagueSeasonExists;
         set
         {
-            _atLeastOneFranchiseSeasonExists = value;
-            OnPropertyChanged(nameof(NoFranchiseSeasonsVisibility));
+            _atLeastOneLeagueSeasonExists = value;
+            OnPropertyChanged(nameof(NoLeagueSeasonsVisibility));
         }
     }
 
@@ -98,9 +98,9 @@ public partial class HomeViewModel : ViewModelBase
     {
         switch (e.PropertyName)
         {
-            case nameof(ApplicationContext.MostRecentFranchiseSeason):
+            case nameof(ApplicationContext.MostRecentLeagueSeason):
             {
-                AtLeastOneFranchiseSeasonExists = _applicationContext.MostRecentFranchiseSeason is not null;
+                AtLeastOneLeagueSeasonExists = _applicationContext.MostRecentLeagueSeason is not null;
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -135,13 +135,13 @@ public partial class HomeViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseCareerBattingStatistics()
     {
         await HandleFranchiseCareerBattingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseCareerPlayoffBattingStatistics()
     {
         await HandleFranchiseCareerBattingExport(false);
@@ -155,7 +155,7 @@ public partial class HomeViewModel : ViewModelBase
         var playersEnumerable = _dataService.GetFranchiseCareerBattingStatistics(isRegularSeason);
 
         var battingType = isRegularSeason ? "regular_season" : "playoffs";
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_career_batting_{battingType}_" +
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_career_batting_{battingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
@@ -163,13 +163,13 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseCareerPitchingStatistics()
     {
         await HandleFranchiseCareerPitchingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseCareerPlayoffPitchingStatistics()
     {
         await HandleFranchiseCareerPitchingExport(false);
@@ -183,7 +183,7 @@ public partial class HomeViewModel : ViewModelBase
         var playersEnumerable = _dataService.GetFranchiseCareerPitchingStatistics(isRegularSeason);
 
         var pitchingType = isRegularSeason ? "regular_season" : "playoffs";
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_career_pitching_{pitchingType}_" +
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_career_pitching_{pitchingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
@@ -191,13 +191,13 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseSeasonBattingStatistics()
     {
         await HandleFranchiseSeasonBattingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseSeasonPlayoffBattingStatistics()
     {
         await HandleFranchiseSeasonBattingExport(false);
@@ -211,7 +211,7 @@ public partial class HomeViewModel : ViewModelBase
         var playersEnumerable = _dataService.GetFranchiseSeasonBattingStatistics(isRegularSeason);
 
         var battingType = isRegularSeason ? "regular_season" : "playoffs";
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_batting_{battingType}_" +
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_season_batting_{battingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
@@ -219,13 +219,13 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseSeasonPitchingStatistics()
     {
         await HandleFranchiseSeasonPitchingExport();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportFranchiseSeasonPlayoffPitchingStatistics()
     {
         await HandleFranchiseSeasonPitchingExport(false);
@@ -239,7 +239,7 @@ public partial class HomeViewModel : ViewModelBase
         var playersEnumerable = _dataService.GetFranchiseSeasonPitchingStatistics(isRegularSeason);
 
         var pitchingType = isRegularSeason ? "regular_season" : "playoffs";
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_pitching_{pitchingType}_" +
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_season_pitching_{pitchingType}_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
@@ -247,7 +247,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportFranchiseTeamSeasonStandings()
     {
         Log.Information("Exporting franchise season standings...");
@@ -255,7 +255,7 @@ public partial class HomeViewModel : ViewModelBase
 
         var teamsEnumerable = _dataService.GetFranchiseSeasonStandings();
 
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_season_standings_" +
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_season_standings_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, teamsEnumerable, fileName);
@@ -263,7 +263,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportFranchiseTeamPlayoffStandings()
     {
         Log.Information("Exporting franchise playoff standings...");
@@ -271,7 +271,7 @@ public partial class HomeViewModel : ViewModelBase
 
         var teamsEnumerable = _dataService.GetFranchisePlayoffStandings();
 
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_playoff_standings_" +
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_playoff_standings_" +
                        $"{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, teamsEnumerable, fileName);
@@ -280,19 +280,19 @@ public partial class HomeViewModel : ViewModelBase
     }
 
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportTopPerformersBatting()
     {
         await HandleTopPerformersBattingExport(MostRecentSeasonFilter.RegularSeason);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportTopRookiesBatting()
     {
         await HandleTopPerformersBattingExport(MostRecentSeasonFilter.Rookies);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportTopPerformersBattingPlayoffs()
     {
         await HandleTopPerformersBattingExport(MostRecentSeasonFilter.Playoffs);
@@ -323,8 +323,8 @@ public partial class HomeViewModel : ViewModelBase
             _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
         };
 
-        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_top_batting_{exportType}_" +
+        var mostRecentSeason = _applicationContext.MostRecentLeagueSeason;
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_top_batting_{exportType}_" +
                        $"{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
@@ -332,19 +332,19 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportTopPerformersPitching()
     {
         await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.RegularSeason);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportHistorical))]
     private async Task ExportTopRookiesPitching()
     {
         await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.Rookies);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportTopPerformersPitchingPlayoffs()
     {
         await HandleTopPerformersPitchingExport(MostRecentSeasonFilter.Playoffs);
@@ -375,8 +375,8 @@ public partial class HomeViewModel : ViewModelBase
             _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
         };
 
-        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_top_pitching_{exportType}_" +
+        var mostRecentSeason = _applicationContext.MostRecentLeagueSeason;
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_top_pitching_{exportType}_" +
                        $"{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
 
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
@@ -384,15 +384,15 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportMostRecentSeasonPlayers()
     {
         Mouse.OverrideCursor = Cursors.Wait;
 
         var playersEnumerable = _dataService.GetMostRecentSeasonPlayers();
         
-        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_players" +
+        var mostRecentSeason = _applicationContext.MostRecentLeagueSeason;
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_players" +
                        $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playersEnumerable, fileName);
@@ -400,15 +400,15 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportMostRecentSeasonTeams()
     {
         Mouse.OverrideCursor = Cursors.Wait;
         
         var teamsEnumerable = _dataService.GetMostRecentSeasonTeams();
         
-        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_teams" +
+        var mostRecentSeason = _applicationContext.MostRecentLeagueSeason;
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_teams" +
                        $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, teamsEnumerable, fileName);
@@ -416,15 +416,15 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportSeason))]
     private async Task ExportMostRecentSeasonSchedule()
     {
         Mouse.OverrideCursor = Cursors.Wait;
         
         var scheduleEnumerable = _dataService.GetMostRecentSeasonSchedule();
         
-        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_schedule" +
+        var mostRecentSeason = _applicationContext.MostRecentLeagueSeason;
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_schedule" +
                        $"_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, scheduleEnumerable, fileName);
@@ -432,7 +432,7 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExport))]
+    [RelayCommand(CanExecute = nameof(CanExportPlayoff))]
     private async Task ExportMostRecentSeasonPlayoffSchedule()
     {
         Mouse.OverrideCursor = Cursors.Wait;
@@ -446,9 +446,9 @@ public partial class HomeViewModel : ViewModelBase
         }
 
         var playoffScheduleEnumerable = _dataService.GetMostRecentSeasonPlayoffSchedule();
-        var mostRecentSeason = _applicationContext.MostRecentFranchiseSeason;
+        var mostRecentSeason = _applicationContext.MostRecentLeagueSeason;
         
-        var fileName = $"{_applicationContext.SelectedFranchise!.LeagueNameSafe}_schedule" +
+        var fileName = $"{_applicationContext.SelectedLeague!.LeagueNameSafe}_schedule" +
                        $"_playoffs_season_{mostRecentSeason!.SeasonNum}_{DateTime.Now:yyyyMMddHHmmssfff}.csv";
         
         var (filePath, _) = await CsvUtils.ExportCsv(_systemIoWrapper, playoffScheduleEnumerable, fileName);
@@ -456,33 +456,94 @@ public partial class HomeViewModel : ViewModelBase
         HandleExportSuccess(filePath);
     }
 
-    private bool CanExport()
+    /// <summary>
+    /// Applies to exports that have a season context (franchise and season)
+    /// </summary>
+    /// <returns></returns>
+    private bool CanExportSeason()
     {
-        return FranchiseSelected && AtLeastOneFranchiseSeasonExists;
+        if (!LeagueSelected || !AtLeastOneLeagueSeasonExists)
+        {
+            return false;
+        }
+
+        return _selectedLeague!.Mode switch
+        {
+            LeagueMode.Franchise => true,
+            LeagueMode.Season => true,
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// Applies to exports that are contain a playoff format (franchise, season, and elimination)
+    /// </summary>
+    /// <returns></returns>
+    private bool CanExportPlayoff()
+    {
+        if (!LeagueSelected || !AtLeastOneLeagueSeasonExists)
+        {
+            return false;
+        }
+
+        return _selectedLeague!.Mode switch
+        {
+            LeagueMode.Franchise => true,
+            LeagueMode.Season => true,
+            LeagueMode.Elimination => true,
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// Applies to exports that are historical in nature (franchise only)
+    /// </summary>
+    /// <returns></returns>
+    private bool CanExportHistorical()
+    {
+        if (!LeagueSelected || !AtLeastOneLeagueSeasonExists)
+        {
+            return false;
+        }
+
+        return _selectedLeague!.Mode switch
+        {
+            LeagueMode.Franchise => true,
+            _ => false
+        };
     }
 
     private void GetFranchises()
     {
-        _dataService.GetFranchises()
+        _dataService.GetLeagues()
             .ContinueWith(async task =>
             {
                 if (task.Exception != null)
                 {
-                    DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to get franchises.",
+                    DefaultExceptionHandler.HandleException(_systemIoWrapper, "Failed to get leagues.",
                         task.Exception);
                     return;
                 }
 
-                if (task.Result.Any())
+                var rawResults = task.Result;
+
+                Log.Debug("Filtering out ineligible leagues (lacking at least one game played), found {Count} total leagues",
+                    rawResults.Count);
+                var filteredResults = rawResults
+                    .Where(x => x.Mode is not LeagueMode.None)
+                    .ToList();
+                Log.Debug("Filtered out ineligible leagues, left with {Count} eligible leagues", filteredResults.Count);
+
+                if (filteredResults.Count != 0)
                 {
-                    Log.Debug("{Count} Franchises found", task.Result.Count);
-                    Franchises = new ObservableCollection<FranchiseSelection>(task.Result);
+                    Log.Debug("{Count} Franchises found", filteredResults.Count);
+                    Leagues = new ObservableCollection<LeagueSelection>(filteredResults);
                     InteractionEnabled = true;
                 }
                 else
                 {
-                    Log.Debug("No franchises found, navigating to landing page");
-                    MessageBox.Show("No franchises found. Please select a different save file.");
+                    Log.Debug("No leagues found, navigating to landing page");
+                    MessageBox.Show("No leagues found. Please select a different save file.");
                     await _dataService.Disconnect();
                     _navigationService.NavigateTo<LandingViewModel>();
                 }

@@ -15,7 +15,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -35,8 +35,16 @@ public partial class DataService
             standing.RunsFor = int.Parse(reader["runsFor"].ToString()!);
             standing.RunsAgainst = int.Parse(reader["runsAgainst"].ToString()!);
             standing.RunDifferential = int.Parse(reader["runDifferential"].ToString()!);
-            standing.WinPercentage = double.Parse(reader["winPct"].ToString()!);
-            standing.GamesBack = double.Parse(reader["gamesBack"].ToString()!);
+
+            var winPercentageRaw = reader["winPct"].ToString()!;
+            standing.WinPercentage = string.IsNullOrEmpty(winPercentageRaw) 
+                ? 0
+                : double.Parse(winPercentageRaw);
+
+            var gamesBackRaw = reader["gamesBack"].ToString()!;
+            standing.GamesBack = string.IsNullOrEmpty(gamesBackRaw) 
+                ? 0
+                : double.Parse(gamesBackRaw);
 
             yield return standing;
         }
@@ -50,7 +58,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
@@ -20,18 +19,18 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
 
-        List<FranchiseSeason> seasons = new();
+        List<FranchiseSeason> seasons = [];
         while (reader.Read())
         {
             var seasonId = int.Parse(reader["seasonId"].ToString()!);
             var seasonNum = int.Parse(reader["seasonNum"].ToString()!);
 
-            var seasonBytes = reader["leagueGUID"] as byte[] ?? Array.Empty<byte>();
+            var seasonBytes = reader["leagueGUID"] as byte[] ?? [];
             var seasonGuid = seasonBytes.ToGuid();
 
             var season = new FranchiseSeason(seasonId, seasonNum, seasonGuid);
@@ -53,7 +52,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -78,7 +77,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();

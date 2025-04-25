@@ -6,8 +6,9 @@ namespace SMB3Explorer.Models.Internal;
 public record Smb4LeagueSelection(string LeagueName, Guid SaveGameLeagueId, string? PlayerTeam, int? NumSeasons)
 {
     public int NumTimesAccessed { get; set; }
-    public DateTime FirstAccessed { get; set; }
+    public DateTime FirstAccessed { get; init; }
     public DateTime LastAccessed { get; set; }
+    public LeagueMode? Mode { get; init; }
     
     // ReSharper disable once UnusedMember.Global
     public string DisplayName
@@ -15,6 +16,11 @@ public record Smb4LeagueSelection(string LeagueName, Guid SaveGameLeagueId, stri
         get
         {
             var sb = new StringBuilder(LeagueName);
+
+            if (Mode is not null)
+            {
+                sb.Append($" ({Mode} mode)");
+            }
 
             if (!string.IsNullOrEmpty(PlayerTeam) && NumSeasons is not null)
             {
@@ -34,7 +40,7 @@ public record Smb4LeagueSelection(string LeagueName, Guid SaveGameLeagueId, stri
                PlayerTeam == other.PlayerTeam;
     }
 
-    public override int GetHashCode()
+    override public int GetHashCode()
     {
         return HashCode.Combine(LeagueName, SaveGameLeagueId, PlayerTeam);
     }

@@ -34,34 +34,34 @@ public sealed partial class DataService : INotifyPropertyChanged, IDataService
     {
         switch (e.PropertyName)
         {
-            case nameof(IApplicationContext.SelectedFranchise):
+            case nameof(IApplicationContext.SelectedLeague):
             {
-                if (_applicationContext.SelectedFranchise is null)
+                if (_applicationContext.SelectedLeague is null)
                 {
                     Log.Information("Clearing cached franchise seasons");
-                    _applicationContext.FranchiseSeasons.Clear();
-                    _applicationContext.MostRecentFranchiseSeason = null;
+                    _applicationContext.LeagueSeasons.Clear();
+                    _applicationContext.MostRecentLeagueSeason = null;
                     break;
                 }
 
                 Mouse.OverrideCursor = Cursors.Wait;
-                _applicationContext.FranchiseSeasonsLoading = true;
+                _applicationContext.LeagueSeasonsLoading = true;
                 Task.Run(async () =>
                 {
                     Log.Information("Setting cached franchise seasons");
                     var seasons = await GetFranchiseSeasons();
-                    _applicationContext.FranchiseSeasons.Clear();
+                    _applicationContext.LeagueSeasons.Clear();
                     foreach (var season in seasons)
                     {
-                        _applicationContext.FranchiseSeasons.Add(season);
+                        _applicationContext.LeagueSeasons.Add(season);
                     }
     
                     var mostRecentSeason = seasons.MaxBy(x => x.SeasonNum);
 
                     Debug.Assert(mostRecentSeason != null, nameof(mostRecentSeason) + " != null");
                     Log.Information("Most recent franchise season: {SeasonNum}", mostRecentSeason.SeasonNum);
-                    _applicationContext.MostRecentFranchiseSeason = mostRecentSeason;
-                    _applicationContext.FranchiseSeasonsLoading = false;
+                    _applicationContext.MostRecentLeagueSeason = mostRecentSeason;
+                    _applicationContext.LeagueSeasonsLoading = false;
                     
                     Application.Current.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Arrow);
                 });

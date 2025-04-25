@@ -1,24 +1,24 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace SMB3Explorer.Models.Internal;
 
 public class GitHubReleaseResponse
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public int Id { get; set; }
 
-    [JsonProperty("tag_name")]
+    [JsonPropertyName("tag_name")]
     public string TagName { private get; set; } = string.Empty;
     
-    [JsonProperty("html_url")]
+    [JsonPropertyName("html_url")]
     public string HtmlUrl { get; set; } = string.Empty;
     
     public Version Version => Version.Parse(TagName.TrimStart('v'));
     
-    [JsonProperty("published_at")]
+    [JsonPropertyName("published_at")]
     public DateTime PublishedAt { get; set; }
     
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 }

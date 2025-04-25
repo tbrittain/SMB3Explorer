@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
-using Newtonsoft.Json;
+using Serilog;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Utils;
@@ -32,7 +33,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         command.Parameters.Add(new SqliteParameter("@leagueOps", SqliteType.Real)
@@ -105,7 +106,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         command.Parameters.Add(new SqliteParameter("@leagueEra", SqliteType.Real)
@@ -178,7 +179,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -213,17 +214,44 @@ public partial class DataService
             if (!string.IsNullOrEmpty(traitsSerialized))
             {
                 var traits =
-                    JsonConvert.DeserializeObject<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ??
-                    Array.Empty<PlayerTrait.DatabaseTraitSubtypePair>();
+                    JsonSerializer.Deserialize<PlayerTrait.DatabaseTraitSubtypePair[]>(traitsSerialized) ?? [];
 
                 seasonPlayer.Traits = _applicationContext.SelectedGame switch
                 {
                     SelectedGame.Smb3 => traits
-                        .Select(x => PlayerTrait.Smb3TraitMap[x])
+                        .Select(x =>
+                        {
+                            var ok = PlayerTrait.Smb3TraitMap.TryGetValue(x, out var trait);
+                            if (!ok)
+                            {
+                                Log.Warning(
+                                    "Trait {Trait} not found in database. This may be due to a missing or incorrect trait",
+                                    x);
+                                return (Trait?)null;
+                            }
+
+                            return trait;
+                        })
+                        .Where(x => x is not null)
+                        .Cast<Trait>()
                         .Distinct()
                         .ToArray(),
                     SelectedGame.Smb4 => traits
-                        .Select(x => PlayerTrait.Smb4TraitMap[x])
+                        .Select(x =>
+                        {
+                            var ok =  PlayerTrait.Smb4TraitMap.TryGetValue(x, out var trait);
+                            if (!ok)
+                            {
+                                Log.Warning(
+                                    "Trait {Trait} not found in database. This may be due to a missing or incorrect trait",
+                                    x);
+                                return (Trait?)null;
+                            }
+
+                            return trait;
+                        })
+                        .Where(x => x is not null)
+                        .Cast<Trait>()
                         .Distinct()
                         .ToArray(),
                     _ => throw new ArgumentException()
@@ -241,11 +269,22 @@ public partial class DataService
                 var pitchesSerialized = reader.IsDBNull(24) ? null : reader.GetString(24);
                 if (!string.IsNullOrEmpty(pitchesSerialized))
                 {
-                    var pitches = JsonConvert.DeserializeObject<DatabaseIntOption[]>(pitchesSerialized) ??
-                                  Array.Empty<DatabaseIntOption>();
+                    var pitches = JsonSerializer.Deserialize<DatabaseIntOption[]>(pitchesSerialized) ?? [];
 
                     seasonPlayer.Pitches = pitches
-                        .Select(x => PitchTypes.Pitches[x])
+                        .Select(x =>
+                        {
+                            var ok = PitchTypes.Pitches.TryGetValue(x, out var pitchType);
+                            if (!ok)
+                            {
+                                Log.Warning(
+                                    "Pitch type {PitchType} not found in database. This may be due to a missing or incorrect pitch type",
+                                    x);
+                                return null;
+                            }
+
+                            return pitchType;
+                        })
                         .Where(x => x is not null)
                         .Cast<PitchType>()
                         .Distinct()
@@ -266,7 +305,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -315,7 +354,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -352,7 +391,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -394,7 +433,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -420,7 +459,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
@@ -447,7 +486,7 @@ public partial class DataService
 
         command.Parameters.Add(new SqliteParameter("@leagueId", SqliteType.Blob)
         {
-            Value = _applicationContext.SelectedFranchise!.LeagueId.ToBlob()
+            Value = _applicationContext.SelectedLeague!.LeagueId.ToBlob()
         });
 
         var reader = await command.ExecuteReaderAsync();
