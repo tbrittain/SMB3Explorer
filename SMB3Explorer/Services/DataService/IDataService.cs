@@ -18,8 +18,7 @@ public interface IDataService
     Task<OneOf<List<Smb4LeagueSelection>, Error<string>>> EstablishDbConnection(string filePath,
         bool isCompressedSaveGame = true);
 
-    Task<List<FranchiseSelection>> GetFranchises();
-    Task<List<FranchiseSeason>> GetFranchiseSeasons();
+    Task<List<LeagueSelection>> GetLeagues();
 
     event EventHandler<EventArgs> ConnectionChanged;
 

@@ -6,28 +6,27 @@
                                  RANK() OVER (ORDER BY id) AS seasonNum
                           FROM t_seasons
                                    JOIN t_leagues ON t_seasons.historicalLeagueGUID = t_leagues.GUID
-                                   JOIN t_franchise tf ON t_leagues.GUID = tf.leagueGUID
                           WHERE t_leagues.GUID = CAST(@leagueId AS BLOB)
                           ORDER BY ID DESC
                           LIMIT 1)
 SELECT vbpi.baseballPlayerGUID,
-       tsea.ID                                        AS seasonId,
+       tsea.ID                                            AS seasonId,
        s.seasonNum,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[firstName]
-           ELSE vbpi.[firstName] END                  AS firstName,
+           ELSE vbpi.[firstName] END                      AS firstName,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[lastName]
-           ELSE vbpi.[lastName] END                   AS lastName,
+           ELSE vbpi.[lastName] END                       AS lastName,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[primaryPos]
-           ELSE vbpi.[primaryPosition] END            AS primaryPosition,
+           ELSE vbpi.[primaryPosition] END                AS primaryPosition,
        CASE
            WHEN tsp.[baseballPlayerLocalID] IS NULL THEN tsp.[pitcherRole]
-           ELSE vbpi.[pitcherRole] END                AS pitcherRole,
-       CAST(secondaryPosition.optionValue AS INTEGER) AS secondaryPosition,
-       currentTeam.teamName                           AS currentTeam,
-       previousTeam.teamName                          AS previousTeam,
+           ELSE vbpi.[pitcherRole] END                    AS pitcherRole,
+       CAST(secondaryPosition.optionValue AS INTEGER)     AS secondaryPosition,
+       currentTeam.teamName                               AS currentTeam,
+       previousTeam.teamName                              AS previousTeam,
        tbp.power,
        tbp.contact,
        tbp.speed,
@@ -37,11 +36,11 @@ SELECT vbpi.baseballPlayerGUID,
        tbp.junk,
        tbp.accuracy,
        tbp.age,
-       salary.salary * 200                            AS salaryDollars,
+       IIF(salary.salary IS NULL, 0, salary.salary) * 200 AS salaryDollars,
        CASE
            WHEN COUNT(tbpt.trait) = 0 THEN NULL
            ELSE json_group_array(json_object('traitId', tbpt.trait, 'subtypeId', tbpt.subType))
-           END                                        AS traits
+           END                                            AS traits
 
 FROM [v_baseball_player_info] vbpi
          LEFT JOIN t_baseball_player_local_ids tbpli ON vbpi.baseballPlayerGUID = tbpli.GUID
@@ -56,7 +55,7 @@ FROM [v_baseball_player_info] vbpi
          JOIN t_league_local_ids tlli ON tsp.leagueLocalID = tlli.localID
          JOIN t_leagues tl ON tlli.GUID = tl.GUID
 
-         JOIN t_salary salary ON vbpi.baseballPlayerGUID = salary.baseballPlayerGUID
+         LEFT JOIN t_salary salary ON vbpi.baseballPlayerGUID = salary.baseballPlayerGUID
 
          LEFT JOIN t_baseball_player_options secondaryPosition
                    ON tbpli.localID = secondaryPosition.baseballPlayerLocalID AND secondaryPosition.optionKey = 55

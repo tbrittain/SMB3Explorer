@@ -48,7 +48,7 @@ public partial class LandingViewModel : ViewModelBase
         {
             Log.Error("Could not retrieve config options for previously selected leagues: {Error}", error);
             MessageBox.Show($"Could not retrieve config options for previously selected leagues: {error.Value}");
-            Smb4LeagueSelections = new List<Smb4LeagueSelection>();
+            Smb4LeagueSelections = [];
         }
 
         Smb4LeagueSelections = configOptions.Leagues
@@ -56,7 +56,8 @@ public partial class LandingViewModel : ViewModelBase
             {
                 NumTimesAccessed = x.NumTimesAccessed,
                 FirstAccessed = x.FirstAccessed,
-                LastAccessed = x.LastAccessed
+                LastAccessed = x.LastAccessed,
+                Mode = x.Mode
             })
             .OrderByDescending(x => x.NumTimesAccessed)
             .ToList();
@@ -128,7 +129,8 @@ public partial class LandingViewModel : ViewModelBase
             {
                 NumTimesAccessed = x.NumTimesAccessed,
                 FirstAccessed = x.FirstAccessed,
-                LastAccessed = x.LastAccessed
+                LastAccessed = x.LastAccessed,
+                Mode = x.Mode
             })
             .OrderByDescending(x => x.NumTimesAccessed)
             .ToList();
@@ -273,7 +275,8 @@ public partial class LandingViewModel : ViewModelBase
                     {
                         NumTimesAccessed = x.NumTimesAccessed,
                         FirstAccessed = x.FirstAccessed,
-                        LastAccessed = x.LastAccessed
+                        LastAccessed = x.LastAccessed,
+                        Mode = x.Mode
                     })
                     .ToList();
 
@@ -281,13 +284,14 @@ public partial class LandingViewModel : ViewModelBase
                     .Where(x => !existingLeagues.Contains(x))
                     .ToList();
 
-                if (newLeagues.Any())
+                if (newLeagues.Count != 0)
                 {
                     var now = DateTime.Now;
                     configOptions.Leagues.AddRange(newLeagues
                         .Select(x => new League
                         {
                             Id = x.SaveGameLeagueId,
+                            Mode = x.Mode,
                             Name = x.LeagueName,
                             PlayerTeam = x.PlayerTeam,
                             NumSeasons = x.NumSeasons,
@@ -339,7 +343,8 @@ public partial class LandingViewModel : ViewModelBase
                             NumSeasons = existingLeagueFromQuery.NumSeasons,
                             NumTimesAccessed = existingLeagueCached.NumTimesAccessed,
                             FirstAccessed = existingLeagueCached.FirstAccessed,
-                            LastAccessed = existingLeagueCached.LastAccessed
+                            LastAccessed = existingLeagueCached.LastAccessed,
+                            Mode = existingLeagueCached.Mode ?? existingLeagueFromQuery.Mode
                         });
 
                         _applicationConfig.SaveConfigOptions(configOptions);
