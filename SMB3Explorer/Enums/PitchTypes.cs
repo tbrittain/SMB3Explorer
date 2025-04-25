@@ -1,11 +1,38 @@
 ﻿using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
+
 // ReSharper disable NotAccessedPositionalProperty.Global
 
 namespace SMB3Explorer.Enums;
 
-public record struct DatabaseIntOption(int OptionKey, int OptionValue);
+public record DatabaseIntOption
+{
+    [JsonConstructor]
+    public DatabaseIntOption()
+    {
+        // For JSON deserialization only
+    }
+
+    public DatabaseIntOption(int optionKey, int optionValue)
+    {
+        OptionKey = optionKey;
+        OptionValue = optionValue;
+    }
+
+    [JsonPropertyName("optionKey")]
+    // ReSharper disable once MemberCanBePrivate.Global
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public int OptionKey { get; init; }
+
+    [JsonPropertyName("optionValue")]
+    // ReSharper disable once MemberCanBePrivate.Global
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public int OptionValue { get; init; }
+
+    override public string ToString() => $"{OptionKey}:{OptionValue}";
+}
 
 public class PitchTypes
 {

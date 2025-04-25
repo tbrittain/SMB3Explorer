@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
+using Serilog;
 using SMB3Explorer.Enums;
 using SMB3Explorer.Models.Exports;
 using SMB3Explorer.Utils;
@@ -218,11 +219,39 @@ public partial class DataService
                 seasonPlayer.Traits = _applicationContext.SelectedGame switch
                 {
                     SelectedGame.Smb3 => traits
-                        .Select(x => PlayerTrait.Smb3TraitMap[x])
+                        .Select(x =>
+                        {
+                            var ok = PlayerTrait.Smb3TraitMap.TryGetValue(x, out var trait);
+                            if (!ok)
+                            {
+                                Log.Warning(
+                                    "Trait {Trait} not found in database. This may be due to a missing or incorrect trait",
+                                    x);
+                                return (Trait?)null;
+                            }
+
+                            return trait;
+                        })
+                        .Where(x => x is not null)
+                        .Cast<Trait>()
                         .Distinct()
                         .ToArray(),
                     SelectedGame.Smb4 => traits
-                        .Select(x => PlayerTrait.Smb4TraitMap[x])
+                        .Select(x =>
+                        {
+                            var ok =  PlayerTrait.Smb4TraitMap.TryGetValue(x, out var trait);
+                            if (!ok)
+                            {
+                                Log.Warning(
+                                    "Trait {Trait} not found in database. This may be due to a missing or incorrect trait",
+                                    x);
+                                return (Trait?)null;
+                            }
+
+                            return trait;
+                        })
+                        .Where(x => x is not null)
+                        .Cast<Trait>()
                         .Distinct()
                         .ToArray(),
                     _ => throw new ArgumentException()
@@ -243,7 +272,19 @@ public partial class DataService
                     var pitches = JsonSerializer.Deserialize<DatabaseIntOption[]>(pitchesSerialized) ?? [];
 
                     seasonPlayer.Pitches = pitches
-                        .Select(x => PitchTypes.Pitches[x])
+                        .Select(x =>
+                        {
+                            var ok = PitchTypes.Pitches.TryGetValue(x, out var pitchType);
+                            if (!ok)
+                            {
+                                Log.Warning(
+                                    "Pitch type {PitchType} not found in database. This may be due to a missing or incorrect pitch type",
+                                    x);
+                                return null;
+                            }
+
+                            return pitchType;
+                        })
                         .Where(x => x is not null)
                         .Cast<PitchType>()
                         .Distinct()

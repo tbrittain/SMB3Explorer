@@ -1,6 +1,7 @@
 ﻿using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 // ReSharper disable NotAccessedPositionalProperty.Global
 
@@ -8,7 +9,30 @@ namespace SMB3Explorer.Enums;
 
 public static class PlayerTrait
 {
-    public record struct DatabaseTraitSubtypePair(int TraitId, int? SubtypeId);
+    public record DatabaseTraitSubtypePair
+    {
+        [JsonConstructor]
+        public DatabaseTraitSubtypePair()
+        {
+            // For JSON deserialization only
+        }
+
+        public DatabaseTraitSubtypePair(int traitId, int? subtypeId)
+        {
+            TraitId = traitId;
+            SubtypeId = subtypeId;
+        }
+
+        [JsonPropertyName("traitId")]
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        public int TraitId { get; init; }
+
+        [JsonPropertyName("subtypeId")]
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        public int? SubtypeId { get; init; }
+    }
 
     // ReSharper disable once InconsistentNaming
     private static Dictionary<DatabaseTraitSubtypePair, Trait> _smb3TraitMap { get; } = new()
