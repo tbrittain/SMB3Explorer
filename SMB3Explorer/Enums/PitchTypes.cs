@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
+using System.Collections.Generic;
 using System.ComponentModel;
 // ReSharper disable NotAccessedPositionalProperty.Global
 
@@ -37,8 +37,8 @@ public class PitchTypes
         {new DatabaseIntOption(65, 1), PitchType.Cutter}
     };
 
-    public static ImmutableDictionary<DatabaseIntOption, PitchType?> Pitches =>
-        _pitches.ToImmutableDictionary();
+    public static FrozenDictionary<DatabaseIntOption, PitchType?> Pitches =>
+        _pitches.ToFrozenDictionary();
 }
 
 public enum PitchType

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 // ReSharper disable NotAccessedPositionalProperty.Global
@@ -35,8 +35,8 @@ public static class PlayerTrait
         {new DatabaseTraitSubtypePair(9, null), Trait.BatterUtility},
     };
 
-    public static ImmutableDictionary<DatabaseTraitSubtypePair, Trait> Smb3TraitMap { get; } =
-        _smb3TraitMap.ToImmutableDictionary();
+    public static FrozenDictionary<DatabaseTraitSubtypePair, Trait> Smb3TraitMap { get; } =
+        _smb3TraitMap.ToFrozenDictionary();
 
     // ReSharper disable once InconsistentNaming
     private static Dictionary<DatabaseTraitSubtypePair, Trait> _smb4TraitMap { get; } = new()
@@ -118,8 +118,8 @@ public static class PlayerTrait
         {new DatabaseTraitSubtypePair(40, 6), Trait.BatterBunter},
     };
 
-    public static ImmutableDictionary<DatabaseTraitSubtypePair, Trait> Smb4TraitMap { get; } =
-        _smb4TraitMap.ToImmutableDictionary();
+    public static FrozenDictionary<DatabaseTraitSubtypePair, Trait> Smb4TraitMap { get; } =
+        _smb4TraitMap.ToFrozenDictionary();
 }
 
 public enum Trait
