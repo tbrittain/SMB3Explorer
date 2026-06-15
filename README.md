@@ -2,6 +2,9 @@
 
 SMB3 Explorer is a native Windows application that exports various game statistics for the Steam version of Super Mega Baseball 3.
 
+> [!IMPORTANT]
+> This application is no longer under active development and will be subject to being marked as archived/obsolete soon. The successor to this app is [smb-tools](https://github.com/tbrittain/smb-tools). Please check out its repository for more details.
+
 - For FAQs/general usage information, see the [wiki](https://github.com/tbrittain/SMB3Explorer/wiki).
 - For a list of planned features, see the [project board](https://github.com/users/tbrittain/projects/5/views/1).
 - For a list of known issues, see the [issues page](https://github.com/tbrittain/SMB3Explorer/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
